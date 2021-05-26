@@ -6,9 +6,12 @@
 
 <script>
 export default {
-  name: 'GameSelection',
+  name: 'AnagramGame',
   mounted() {
       console.log('anagram game is loading up')
+  },
+  unmounted() {
+    console.log('shutting down...')
   }
 }
 </script>

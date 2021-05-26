@@ -1,20 +1,15 @@
 <template>
   <div class="game-choice">
-      <button @click="launch()">{{ name }}</button>
+      <button @click="$emit('launchGame', scene)">{{ name }}</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'GameSelection',
+  name: 'GameChoice',
   props: {
       name: String,
-      src: String
-  },
-  methods: {
-      launch() {
-          this.$emit('launchGame', this.src)
-      }
+      scene: String
   }
 }
 </script>

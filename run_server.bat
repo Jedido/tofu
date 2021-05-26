@@ -1,1 +1,1 @@
-npm run build && serve -s dist -p 8638
+npm run build && node src/server/server.js
