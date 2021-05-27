@@ -7,8 +7,9 @@
 <script>
 export default {
   name: 'AnagramGame',
-  mounted() {
-      console.log('anagram game is loading up')
+  async mounted() {
+    console.log('anagram game is loading up')
+    console.log(await this.axios.$get('/anagram/game'))
   },
   unmounted() {
     console.log('shutting down...')

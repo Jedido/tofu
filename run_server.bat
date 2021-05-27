@@ -1,1 +1,1 @@
-npm run build && node src/server/server.js
+npm run build && node server/server.js

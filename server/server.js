@@ -5,6 +5,7 @@ const app = express()
 const port = 8080
 const Router = require('./router.js')
 const AnagramService = require('./services/anagramService.js')
+const loggingMiddleware = require('./middleware/loggingMiddleware.js')
 
 const path = __dirname + '/../dist/'
 
@@ -12,16 +13,12 @@ app.use(express.static(path))
 app.use(bodyParser.json())
 app.use(cors())
 app.use(express.urlencoded({ extended: true }))
-app.use((req, res, next) => {
-  console.log(req.url)
-  next()
-})
-const router = new Router([new AnagramService()])
-router.apply(app)
-
+app.use(loggingMiddleware)
 app.get('/', function (req, res) {
   res.sendFile(`${path}index.html`)
 })
+const router = new Router([new AnagramService()])
+router.apply(app)
 
 // listen on the port
 app.listen(port)
