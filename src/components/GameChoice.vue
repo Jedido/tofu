@@ -8,8 +8,8 @@
 export default {
   name: 'GameChoice',
   props: {
-      name: String,
-      scene: String
+    name: String,
+    scene: String
   }
 }
 </script>

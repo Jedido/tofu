@@ -19,7 +19,7 @@ export default {
     return {
         games: [
             { name: 'Anagram', scene: 'anagram' },
-            { name: 'name2', scene: 'game2' },
+            { name: 'Minesweeper', scene: 'minesweeper' },
             { name: 'name3', scene: 'game3' }
         ] 
     }

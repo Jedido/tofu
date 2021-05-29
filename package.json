@@ -5,28 +5,35 @@
     "scripts": {
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
-        "lint": "vue-cli-service lint"
+        "lint": "vue-cli-service lint",
+        "dev": "nodemon start --ext vue",
+        "start": "run_server.bat"
     },
     "dependencies": {
+        "@vue/component-compiler-utils": "^3.1.2",
         "body-parser": "^1.19.0",
         "core-js": "^3.6.5",
         "cors": "^2.8.5",
         "express": "^4.17.1",
-        "vue": "^3.0.0"
+        "vue": "^3.0.0",
+        "vue-loader": "^16.0.0-beta.8"
     },
     "devDependencies": {
         "@vue/cli-plugin-babel": "~4.5.0",
         "@vue/cli-plugin-eslint": "^4.5.13",
         "@vue/cli-service": "~4.5.0",
-        "@vue/compiler-sfc": "^3.0.0",
+        "@vue/compiler-sfc": "^3.0.11",
         "@vue/eslint-config-prettier": "^6.0.0",
         "axios": "^0.21.1",
         "babel-eslint": "^10.1.0",
         "eslint": "^6.7.2",
         "eslint-plugin-prettier": "^3.3.1",
         "eslint-plugin-vue": "^7.0.0",
+        "nodemon": "^2.0.7",
         "prettier": "^2.2.1",
-        "vue-axios": "^3.2.4"
+        "vue-axios": "^3.2.4",
+        "vue-svg-loader": "^0.17.0-beta.2",
+        "vue-template-compiler": "^2.6.10"
     },
     "eslintConfig": {
         "root": true,

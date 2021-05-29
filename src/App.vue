@@ -1,11 +1,12 @@
 <template>
-  <div id="app" class="container">
+  <div class="container">
     <header>
       <button @click="scene = 'select'">Back To Main Menu</button>
     </header>
     <main>
       <GameSelection v-if="scene === 'select'" v-on:launch-game="launchGame" />
       <AnagramGame v-else-if="scene === 'anagram'" />
+      <MinesweeperGame v-else-if="scene === 'minesweeper'" />
       <div v-else>{{ scene }}</div>
     </main>
     <footer>
@@ -22,7 +23,8 @@ export default {
   name: 'App',
   components: {
     GameSelection,
-    AnagramGame: defineAsyncComponent(() => import('./components/anagram/AnagramGame.vue'))
+    AnagramGame: defineAsyncComponent(() => import('./components/anagram/AnagramGame.vue')),
+    MinesweeperGame: defineAsyncComponent(() => import('./components/minesweeper/MinesweeperGame.vue'))
   },
   data() {
     return {
@@ -49,7 +51,6 @@ body, p {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   background-color: lightblue;
-  height: 100vh;
 }
 
 .container {
@@ -60,17 +61,18 @@ body, p {
     ". header ."
     ". main ."
     ". footer .";
+  height: 100vh;
 }
 
 header {
   grid-area: header;
-  background-color: salmon;
+  background-color: #222;
 }
 
 main {
   grid-area: main;
   display: grid;
-  grid-template-columns: auto 200px;
+  grid-template-columns: auto auto;
   column-gap: 20px;
   grid-template-rows: auto;
   grid-template-areas:
@@ -79,7 +81,7 @@ main {
 
 footer {
   grid-area: footer;
-  background-color: palevioletred;
+  background-color: #222;
 }
 
 .sidebar {
@@ -88,6 +90,6 @@ footer {
 }
 .scene {
   grid-area: scene;
-  background-color: palegreen;
+  background-color: white;
 }
 </style>
