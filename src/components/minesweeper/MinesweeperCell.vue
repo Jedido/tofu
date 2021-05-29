@@ -4,6 +4,7 @@
     :class="type"
     :style="{ color: `${color}` }"
     @click="revealSpace()"
+    @contextmenu.prevent="flagSpace()"
   >
     <Mine v-if="value === mine" />
     <Explosion v-else-if="value === explosion" />
@@ -42,6 +43,11 @@ export default {
     revealSpace() {
       if (this.value === this.hidden) {
         this.$emit('revealSpace')
+      }
+    },
+    flagSpace() {
+      if (this.value === this.hidden || this.value === this.flag) {
+        this.$emit('flagSpace')
       }
     }
   },

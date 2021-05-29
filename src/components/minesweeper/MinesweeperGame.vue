@@ -15,6 +15,7 @@
       <MinesweeperCell
         v-for="(cell, index) in board"
         v-on:reveal-space="() => revealSpace(index)"
+        v-on:flag-space="() => flagSpace(index)"
         class="space"
         :key="index"
         :value="cell"
@@ -88,6 +89,16 @@ export default {
           return
       }
       await this.axios.$post('/minesweeper/reveal', {
+        y: i % this.size,
+        x: Math.floor(i / this.size)
+      })
+      this.getBoard()
+    },
+    async flagSpace(i) {
+      if (this.status === 'lose' || this.status === 'win') {
+          return
+      }
+      await this.axios.$post('/minesweeper/flag', {
         y: i % this.size,
         x: Math.floor(i / this.size)
       })
