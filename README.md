@@ -19,7 +19,7 @@ npm run start
 npm run dev
 ```
 
-### Lints and fixes files
+### Lints files
 ```
 npm run lint
 ```

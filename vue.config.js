@@ -8,7 +8,7 @@ module.exports = {
     svgRule.uses.clear()
 
     svgRule
-      .use("vue-loader")
+      .use('vue-loader')
       .loader('vue-loader')
       .end()
       .use('vue-svg-loader')
