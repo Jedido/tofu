@@ -11,12 +11,12 @@ npm run serve
 
 ### Builds and deploys production
 ```
-run_server.bat
+npm run start
 ```
 
 ### Starts dev server
 ```
-run_devserver.bat
+npm run dev
 ```
 
 ### Lints and fixes files
