@@ -2,7 +2,8 @@
 
 ## Project setup
 1. install Node.js
-2. run `npm install` in the base repository folder
+2. `npm i -g eslint`
+3. run `npm install`
 
 ### Compiles and hot-reloads for development
 ```
