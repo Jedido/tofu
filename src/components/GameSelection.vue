@@ -17,11 +17,11 @@ export default {
   components: { GameChoice },
   data() {
     return {
-        games: [
-            { name: 'Anagram', scene: 'anagram' },
-            { name: 'Minesweeper', scene: 'minesweeper' },
-            { name: 'name3', scene: 'game3' }
-        ] 
+      games: [
+        { name: 'Anagram', scene: 'anagram' },
+        { name: 'Minesweeper', scene: 'minesweeper' },
+        { name: 'name3', scene: 'game3' }
+      ] 
     }
   }
 }

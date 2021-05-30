@@ -16,7 +16,7 @@ export default {
 
 <style scoped>
 .game-choice {
-    background: #aaa;
-    padding: 20px;
+  background: #aaa;
+  padding: 20px;
 }
 </style>

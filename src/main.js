@@ -14,12 +14,12 @@ app.use(VueAxios, axios)
 */
 const methods = ['get', 'post']
 methods.forEach((method) => {
-    axios[`$${method}`] = async function() {
-        const res = await axios[method](...arguments)
-        if (res.status !== 200) {
-            console.error(`Request ${arguments} filed with ${res}`)
-        }
-        return res.data
+  axios[`$${method}`] = async function() {
+    const res = await axios[method](...arguments)
+    if (res.status !== 200) {
+      console.error(`Request ${arguments} filed with ${res}`)
     }
+    return res.data
+  }
 })
 app.mount('#app')

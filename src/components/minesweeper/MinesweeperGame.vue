@@ -60,13 +60,13 @@ export default {
       this.join()
     },
     join() {
-        // Start timer
-        if (this.counter !== null) {
-            clearInterval(this.counter)
-        }
-        this.time = 0
-        this.counter = setInterval(this.tick, 1000)
-        this.getBoard()
+      // Start timer
+      if (this.counter !== null) {
+        clearInterval(this.counter)
+      }
+      this.time = 0
+      this.counter = setInterval(this.tick, 1000)
+      this.getBoard()
     },
     async getBoard() {
       const res = await this.axios.$get('/minesweeper/board')
@@ -75,18 +75,18 @@ export default {
       this.mines = res.mines
       this.size = res.size
       if (this.boardRefresh) {
-          clearInterval(this.boardRefresh)
+        clearInterval(this.boardRefresh)
       }
       if (this.status === 'lose' || this.status === 'win') {
-          clearInterval(this.counter)
-          clearInterval(this.boardRefresh)
+        clearInterval(this.counter)
+        clearInterval(this.boardRefresh)
       } else {
         this.boardRefresh = setTimeout(this.getBoard, 3000)
       }
     },
     async revealSpace(i) {
       if (this.status === 'lose' || this.status === 'win') {
-          return
+        return
       }
       await this.axios.$post('/minesweeper/reveal', {
         y: i % this.size,
@@ -96,7 +96,7 @@ export default {
     },
     async flagSpace(i) {
       if (this.status === 'lose' || this.status === 'win') {
-          return
+        return
       }
       await this.axios.$post('/minesweeper/flag', {
         y: i % this.size,

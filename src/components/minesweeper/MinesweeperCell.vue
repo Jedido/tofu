@@ -54,14 +54,14 @@ export default {
   computed: {
     type() {
       switch (this.value) {
-        case this.hidden:
-          return 'hidden'
-        case this.flag:
-          return 'flag'
-        case this.mine:
-          return 'bomb'
-        case this.explosion:
-          return ''
+      case this.hidden:
+        return 'hidden'
+      case this.flag:
+        return 'flag'
+      case this.mine:
+        return 'bomb'
+      case this.explosion:
+        return ''
       }
       return 'normal'
     },
