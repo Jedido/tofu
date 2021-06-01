@@ -31,6 +31,15 @@ export default {
       scene: 'select'
     }
   },
+  mounted() {
+    const io = require('socket.io-client')
+    const socket = io('ws://localhost:8080')
+
+    socket.on('connect', () => {
+      // either with send()
+      socket.emit('action', { msg: 'lets do this'})
+    })
+  },
   methods: {
     launchGame(game) {
       this.scene = game

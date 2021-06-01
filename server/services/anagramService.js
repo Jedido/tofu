@@ -1,4 +1,6 @@
 class AnagramService {
+  static id = 'anagram'
+
   constructor() {
     this.settings = {}
     this.words = []

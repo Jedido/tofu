@@ -5,6 +5,8 @@ const BLANK = -40
 const BOOM = -50
 
 class MinesweeperService {
+  static id = 'minesweeper'
+
   constructor() {
     this.field = []
     this.revealed = []

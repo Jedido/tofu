@@ -138,7 +138,7 @@ export default {
     text-align: center;
 }
 
-.space >>> svg {
+.space :deep() svg {
     width: 100%;
     display: block;
 }
