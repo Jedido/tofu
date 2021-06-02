@@ -1,6 +1,4 @@
 class AnagramService {
-  static id = 'anagram'
-
   constructor() {
     this.settings = {}
     this.words = []
@@ -18,5 +16,6 @@ class AnagramService {
     this.ciphers = []
   }
 }
+AnagramService.prototype.id = 'anagram'
 
 module.exports = AnagramService

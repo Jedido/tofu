@@ -1,12 +1,13 @@
 <template>
   <div class="container">
     <header>
+      <p v-if="roomId">Room ID: {{ roomId }}</p>
       <button @click="scene = 'select'">Back To Main Menu</button>
     </header>
     <main>
-      <GameSelection v-if="scene === 'select'" v-on:launch-game="launchGame" />
-      <AnagramGame v-else-if="scene === 'anagram'" />
-      <MinesweeperGame v-else-if="scene === 'minesweeper'" />
+      <RoomSelection v-if="scene === 'select'" v-on:launch-game="launchGame" v-on:join-room="joinRoom" />
+      <AnagramGame v-else-if="scene === 'anagram'" :socket="socket" />
+      <MinesweeperGame v-else-if="scene === 'minesweeper'" :socket="socket" />
       <div v-else>{{ scene }}</div>
     </main>
     <footer>
@@ -16,33 +17,46 @@
 </template>
 
 <script>
-import GameSelection from './components/GameSelection.vue'
+import RoomSelection from './components/RoomSelection.vue'
 import { defineAsyncComponent } from 'vue'
 
 export default {
   name: 'App',
   components: {
-    GameSelection,
+    RoomSelection,
     AnagramGame: defineAsyncComponent(() => import('./components/anagram/AnagramGame.vue')),
     MinesweeperGame: defineAsyncComponent(() => import('./components/minesweeper/MinesweeperGame.vue'))
   },
   data() {
     return {
-      scene: 'select'
+      scene: 'select',
+      socket: null,
+      roomId: ''
     }
   },
   mounted() {
     const io = require('socket.io-client')
-    const socket = io('ws://localhost:8080')
+    this.socket = io(`ws://${window.location.host}`)
+    console.log(window.location.pathname)  // to use later
 
-    socket.on('connect', () => {
-      // either with send()
-      socket.emit('action', { msg: 'lets do this'})
+    this.socket.on('connect', () => {
+      console.log('connected to the service')
+    })
+    this.socket.on('set-scene', (scene) => {
+      this.scene = scene
+    })
+    this.socket.on('set-room', (room) => {
+      this.roomId = room
     })
   },
   methods: {
     launchGame(game) {
       this.scene = game
+      this.socket.emit('create-room', game)
+    },
+    joinRoom(roomId) {
+      this.socket.emit('join-room', roomId)
+      this.room = roomId
     }
   }
 }
@@ -59,7 +73,7 @@ body, p {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  background-color: lightblue;
+  background-color: white;
 }
 
 .container {
@@ -67,15 +81,15 @@ body, p {
   grid-template-columns: 10% auto 10%;
   grid-template-rows: 100px auto 100px;
   grid-template-areas: 
-    ". header ."
+    "header header header"
     ". main ."
-    ". footer .";
-  height: 100vh;
+    "footer footer footer";
+  min-height: 100vh;
 }
 
 header {
   grid-area: header;
-  background-color: #222;
+  background-color: #ccc;
 }
 
 main {

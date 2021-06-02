@@ -11,7 +11,7 @@ const loggingMiddleware = require('./middleware/loggingMiddleware.js')
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
-const port = 8080
+const port = 8638
 
 const path = __dirname + '/../dist/'
 
@@ -24,38 +24,39 @@ app.get('/', function (_, res) {
   res.sendFile(`${path}index.html`)
 })
 
-// const router = new Router([new AnagramService(), new MinesweeperService()])
-// router.apply(app)
-
 const gameManager = new GameManager()
 let userId = 0
 io.on('connection', (socket) => {
   let r = null
   let g = null
+  let gid = ''
   let id = `user ${userId++}`
   let ign = ''
   socket.on('create-room', (gameId, name) => {
-    const res = gameManager.addGame(gameId)
-    ign = name
+    const res = gameManager.createRoom(gameId, socket)
+    ign = name ? name : id
     r = res.roomId
     g = res.game
+    gid = res.gameId
+    socket.emit('set-room', r)
   })
-  socket.on('join-game', (roomId, name) => {
-    ign = name
-    g = gameManager.joinGame(roomId)
+  socket.on('join-room', (roomId, name) => {
+    ign = name ? name : id
+    g = gameManager.joinRoom(roomId, socket)
     r = roomId
+    gid = Object.getPrototypeOf(g).id
+    socket.emit('set-scene', gid)
   })
   socket.on('set-game', (gameId) => {
     gameManager.removeGame(r)
     g = gameManager.createGame(gameId)
   })
-  socket.on('action', (data) => {
-    console.log(`${id} (${ign}) made action on ${g}: `)
-    console.log(data)
-    // g.performAction(data)
+  socket.on('message', (msg) => {
+    gameManager.broadcastEvent(r, 'message', `${ign ? ign : id}: ${msg}`)
   })
-  socket.on('get-info', () => {
-    socket.send('state', { gameId: gameManager.getRoomGame(r).id, r })
+  socket.on('action', (type, data) => {
+    // console.log(`${id} (${ign}) triggered ${type} on ${gid} (${r}): ${JSON.stringify(data)}`)
+    g.actions[type](data, socket)
   })
   socket.on('disconnect', function () {
     console.log(`${id} (${ign}) has disconnected`)

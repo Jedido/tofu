@@ -3,8 +3,7 @@
     <h2>Minesweeper</h2>
     <p>Board size (default 25): <input v-model="inputSize" type="number" id="mine-size" min="5" max="50"></p>
     <p>Mines (default 100): <input v-model="mines" type="number" id="mine-mines" min="1" max="2499"></p>
-    <button @click="minesweeper" id="play-minesweeper">Play</button>
-    <button @click="join" id="join-minesweeper">Join</button>
+    <button @click="minesweeper" id="play-minesweeper">New Game</button>
     <p id="message">{{ message }}</p>
     <div id="minesweeper-board" :class="status" :style="{
       'grid-template-rows': `repeat(${size}, 1fr)`,
@@ -32,6 +31,9 @@ export default {
   components: {
     MinesweeperCell
   },
+  props: {
+    socket: Object
+  },
   data() {
     return {
       board: [],
@@ -41,23 +43,33 @@ export default {
       mines: 100,
       message: 'Click "Play" to start a game, or "Join" to join an existing game.',
       time: 0,
-      counter: null,
-      boardRefresh: null
+      counter: null
     }
   },
+  mounted() {
+    this.socket.on('minesweeper-board', (data) => {
+      this.setBoard(data)
+    })
+    this.socket.on('minesweeper-update-space', (x, y, value) => {
+      this.board[x * this.size + y] = value
+    })
+  },
   unmounted() {
+    this.socket.off('minesweeper-board')
+    this.socket.off('minesweeper-update-space')
     clearInterval(this.counter)
-    clearInterval(this.boardRefresh)
   },
   methods: {
+    emit(type, data) {
+      this.socket.emit('action', type, data)
+    },
     /** Makes a game of minesweeper */
-    async minesweeper() {
+    minesweeper() {
       this.size = this.inputSize
-      await this.axios.$post('/minesweeper/init', {
+      this.emit('minesweeper-init', {
         size: this.size,
         bombs: this.mines
       })
-      this.join()
     },
     join() {
       // Start timer
@@ -66,43 +78,34 @@ export default {
       }
       this.time = 0
       this.counter = setInterval(this.tick, 1000)
-      this.getBoard()
+      this.emit('minesweeper-get-board')
     },
-    async getBoard() {
-      const res = await this.axios.$get('/minesweeper/board')
+    setBoard(res) {
       this.board = res.board.reduce((acc, cur) => acc.concat(cur), [])
       this.status = res.status
       this.mines = res.mines
       this.size = res.size
-      if (this.boardRefresh) {
-        clearInterval(this.boardRefresh)
-      }
-      if (this.status === 'lose' || this.status === 'win') {
+      if (this.status !== 'ongoing') {
         clearInterval(this.counter)
-        clearInterval(this.boardRefresh)
-      } else {
-        this.boardRefresh = setTimeout(this.getBoard, 3000)
       }
     },
-    async revealSpace(i) {
-      if (this.status === 'lose' || this.status === 'win') {
+    revealSpace(i) {
+      if (this.status !== 'ongoing') {
         return
       }
-      await this.axios.$post('/minesweeper/reveal', {
+      this.emit('minesweeper-reveal', {
         y: i % this.size,
         x: Math.floor(i / this.size)
       })
-      this.getBoard()
     },
-    async flagSpace(i) {
-      if (this.status === 'lose' || this.status === 'win') {
+    flagSpace(i) {
+      if (this.status !== 'ongoing') {
         return
       }
-      await this.axios.$post('/minesweeper/flag', {
+      this.emit('minesweeper-flag', {
         y: i % this.size,
         x: Math.floor(i / this.size)
       })
-      this.getBoard()
     },
     tick() {
       this.message = `Time: ${++this.time}`

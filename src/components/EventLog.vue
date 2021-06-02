@@ -1,11 +1,31 @@
 <template>
-  <section class="sidebar">
-  </section>
+  <div class="sidebar">
+    <p v-for="(index, logLine) in logs" :key="index">{{ logLine }}</p>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'EventLog'
+  name: 'EventLog',
+  props: {
+    socket: Object
+  },
+  data() {
+    return { logs: [] }
+  },
+  mounted() {
+    this.socket.on('all-logs', (logs) => {
+      this.logs = logs
+    })
+    this.socket.on('log', (msg) => {
+      this.logs.push(msg)
+    })
+    this.socket.emit('get-logs')
+  },
+  unmounted() {
+    this.socket.off('all-logs')
+    this.socket.off('log')
+  }
 }
 </script>
 
