@@ -4,14 +4,18 @@ const cors = require('cors')
 const http = require('http')
 const { Server } = require('socket.io')
 
-// const Router = require('./router.js')
 const GameManager = require('./gameManager.js')
 const loggingMiddleware = require('./middleware/loggingMiddleware.js')
 
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
-const port = 8638
+let port = 8080
+process.argv.forEach(function (val) {
+  if (val === 'prod') {
+    port = 8638
+  }
+})
 
 const path = __dirname + '/../dist/'
 
@@ -22,6 +26,9 @@ app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 app.use(loggingMiddleware)
 app.get('/', function (_, res) {
+  res.sendFile(`${path}index.html`)
+})
+app.get('/:room', function (_, res) {
   res.sendFile(`${path}index.html`)
 })
 

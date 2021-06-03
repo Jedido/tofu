@@ -1,78 +1,79 @@
 {
-    "name": "tofu",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "serve": "vue-cli-service serve",
-        "build": "vue-cli-service build",
-        "lint": "vue-cli-service lint --no-fix",
-        "dev": "nodemon start --ext vue",
-        "start": "run_server.bat"
+  "name": "tofu",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint --no-fix",
+    "dev": "nodemon start --ext vue",
+    "start": "run_devserver.bat",
+    "prod": "run_server.bat"
+  },
+  "dependencies": {
+    "@vue/component-compiler-utils": "^3.1.2",
+    "body-parser": "^1.19.0",
+    "core-js": "^3.6.5",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "socket.io-client": "^4.1.2",
+    "vue": "^3.0.0",
+    "vue-loader": "^16.0.0-beta.8"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "^4.5.13",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.11",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "axios": "^0.21.1",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-vue": "^7.0.0",
+    "nodemon": "^2.0.7",
+    "prettier": "^2.2.1",
+    "socket.io": "^4.1.2",
+    "vue-axios": "^3.2.4",
+    "vue-svg-loader": "^0.17.0-beta.2",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
     },
-    "dependencies": {
-        "@vue/component-compiler-utils": "^3.1.2",
-        "body-parser": "^1.19.0",
-        "core-js": "^3.6.5",
-        "cors": "^2.8.5",
-        "express": "^4.17.1",
-        "socket.io-client": "^4.1.2",
-        "vue": "^3.0.0",
-        "vue-loader": "^16.0.0-beta.8"
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended",
+      "@vue/prettier"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
     },
-    "devDependencies": {
-        "@vue/cli-plugin-babel": "~4.5.0",
-        "@vue/cli-plugin-eslint": "^4.5.13",
-        "@vue/cli-service": "~4.5.0",
-        "@vue/compiler-sfc": "^3.0.11",
-        "@vue/eslint-config-prettier": "^6.0.0",
-        "axios": "^0.21.1",
-        "babel-eslint": "^10.1.0",
-        "eslint": "^6.8.0",
-        "eslint-plugin-prettier": "^3.3.1",
-        "eslint-plugin-vue": "^7.0.0",
-        "nodemon": "^2.0.7",
-        "prettier": "^2.2.1",
-        "socket.io": "^4.1.2",
-        "vue-axios": "^3.2.4",
-        "vue-svg-loader": "^0.17.0-beta.2",
-        "vue-template-compiler": "^2.6.10"
-    },
-    "eslintConfig": {
-        "root": true,
-        "env": {
-            "node": true
-        },
-        "extends": [
-            "plugin:vue/vue3-essential",
-            "eslint:recommended",
-            "@vue/prettier"
-        ],
-        "parserOptions": {
-            "parser": "babel-eslint"
-        },
-        "rules": {
-            "prettier/prettier": 0,
-            "semi": [
-                "error",
-                "never"
-            ],
-            "comma-dangle": [
-                "error",
-                "never"
-            ],
-            "quotes": [
-                "error",
-                "single"
-            ],
-            "indent": [
-                "error",
-                2
-            ]
-        }
-    },
-    "browserslist": [
-        "> 1%",
-        "last 2 versions",
-        "not dead"
-    ]
+    "rules": {
+      "prettier/prettier": 0,
+      "semi": [
+        "error",
+        "never"
+      ],
+      "comma-dangle": [
+        "error",
+        "never"
+      ],
+      "quotes": [
+        "error",
+        "single"
+      ],
+      "indent": [
+        "error",
+        2
+      ]
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

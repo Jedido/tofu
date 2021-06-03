@@ -1,1 +1,1 @@
-nodemon start --ext vue
+npm run build && node server/server.js
