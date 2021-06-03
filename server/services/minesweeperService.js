@@ -22,6 +22,7 @@ class MinesweeperService {
     this.gameStatus = 'ongoing'
     this.spaces = 0
     this.numBombs = 0
+    this.time = new Date()
     this.id = 'minesweeper'
   }
 
@@ -57,11 +58,14 @@ class MinesweeperService {
       'status': this.gameStatus,
       'size': this.revealed.length,
       'mines': this.numBombs,
-      'board': this.revealed
+      'board': this.revealed,
+      'time': this.gameStatus === 'ongoing'
+        ? Math.round((new Date() - this.time) / 1000)
+        : this.time
     }
   }
 
-  init({ size, bombs }) {
+  init({ size, bombs }, socket) {
     this.gameStatus = 'ongoing'
     this.field = []
     this.revealed = []
@@ -97,16 +101,20 @@ class MinesweeperService {
         spacesLeft--
       }
     }
+    this.broadcastFn('log', `${socket.ign} started a new game (bombs=${bombs}, size=${size})`)
     this.broadcastFn(this.boardEvent, this.getState())
   }
 
-  reveal({ x, y }) {
+  reveal({ x, y }, socket) {
     if (this.revealed[x][y] !== FLAG) {
+      this.broadcastFn('log', `${socket.ign} revealed (${x}, ${y})`)
       if (this.field[x][y] === BOMB) {
         this.revealBoard()
         this.revealed[x][y] = BOOM
         this.gameStatus = 'lose'
+        this.time = Math.round((new Date() - this.time) / 1000)
         this.broadcastFn(this.boardEvent, this.getState())
+        this.broadcastFn('log', `${socket.ign} blew everyone up after ${this.time} seconds.`)
       } else {
         let queue = []
         queue.push([x, y])
@@ -138,7 +146,9 @@ class MinesweeperService {
         if (this.spaces === 0) {
           this.revealBoard()
           this.gameStatus = 'win'
+          this.time = Math.round((new Date() - this.time) / 1000)
           this.broadcastFn(this.boardEvent, this.getState())
+          this.broadcastFn('log', `${socket.ign} revealed the last space after ${this.time} seconds.`)
         } else if (this.field[x][y] === 0) {
           this.broadcastFn(this.boardEvent, this.getState())
         } else {

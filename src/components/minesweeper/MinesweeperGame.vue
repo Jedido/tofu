@@ -1,15 +1,19 @@
 <template>
   <div id="minesweeper">
     <h2>Minesweeper</h2>
-    <p>Board size (default 25): <input v-model="inputSize" type="number" id="mine-size" min="5" max="50"></p>
-    <p>Mines (default 100): <input v-model="mines" type="number" id="mine-mines" min="1" max="2499"></p>
-    <button @click="minesweeper" id="play-minesweeper">New Game</button>
-    <p id="message">{{ message }}</p>
+    <div id="minesweeper-info">
+      <p v-if="status === 'ongoing'">Time: {{ time }} seconds</p>
+      <p v-else-if="status !== ''">You {{ status }}</p>
+      <p v-if="status === 'ongoing'">Revealed: {{ revealed }}</p>
+      <p v-else>Click "New Game" to start a game</p>
+      <p>Flags: {{ flags }} / {{ mines }}</p>
+    </div>
     <div id="minesweeper-board" :class="status" :style="{
       'grid-template-rows': `repeat(${size}, 1fr)`,
       'grid-template-columns': `repeat(${size}, 1fr)`,
       'fontSize': cellSize,
-      'lineHeight': cellSize
+      'lineHeight': cellSize,
+      'height': `${boardWidth}px`
     }">
       <MinesweeperCell
         v-for="(cell, index) in board"
@@ -19,6 +23,11 @@
         :key="index"
         :value="cell"
       />
+    </div>
+    <div id="options">
+      <p>Board size (default 25): <input v-model="inputSize" type="number" min="5" max="50"></p>
+      <p>Mines (default 100): <input v-model="mines" type="number" min="1" max="2499"></p>
+      <button @click="minesweeper">New Game</button>
     </div>
   </div>
 </template>
@@ -41,20 +50,34 @@ export default {
       inputSize: 25,
       size: 25,
       mines: 100,
-      message: 'Click "Play" to start a game, or "Join" to join an existing game.',
       time: 0,
-      counter: null
+      flags: 0,
+      revealed: 0,
+      counter: null,
+      boardWidth: 600
     }
   },
+  created() {
+    window.addEventListener('resize', this.resizeBoard)
+  },
   mounted() {
+    this.boardWidth = document.querySelector('#minesweeper-board').clientWidth
     this.socket.on('minesweeper-board', (data) => {
       this.setBoard(data)
+      this.$nextTick(() => {
+        this.revealed = document.querySelectorAll('.normal').length
+      })
     })
     this.socket.on('minesweeper-update-space', (x, y, value) => {
       this.board[x * this.size + y] = value
+      this.$nextTick(() => {
+        this.revealed = document.querySelectorAll('.normal').length
+        this.flags = document.querySelectorAll('.flag').length
+      })
     })
   },
   unmounted() {
+    window.removeEventListener('resize', this.resizeBoard)
     this.socket.off('minesweeper-board')
     this.socket.off('minesweeper-update-space')
     clearInterval(this.counter)
@@ -71,22 +94,16 @@ export default {
         bombs: this.mines
       })
     },
-    join() {
-      // Start timer
-      if (this.counter !== null) {
-        clearInterval(this.counter)
-      }
-      this.time = 0
-      this.counter = setInterval(this.tick, 1000)
-      this.emit('minesweeper-get-board')
-    },
     setBoard(res) {
       this.board = res.board.reduce((acc, cur) => acc.concat(cur), [])
       this.status = res.status
       this.mines = res.mines
       this.size = res.size
+      this.time = res.time
       if (this.status !== 'ongoing') {
         clearInterval(this.counter)
+      } else if (!this.counter) {
+        this.counter = setInterval(this.tick, 1000)
       }
     },
     revealSpace(i) {
@@ -108,71 +125,102 @@ export default {
       })
     },
     tick() {
-      this.message = `Time: ${++this.time}`
+      ++this.time
+    },
+    resizeBoard() {
+      this.boardWidth = document.querySelector('#minesweeper-board').clientWidth
     }
   },
   computed: {
     cellSize() {
-      return `${600 / this.size - 1}px`
+      return `${(this.boardWidth - 20) / this.size - 2}px`
     }
   }
 }
 </script>
 
 <style scoped>
-#message {
-    text-align: center;
+h2 {
+  text-align: center;
 }
 
 #minesweeper-board {
-    display: grid;
-    width: 620px;
-    height: 620px;
-    padding: 10px;
-    background-color: gray;
-    font-family: "Courier New", monospace;
-    font-weight: bold;
+  display: grid;
+  min-width: 400px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  position: relative;
+  background-color: gray;
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+}
+
+#minesweeper-info {
+  display: flex;
+  justify-content: space-between;
+}
+
+#minesweeper-info p {
+  display: inline;
 }
 
 .space {
-    display: inline;
-    border: 1px solid gray;
-    background-color: lightgray;
-    text-align: center;
+  border: 1px solid gray;
+  background-color: lightgray;
+  text-align: center;
 }
 
 .space :deep() svg {
-    width: 100%;
-    display: block;
+  display: block;
 }
 
 .space::selection {
-    background: none;
+  background: none;
 }
 
 .normal {
-    background-color: darkgray;
+  background-color: darkgray;
 }
 
 .win .space {
-    border: 1px solid green;
-    background-color: lightgreen;
+  border: 1px solid green;
+  background-color: lightgreen;
 }
 
 .lose .space {
-    border: 1px solid red;
-    background-color: pink;
+  border: 1px solid red;
+  background-color: pink;
 }
 
 .hidden:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .flag:hover {
-    cursor: not-allowed;
+  cursor: not-allowed;
 }
 
 .normal:hover {
-    cursor: default;
+  cursor: default;
 }
+
+#options {
+  display: grid;
+  grid-template-columns: auto 300px;
+  grid-template-rows: auto;
+  grid-template-areas: 
+    "input button"
+    "input button";
+  margin-bottom: 8px;
+}
+
+input {
+  grid-area: input;
+}
+
+button {
+  grid-area: button;
+}
+
 </style>

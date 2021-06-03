@@ -1,14 +1,22 @@
 <template>
   <div class="container">
     <header>
-      <p v-if="roomId">Room ID: {{ roomId }}</p>
-      <button @click="scene = 'select'">Back To Main Menu</button>
+      <label>
+        Your username: <input type="text" id="ign" v-model="ign">
+        <button @click="setIgn()">Set</button>
+      </label>
+      <p>User ID: {{ userId }}</p>
     </header>
     <main>
-      <RoomSelection v-if="scene === 'select'" v-on:launch-game="launchGame" v-on:join-room="joinRoom" />
-      <AnagramGame v-else-if="scene === 'anagram'" :socket="socket" />
-      <MinesweeperGame v-else-if="scene === 'minesweeper'" :socket="socket" />
-      <div v-else>{{ scene }}</div>
+      <div class="scene">
+        <RoomSelection v-if="scene === 'select'" v-on:launch-game="launchGame" />
+        <AnagramGame v-else-if="scene === 'anagram'" :socket="socket" />
+        <MinesweeperGame v-else-if="scene === 'minesweeper'" :socket="socket" />
+        <div v-else>{{ scene }}</div>
+      </div>
+      <div v-if="socket" class="sidebar">
+        <EventLog v-on:join-room="joinRoom" v-on:leave-room="leaveRoom" :socket="socket" :roomId="roomId" />
+      </div>
     </main>
     <footer>
       You can download this app on github.com.
@@ -17,13 +25,16 @@
 </template>
 
 <script>
-import RoomSelection from './components/RoomSelection.vue'
 import { defineAsyncComponent } from 'vue'
+import io from 'socket.io-client'
+import RoomSelection from './components/RoomSelection.vue'
+import EventLog from './components/EventLog.vue'
 
 export default {
   name: 'App',
   components: {
     RoomSelection,
+    EventLog,
     AnagramGame: defineAsyncComponent(() => import('./components/anagram/AnagramGame.vue')),
     MinesweeperGame: defineAsyncComponent(() => import('./components/minesweeper/MinesweeperGame.vue'))
   },
@@ -31,14 +42,13 @@ export default {
     return {
       scene: 'select',
       socket: null,
-      roomId: ''
+      roomId: '',
+      ign: '',
+      userId: 'loading...'
     }
   },
-  mounted() {
-    const io = require('socket.io-client')
+  created() {
     this.socket = io(`ws://${window.location.host}`)
-    console.log(window.location.pathname)  // to use later
-
     this.socket.on('connect', () => {
       console.log('connected to the service')
     })
@@ -48,15 +58,32 @@ export default {
     this.socket.on('set-room', (room) => {
       this.roomId = room
     })
+    this.socket.on('set-user', (ign, id) => {
+      this.ign = ign
+      this.userId = id
+    })
+    console.log(window.location.pathname)  // to use later
   },
   methods: {
     launchGame(game) {
       this.scene = game
-      this.socket.emit('create-room', game)
+      this.socket.emit('create-room', game, this.ign)
     },
     joinRoom(roomId) {
-      this.socket.emit('join-room', roomId)
-      this.room = roomId
+      this.socket.emit('join-room', roomId, this.ign)
+      this.roomId = roomId
+    },
+    leaveRoom() {
+      this.socket.emit('leave-room')
+      this.roomId = null
+      this.scene = 'select'
+    },
+    setIgn() {
+      if (this.ign.search(/user/) === -1) {
+        this.socket.emit('set-ign', this.ign)
+      } else {
+        alert('Username cannot contain the string "user" in it!')
+      }
     }
   }
 }
@@ -80,6 +107,7 @@ body, p {
   display: grid;
   grid-template-columns: 10% auto 10%;
   grid-template-rows: 100px auto 100px;
+  row-gap: 20px;
   grid-template-areas: 
     "header header header"
     ". main ."
@@ -90,16 +118,36 @@ body, p {
 header {
   grid-area: header;
   background-color: #ccc;
+  padding: 12px;
+}
+
+#ign {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  border-bottom: 1px solid black;
+  margin-bottom: 8px;
+}
+
+input:focus {
+  outline: none;
 }
 
 main {
   grid-area: main;
   display: grid;
-  grid-template-columns: auto auto;
-  column-gap: 20px;
-  grid-template-rows: auto;
+  row-gap: 20px;
   grid-template-areas:
-    "scene sidebar";
+    "scene"
+    "sidebar";
+}
+@media (min-width: 768px) {
+  main {
+    grid-template-areas:
+      "scene sidebar";
+    grid-template-columns: auto 300px;
+    column-gap: 20px;
+  }
 }
 
 footer {
@@ -111,6 +159,7 @@ footer {
   grid-area: sidebar;
   background-color: white;
 }
+
 .scene {
   grid-area: scene;
   background-color: white;
