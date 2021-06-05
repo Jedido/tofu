@@ -13,7 +13,7 @@
       'grid-template-columns': `repeat(${size}, 1fr)`,
       'fontSize': cellSize,
       'lineHeight': cellSize,
-      'height': `${boardWidth}px`
+      'height': `${gameWidth - 24}px`
     }">
       <MinesweeperCell
         v-for="(cell, index) in board"
@@ -41,7 +41,8 @@ export default {
     MinesweeperCell
   },
   props: {
-    socket: Object
+    socket: Object,
+    gameWidth: Number
   },
   data() {
     return {
@@ -53,15 +54,12 @@ export default {
       time: 0,
       flags: 0,
       revealed: 0,
-      counter: null,
-      boardWidth: 600
+      counter: null
     }
   },
   created() {
-    window.addEventListener('resize', this.resizeBoard)
   },
   mounted() {
-    this.boardWidth = document.querySelector('#minesweeper-board').clientWidth
     this.socket.on('minesweeper-board', (data) => {
       this.setBoard(data)
       this.$nextTick(() => {
@@ -77,7 +75,6 @@ export default {
     })
   },
   unmounted() {
-    window.removeEventListener('resize', this.resizeBoard)
     this.socket.off('minesweeper-board')
     this.socket.off('minesweeper-update-space')
     clearInterval(this.counter)
@@ -126,14 +123,11 @@ export default {
     },
     tick() {
       ++this.time
-    },
-    resizeBoard() {
-      this.boardWidth = document.querySelector('#minesweeper-board').clientWidth
     }
   },
   computed: {
     cellSize() {
-      return `${(this.boardWidth - 20) / this.size - 2}px`
+      return `${(this.gameWidth - 44) / this.size - 2}px`
     }
   }
 }

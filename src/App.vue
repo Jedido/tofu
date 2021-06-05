@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div :class="['container', { noselect: dragging }]" @mousemove="dragUpdate">
     <header>
       <label>
         Your username: <input type="text" id="ign" v-model="ign">
@@ -7,17 +7,18 @@
       </label>
       <p>User ID: {{ userId }}</p>
     </header>
-    <main>
-      <div class="scene">
-        <RoomSelection v-if="scene === 'select'" v-on:launch-game="launchGame" />
-        <AnagramGame v-else-if="scene === 'anagram'" :socket="socket" />
-        <MinesweeperGame v-else-if="scene === 'minesweeper'" :socket="socket" />
-        <div v-else>{{ scene }}</div>
-      </div>
-      <div v-if="socket" class="sidebar">
-        <EventLog v-on:join-room="joinRoom" v-on:leave-room="leaveRoom" :socket="socket" :roomId="roomId" />
-      </div>
+    <main class="scene">
+      <RoomSelection v-if="scene === 'select'" v-on:launch-game="launchGame" />
+      <AnagramGame v-else-if="scene === 'anagram'" :socket="socket" />
+      <MinesweeperGame v-else-if="scene === 'minesweeper'" :socket="socket" :game-width="gameWidth" />
+      <div v-else>{{ scene }}</div>
     </main>
+    <div class="dragbar" @mousedown="startDrag"></div>
+    <div class="sidebar" :style="{
+      width: `${sidebarWidth}px`
+    }">
+      <EventLog v-on:join-room="joinRoom" v-on:leave-room="leaveRoom" :socket="socket" :roomId="roomId" />
+    </div>
     <footer>
       You can download this app on github.com.
     </footer>
@@ -44,7 +45,12 @@ export default {
       socket: null,
       roomId: '',
       ign: '',
-      userId: 'loading...'
+      userId: 'loading...',
+      dragging: false,
+      dragX: 0,
+      oldWidth: 300,
+      sidebarWidth: 300,
+      gameWidth: 0
     }
   },
   created() {
@@ -62,7 +68,17 @@ export default {
       this.ign = ign
       this.userId = id
     })
-    console.log(window.location.pathname)  // to use later
+    console.log(window.location.pathname)  // to use later?
+  },
+  mounted() {
+    document.addEventListener('mouseup', () => {
+      if (this.dragging) {
+        this.resizeGame()
+      }
+      this.dragging = false
+    })
+    window.addEventListener('resize', this.resizeGame)
+    this.gameWidth = document.querySelector('.scene').clientWidth
   },
   methods: {
     launchGame(game) {
@@ -84,6 +100,22 @@ export default {
       } else {
         alert('Username cannot contain the string "user" in it!')
       }
+    },
+    async resizeGame() {
+      this.gameWidth = document.querySelector('.scene').clientWidth
+      await this.$nextTick()
+    },
+    startDrag(e) {
+      this.dragging = true
+      this.oldWidth = this.sidebarWidth
+      this.dragX = e.clientX
+    },
+    dragUpdate(e) {
+      if (!this.dragging) {
+        return false
+      }
+      let dx = e.clientX - this.dragX
+      this.sidebarWidth = this.oldWidth - dx
     }
   }
 }
@@ -103,16 +135,27 @@ body, p {
   background-color: white;
 }
 
+
 .container {
   display: grid;
-  grid-template-columns: 10% auto 10%;
-  grid-template-rows: 100px auto 100px;
-  row-gap: 20px;
-  grid-template-areas: 
-    "header header header"
-    ". main ."
-    "footer footer footer";
   min-height: 100vh;
+  grid-template-rows: 100px auto auto min-content;
+  grid-template-areas: 
+    "header"
+    "scene"
+    "sidebar"
+    "footer";
+}
+
+@media (min-width: 768px) {
+  .container {
+    grid-template-columns: auto 4px min-content;
+    grid-template-rows: 100px auto min-content;
+    grid-template-areas: 
+      "header header header"
+      "scene dragbar sidebar"
+      "footer footer footer";
+  }
 }
 
 header {
@@ -133,35 +176,41 @@ input:focus {
   outline: none;
 }
 
-main {
-  grid-area: main;
-  display: grid;
-  row-gap: 20px;
-  grid-template-areas:
-    "scene"
-    "sidebar";
-}
-@media (min-width: 768px) {
-  main {
-    grid-template-areas:
-      "scene sidebar";
-    grid-template-columns: auto 300px;
-    column-gap: 20px;
-  }
-}
-
 footer {
   grid-area: footer;
   background-color: #222;
 }
 
+.dragbar {
+  background: #ddd;
+}
+
+.dragbar:hover {
+  cursor: col-resize;
+  border: 4px #2c3e50;
+  border-style: none solid;
+}
+
 .sidebar {
+  padding: 12px;
   grid-area: sidebar;
   background-color: white;
+  width: 300px;
 }
 
 .scene {
+  padding: 12px;
   grid-area: scene;
   background-color: white;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 </style>

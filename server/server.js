@@ -51,9 +51,11 @@ io.on('connection', (socket) => {
   socket.on('join-room', (roomId, name) => {
     socket.ign = name ? name : socket.id
     g = gameManager.joinRoom(roomId, socket)
-    r = roomId
-    gid = Object.getPrototypeOf(g).id
-    socket.emit('set-scene', gid)
+    if (g) {
+      r = roomId
+      gid = Object.getPrototypeOf(g).id
+      socket.emit('set-scene', gid)
+    }
   })
   socket.on('leave-room', () => {
     gameManager.broadcast(r, 'message', `${socket.ign} has left the room.`)

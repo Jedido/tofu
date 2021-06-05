@@ -40,6 +40,7 @@ export default {
   unmounted() {
     this.socket.off('all-logs')
     this.socket.off('log')
+    this.logs = []
   }
 }
 </script>
@@ -48,9 +49,8 @@ export default {
 #logs-container {
   display: block;
   box-sizing: border-box;
-  background: #eee;
-  padding: 12px;
   height: 100%;
+  overflow: scroll;
 }
 #logs-content {
   background: white;
