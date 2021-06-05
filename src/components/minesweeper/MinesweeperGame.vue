@@ -73,6 +73,7 @@ export default {
         this.flags = document.querySelectorAll('.flag').length
       })
     })
+    this.emit('minesweeper-get-board')
   },
   unmounted() {
     this.socket.off('minesweeper-board')

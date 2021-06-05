@@ -50,7 +50,6 @@ export default {
   display: block;
   box-sizing: border-box;
   height: 100%;
-  overflow: scroll;
 }
 #logs-content {
   background: white;

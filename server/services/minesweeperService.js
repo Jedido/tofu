@@ -19,11 +19,9 @@ class MinesweeperService {
     this.broadcastFn = broadcastFn
     this.field = []
     this.revealed = []
-    this.gameStatus = 'ongoing'
+    this.gameStatus = ''
     this.spaces = 0
-    this.numBombs = 0
-    this.time = new Date()
-    this.id = 'minesweeper'
+    this.numBombs = 100
   }
 
   revealBoard() {
@@ -69,6 +67,7 @@ class MinesweeperService {
     this.gameStatus = 'ongoing'
     this.field = []
     this.revealed = []
+    this.time = new Date()
     for (let x = 0; x < size; x++) {
       let row = []
       let rev = []

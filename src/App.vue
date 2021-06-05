@@ -7,7 +7,7 @@
       </label>
       <p>User ID: {{ userId }}</p>
     </header>
-    <main class="scene">
+    <main class="content">
       <RoomSelection v-if="scene === 'select'" v-on:launch-game="launchGame" />
       <AnagramGame v-else-if="scene === 'anagram'" :socket="socket" />
       <MinesweeperGame v-else-if="scene === 'minesweeper'" :socket="socket" :game-width="gameWidth" />
@@ -78,7 +78,7 @@ export default {
       this.dragging = false
     })
     window.addEventListener('resize', this.resizeGame)
-    this.gameWidth = document.querySelector('.scene').clientWidth
+    this.resizeGame()
   },
   methods: {
     launchGame(game) {
@@ -101,9 +101,8 @@ export default {
         alert('Username cannot contain the string "user" in it!')
       }
     },
-    async resizeGame() {
-      this.gameWidth = document.querySelector('.scene').clientWidth
-      await this.$nextTick()
+    resizeGame() {
+      this.gameWidth = document.querySelector('.content').clientWidth
     },
     startDrag(e) {
       this.dragging = true
@@ -116,6 +115,7 @@ export default {
       }
       let dx = e.clientX - this.dragX
       this.sidebarWidth = this.oldWidth - dx
+      this.resizeGame()
     }
   }
 }
@@ -196,9 +196,10 @@ footer {
   grid-area: sidebar;
   background-color: white;
   width: 300px;
+  overflow: auto;
 }
 
-.scene {
+.content {
   padding: 12px;
   grid-area: scene;
   background-color: white;
