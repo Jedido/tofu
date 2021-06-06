@@ -7,12 +7,12 @@
 
 ### Compiles and hot-reloads for development
 ```
-npm run prod
+npm run serve
 ```
 
 ### Builds and deploys production
 ```
-npm run start
+npm run prod
 ```
 
 ### Starts dev server
