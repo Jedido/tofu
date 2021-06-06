@@ -7,8 +7,8 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint --no-fix",
     "dev": "nodemon start --ext vue",
-    "start": "run_devserver.bat",
-    "prod": "run_server.bat"
+    "start": "npm run build && node server/server.js",
+    "prod": "npm run build && node server/server.js prod"
   },
   "dependencies": {
     "@vue/component-compiler-utils": "^3.1.2",
