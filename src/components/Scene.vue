@@ -1,79 +1,64 @@
 <template>
-  <div class="grid h-screen content">
-    <Header class="header" :socket="socket" />
-    <Scene class="scene" :socket="socket" />
-    <DragBar class="dragbar" />
-    <EventLog :socket="socket" />
-    <footer class="p-3 bg-emerald-700 footer">
-      You can download this app on github.com.
-    </footer>
-  </div>
+  <main class="p-3 bg-amber-50">
+    <component
+      :is="activeScene"
+      :socket="socket"
+      :game-width="$store.state.sceneWidth"
+      v-on:launch-game="launchGame"
+    />
+  </main>
 </template>
 
 <script>
-import io from "socket.io-client"
-import EventLog from "./components/EventLog.vue"
-import Header from "./components/Header.vue"
-import Scene from "./components/Scene.vue"
-import DragBar from "./components/DragBar.vue"
+import { defineAsyncComponent } from "vue"
+import RoomSelection from "./RoomSelection.vue"
 
 export default {
-  name: "App",
+  name: "Scene",
+  props: {
+    socket: Object,
+  },
   components: {
-    Header,
-    EventLog,
-    DragBar,
-    Scene,
+    RoomSelection,
   },
   data() {
     return {
-      scene: "select",
-      socket: null,
-      oldWidth: 300,
-      sidebarWidth: 300,
       gameWidth: 0,
-      md: window.innerWidth >= 768,
     }
   },
-  created() {
-    this.socket = io(`ws://${window.location.host}`)
-    this.socket.on("connect", () => {
-      console.log("connected to the service")
-    })
-    console.log(window.location.pathname) // to use later?
-  },
   mounted() {
-    document.addEventListener("mouseup", () => {
-      if (this.dragging) {
-        this.resizeGame()
-      }
-      this.dragging = false
-    })
     window.addEventListener("resize", this.resizeGame)
+    this.socket.on("set-scene", (scene) => {
+      this.$store.commit("setScene", scene)
+    })
     this.resizeGame()
   },
   methods: {
     launchGame(game) {
       this.scene = game
-      this.$store.commit("setGame", game)
+      this.$store.commit("setScene", game)
       this.socket.emit("create-room", game, this.$store.state.ign)
     },
     resizeGame() {
-      this.gameWidth = document.querySelector(".content").clientWidth
-      this.md = window.innerWidth >= 768
+      this.$store.commit(
+        "setSceneWidth",
+        document.querySelector(".scene").clientWidth
+      )
     },
-    startDrag(e) {
-      this.dragging = true
-      this.oldWidth = this.sidebarWidth
-      this.dragX = e.clientX
-    },
-    dragUpdate(e) {
-      if (!this.dragging) {
-        return false
+  },
+  computed: {
+    activeScene() {
+      switch (this.$store.state.scene) {
+        case "select":
+          return RoomSelection
+        case "minesweeper":
+          return defineAsyncComponent(() =>
+            import("./minesweeper/MinesweeperGame.vue")
+          )
+        case "anagram":
+          return defineAsyncComponent(() => import("./anagram/AnagramGame.vue"))
       }
-      let dx = e.clientX - this.dragX
-      this.sidebarWidth = this.oldWidth - dx
-      this.resizeGame()
+      return null
     },
   },
 }
@@ -111,11 +96,11 @@ export default {
   }
 }
 
-.header {
+header {
   grid-area: header;
 }
 
-.footer {
+footer {
   grid-area: footer;
 }
 

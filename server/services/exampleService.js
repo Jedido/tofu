@@ -6,11 +6,11 @@ class ExampleService {
   }
 
   register(app) {
-    app.get('/get-example', (req, res) => {
-      res.send('success with params: ' + req.params)
+    app.get("/get-example", (req, res) => {
+      res.send("success with params: " + req.params)
     })
-    app.post('/post-example', (req, res) => {
-      res.send('success with body: ' + req.body)
+    app.post("/post-example", (req, res) => {
+      res.send("success with body: " + req.body)
     })
   }
 

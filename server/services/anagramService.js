@@ -6,8 +6,8 @@ class AnagramService {
   }
 
   register(app) {
-    app.get('/anagram/game', (req, res) => {
-      res.send('success')
+    app.get("/anagram/game", (req, res) => {
+      res.send("success")
     })
   }
 
@@ -16,6 +16,6 @@ class AnagramService {
     this.ciphers = []
   }
 }
-AnagramService.prototype.id = 'anagram'
+AnagramService.prototype.id = "anagram"
 
 module.exports = AnagramService

@@ -10,20 +10,20 @@
 </template>
 
 <script>
-import GameChoice from './GameChoice.vue'
+import GameChoice from "./GameChoice.vue"
 
 export default {
-  name: 'GameSelection',
+  name: "GameSelection",
   components: { GameChoice },
   data() {
     return {
       games: [
-        { name: 'Anagram', scene: 'anagram' },
-        { name: 'Minesweeper', scene: 'minesweeper' },
-        { name: 'name3', scene: 'game3' }
+        { name: "Anagram", scene: "anagram" },
+        { name: "Minesweeper", scene: "minesweeper" },
+        { name: "name3", scene: "game3" },
       ],
-      room: ''
+      room: "",
     }
-  }
+  },
 }
 </script>

@@ -1,47 +1,75 @@
 <template>
-  <div id="logs-container">
-    <div id="logs-content" v-if="!roomId">
-      <h3>Join a Room</h3>
-      <form>
-        <label>
-          <p>Room Code</p>
-          <input v-model="room" type="text" maxlength="5" spellcheck="false">
-        </label>
-        <button @click="$emit('join-room', room)">Join</button>
-      </form>
-    </div>
-    <div id="logs-content" v-else>
-      <p>Room: {{ roomId }} <button @click="$emit('leave-room')">Leave Room</button></p>
-      <h3>Event Log</h3>
-      <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
+  <div
+    class="sidebar p-3 bg-amber-50 w-100 overflow-auto"
+    :style="{
+      width: `${md ? `${$store.state.sidebarWidth}px` : '100%'}`,
+    }"
+  >
+    <div id="logs-container">
+      <div id="logs-content" v-if="!$store.state.room">
+        <h3>Join a Room</h3>
+        <form>
+          <label>
+            <p>Room Code</p>
+            <input
+              v-model="room"
+              type="text"
+              maxlength="5"
+              spellcheck="false"
+            />
+          </label>
+          <button @click="socket.emit('join-room', room)">Join</button>
+        </form>
+      </div>
+      <div id="logs-content" v-else>
+        <p>
+          Room: {{ $store.state.room }}
+          <button @click="$store.commit('leaveRoom')">Leave Room</button>
+        </p>
+        <h3>Event Log</h3>
+        <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'EventLog',
+  name: "EventLog",
   props: {
     socket: Object,
-    roomId: String
   },
   data() {
-    return { logs: [] }
+    return {
+      logs: [],
+      md: window.innerWidth >= 768,
+      room: "",
+    }
   },
   mounted() {
-    this.socket.on('all-logs', (logs) => {
+    this.socket.on("all-logs", (logs) => {
       this.logs = logs
     })
-    this.socket.on('log', (msg) => {
+    this.socket.on("log", (msg) => {
       this.logs.push(msg)
     })
-    this.socket.emit('get-logs')
+    this.socket.emit("get-logs")
+    this.socket.on("set-room", (room) => {
+      this.$store.commit("setRoom", room)
+    })
+    window.addEventListener("resize", this.resize)
+    this.resize()
   },
   unmounted() {
-    this.socket.off('all-logs')
-    this.socket.off('log')
+    this.socket.off("all-logs")
+    this.socket.off("log")
     this.logs = []
-  }
+  },
+  methods: {
+    resize() {
+      this.md = window.innerWidth >= 768
+    },
+  },
 }
 </script>
 
@@ -76,16 +104,17 @@ input {
   width: 7.5ch;
   padding: 0px;
   margin-left: 0.5ch;
-  background: 
-    repeating-linear-gradient(90deg, 
-        dimgrey 0, 
-        dimgrey 1ch, 
-        transparent 0, 
-        transparent 1.5ch) 
-      0 100%/100% 2px no-repeat;
+  background: repeating-linear-gradient(
+      90deg,
+      dimgrey 0,
+      dimgrey 1ch,
+      transparent 0,
+      transparent 1.5ch
+    )
+    0 100%/100% 2px no-repeat;
   color: #2c3e50;
   font: 5ch consolas, monospace;
-  letter-spacing: .5ch;
+  letter-spacing: 0.5ch;
 }
 button {
   display: block;

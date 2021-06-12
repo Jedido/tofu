@@ -1,16 +1,16 @@
 <template>
   <div class="game-choice">
-      <button @click="$emit('launchGame', scene)">{{ name }}</button>
+    <button @click="$emit('launchGame', scene)">{{ name }}</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'GameChoice',
+  name: "GameChoice",
   props: {
     name: String,
-    scene: String
-  }
+    scene: String,
+  },
 }
 </script>
 

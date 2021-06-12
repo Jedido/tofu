@@ -5,21 +5,24 @@ const BLANK = -40
 const BOOM = -50
 
 class MinesweeperService {
-  // requests
-  actions = {
-    'minesweeper-get-board': this.getBoard.bind(this),
-    'minesweeper-init': this.init.bind(this),
-    'minesweeper-reveal': this.reveal.bind(this),
-    'minesweeper-flag': this.flag.bind(this)
-  }
-  // responses
-  boardEvent = 'minesweeper-board'
-  updateSpaceEvent = 'minesweeper-update-space'
   constructor(broadcastFn) {
     this.broadcastFn = broadcastFn
+
+    // requests
+    this.actions = {
+      "minesweeper-get-board": this.getBoard.bind(this),
+      "minesweeper-init": this.init.bind(this),
+      "minesweeper-reveal": this.reveal.bind(this),
+      "minesweeper-flag": this.flag.bind(this),
+    }
+    // responses
+    this.boardEvent = "minesweeper-board"
+    this.updateSpaceEvent = "minesweeper-update-space"
+
+    // game state
     this.field = []
     this.revealed = []
-    this.gameStatus = ''
+    this.gameStatus = ""
     this.spaces = 0
     this.numBombs = 100
   }
@@ -53,18 +56,19 @@ class MinesweeperService {
   // returns the whole state of the board (expensive)
   getState() {
     return {
-      'status': this.gameStatus,
-      'size': this.revealed.length,
-      'mines': this.numBombs,
-      'board': this.revealed,
-      'time': this.gameStatus === 'ongoing'
-        ? Math.round((new Date() - this.time) / 1000)
-        : this.time
+      status: this.gameStatus,
+      size: this.revealed.length,
+      mines: this.numBombs,
+      board: this.revealed,
+      time:
+        this.gameStatus === "ongoing"
+          ? Math.round((new Date() - this.time) / 1000)
+          : this.time,
     }
   }
 
   init({ size, bombs }, socket) {
-    this.gameStatus = 'ongoing'
+    this.gameStatus = "ongoing"
     this.field = []
     this.revealed = []
     this.time = new Date()
@@ -100,20 +104,26 @@ class MinesweeperService {
         spacesLeft--
       }
     }
-    this.broadcastFn('log', `${socket.ign} started a new game (bombs=${bombs}, size=${size})`)
+    this.broadcastFn(
+      "log",
+      `${socket.ign} started a new game (bombs=${bombs}, size=${size})`
+    )
     this.broadcastFn(this.boardEvent, this.getState())
   }
 
   reveal({ x, y }, socket) {
     if (this.revealed[x][y] !== FLAG) {
-      this.broadcastFn('log', `${socket.ign} revealed (${x}, ${y})`)
+      this.broadcastFn("log", `${socket.ign} revealed (${x}, ${y})`)
       if (this.field[x][y] === BOMB) {
         this.revealBoard()
         this.revealed[x][y] = BOOM
-        this.gameStatus = 'lose'
+        this.gameStatus = "lose"
         this.time = Math.round((new Date() - this.time) / 1000)
         this.broadcastFn(this.boardEvent, this.getState())
-        this.broadcastFn('log', `${socket.ign} blew everyone up after ${this.time} seconds.`)
+        this.broadcastFn(
+          "log",
+          `${socket.ign} blew everyone up after ${this.time} seconds.`
+        )
       } else {
         let queue = []
         queue.push([x, y])
@@ -144,10 +154,13 @@ class MinesweeperService {
         }
         if (this.spaces === 0) {
           this.revealBoard()
-          this.gameStatus = 'win'
+          this.gameStatus = "win"
           this.time = Math.round((new Date() - this.time) / 1000)
           this.broadcastFn(this.boardEvent, this.getState())
-          this.broadcastFn('log', `${socket.ign} revealed the last space after ${this.time} seconds.`)
+          this.broadcastFn(
+            "log",
+            `${socket.ign} revealed the last space after ${this.time} seconds.`
+          )
         } else if (this.field[x][y] === 0) {
           this.broadcastFn(this.boardEvent, this.getState())
         } else {
@@ -166,6 +179,6 @@ class MinesweeperService {
     this.broadcastFn(this.updateSpaceEvent, x, y, this.revealed[x][y])
   }
 }
-MinesweeperService.prototype.id = 'minesweeper'
+MinesweeperService.prototype.id = "minesweeper"
 
 module.exports = MinesweeperService

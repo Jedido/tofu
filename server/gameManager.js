@@ -1,21 +1,21 @@
-const AnagramService = require('./services/anagramService.js')
-const MinesweeperService = require('./services/minesweeperService.js')
+const AnagramService = require("./services/anagramService.js")
+const MinesweeperService = require("./services/minesweeperService.js")
 
 const roomIdLength = 5
-const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 const charactersLength = characters.length
 function generateRoomId() {
   const result = []
   for (let i = 0; i < roomIdLength; i++) {
     result.push(characters.charAt(Math.floor(Math.random() * charactersLength)))
   }
-  return result.join('')
+  return result.join("")
 }
 
-const games = [MinesweeperService, AnagramService].reduce(
-  (acc, cur) => { acc[cur.prototype.id] = cur; return acc }, {}
-)
-
+const games = [MinesweeperService, AnagramService].reduce((acc, cur) => {
+  acc[cur.prototype.id] = cur
+  return acc
+}, {})
 
 class GameManager {
   constructor() {
@@ -29,7 +29,9 @@ class GameManager {
     do {
       roomId = generateRoomId()
     } while (this.rooms[roomId])
-    const game = new games[gameId]((type, ...params) => this.broadcast(roomId, type, ...params))
+    const game = new games[gameId]((type, ...params) =>
+      this.broadcast(roomId, type, ...params)
+    )
     const sockets = new Set()
     sockets.add(socket)
     this.rooms[roomId] = { game, log: [], sockets }
@@ -66,7 +68,7 @@ class GameManager {
       return
     }
     // console.log(`emitting ${type} for all users in room ${roomId} (${this.rooms[roomId].sockets.length})`)
-    this.rooms[roomId].sockets.forEach(socket => socket.emit(type, ...params))
+    this.rooms[roomId].sockets.forEach((socket) => socket.emit(type, ...params))
   }
   broadcastAll() {
     // TODO: optional

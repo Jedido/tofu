@@ -18,7 +18,8 @@
     "express": "^4.17.1",
     "socket.io-client": "^4.1.2",
     "vue": "^3.0.0",
-    "vue-loader": "^16.0.0-beta.8"
+    "vue-loader": "^16.0.0-beta.8",
+    "vuex": "^4.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -26,14 +27,16 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.11",
     "@vue/eslint-config-prettier": "^6.0.0",
+    "autoprefixer": "^9.8.6",
     "axios": "^0.21.1",
-    "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.0.0",
     "nodemon": "^2.0.7",
+    "postcss": "^7.0.36",
     "prettier": "^2.2.1",
     "socket.io": "^4.1.2",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.4",
     "vue-axios": "^3.2.4",
     "vue-svg-loader": "^0.17.0-beta.2",
     "vue-template-compiler": "^2.6.10"
@@ -48,26 +51,15 @@
       "eslint:recommended",
       "@vue/prettier"
     ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
     "rules": {
-      "prettier/prettier": 0,
-      "semi": [
+      "prettier/prettier": [
         "error",
-        "never"
-      ],
-      "comma-dangle": [
-        "error",
-        "never"
-      ],
-      "quotes": [
-        "error",
-        "single"
-      ],
-      "indent": [
-        "error",
-        2
+        {
+          "endOfLine": "auto",
+          "semi": false,
+          "trailingComma": "es5",
+          "indent": 2
+        }
       ]
     }
   },
