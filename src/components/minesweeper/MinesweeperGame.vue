@@ -1,6 +1,6 @@
 <template>
   <div id="minesweeper" class="select-none text-gray-700">
-    <h2 class="text-2xl">Minesweeper</h2>
+    <h2 class="text-2xl text-center">Minesweeper</h2>
     <div class="flex justify-between text-sm">
       <p v-if="status === 'ongoing'">Time: {{ time }} seconds</p>
       <p v-else-if="status !== ''">You {{ status }}</p>
@@ -165,10 +165,6 @@ export default {
 </script>
 
 <style scoped>
-h2 {
-  text-align: center;
-}
-
 #minesweeper-board {
   font-family: "Courier New", monospace;
 }
