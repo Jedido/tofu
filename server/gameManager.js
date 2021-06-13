@@ -1,3 +1,4 @@
+const ExampleService = require("./services/exampleService.js")
 const AnagramService = require("./services/anagramService.js")
 const MinesweeperService = require("./services/minesweeperService.js")
 
@@ -12,10 +13,13 @@ function generateRoomId() {
   return result.join("")
 }
 
-const games = [MinesweeperService, AnagramService].reduce((acc, cur) => {
-  acc[cur.prototype.id] = cur
-  return acc
-}, {})
+const games = [MinesweeperService, AnagramService, ExampleService].reduce(
+  (acc, cur) => {
+    acc[cur.prototype.id] = cur
+    return acc
+  },
+  {}
+)
 
 class GameManager {
   constructor() {
@@ -55,6 +59,12 @@ class GameManager {
     if (sockets.size === 0) {
       this.removeGame(roomId)
     }
+  }
+  getPlayers(roomId) {
+    if (!this.hasRoom(roomId)) {
+      return
+    }
+    return this.rooms[roomId].sockets
   }
   removeGame(roomId) {
     if (!this.hasRoom(roomId)) {

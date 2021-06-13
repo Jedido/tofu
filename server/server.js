@@ -56,6 +56,7 @@ io.on("connection", (socket) => {
     socket.ign = name ? name : socket.id
     g = gameManager.joinRoom(roomId, socket)
     if (g) {
+      gameManager.broadcast(r, "message", `${socket.ign} has joined the room.`)
       r = roomId
       gid = Object.getPrototypeOf(g).id
       socket.emit("set-scene", gid)
@@ -105,6 +106,17 @@ io.on("connection", (socket) => {
       }
     } catch (e) {
       console.log(`${socket.id} (${socket.ign} failed to execute: ${e}`)
+      console.log(e.stack)
+    }
+  })
+  socket.on("players", () => {
+    if (r) {
+      const sockets = gameManager.getPlayers(r)
+      let players = {}
+      for (let i = 0; i < sockets.length; i++) {
+        let socket = sockets[i]
+        players[socket.id] = socket.ign
+      }
     }
   })
   socket.on("disconnect", function () {
