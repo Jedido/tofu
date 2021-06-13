@@ -20,7 +20,7 @@ export default {
       games: [
         { name: "Anagram", scene: "anagram" },
         { name: "Minesweeper", scene: "minesweeper" },
-        { name: "name3", scene: "game3" },
+        { name: "Example Game", scene: "example" },
       ],
       room: "",
     }

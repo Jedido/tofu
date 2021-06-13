@@ -6,14 +6,16 @@ module.exports = {
   theme: {
     colors: {
       amber: colors.amber,
+      error: "#EF4444",
       emerald: colors.emerald,
       gray: colors.coolGray,
+      white: "#FFFFFF",
     },
     extend: {},
   },
   variants: {
     extend: {
-      backgroundColor: ["active"],
+      backgroundColor: ["active", "disabled"],
     },
   },
   plugins: [],

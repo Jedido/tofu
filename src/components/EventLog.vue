@@ -18,13 +18,13 @@
               spellcheck="false"
             />
           </label>
-          <button @click="socket.emit('join-room', room)">Join</button>
+          <button @click.prevent="joinRoom()">Join</button>
         </form>
       </div>
       <div id="logs-content" v-else>
         <p>
           Room: {{ $store.state.room }}
-          <button @click="$store.commit('leaveRoom')">Leave Room</button>
+          <button @click="leaveRoom()">Leave Room</button>
         </p>
         <h3>Event Log</h3>
         <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
@@ -68,6 +68,14 @@ export default {
   methods: {
     resize() {
       this.md = window.innerWidth >= 768
+    },
+    leaveRoom() {
+      this.socket.emit("leave-room")
+      this.$store.commit("leaveRoom")
+    },
+    joinRoom() {
+      this.socket.emit("join-room", this.room)
+      this.$store.commit("setRoom", this.room)
     },
   },
 }

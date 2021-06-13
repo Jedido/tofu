@@ -34,7 +34,7 @@
     <div class="grid grid-cols-6 my-2 gap-3">
       <p class="col-span-2 text-right">Board size</p>
       <input
-        class="rounded text-center"
+        class="rounded text-center shadow outline-none"
         v-model="inputSize"
         type="number"
         min="5"
@@ -57,7 +57,7 @@
       </button>
       <p class="col-span-2 text-right">Mines</p>
       <input
-        class="rounded text-center"
+        class="rounded text-center shadow outline-none"
         v-model="mines"
         type="number"
         min="1"

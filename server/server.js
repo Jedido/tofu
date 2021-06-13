@@ -42,11 +42,15 @@ io.on("connection", (socket) => {
   socket.id = `user ${userId++}`
   socket.on("create-room", (gameId, name) => {
     const res = gameManager.createRoom(gameId, socket)
-    socket.ign = name ? name : socket.id
-    r = res.roomId
-    g = res.game
-    gid = res.gameId
-    socket.emit("set-room", r)
+    if (res) {
+      socket.ign = name ? name : socket.id
+      r = res.roomId
+      g = res.game
+      gid = res.gameId
+      socket.emit("set-room", r)
+    } else {
+      console.log(`${gid} failed to load game ${gameId}`)
+    }
   })
   socket.on("join-room", (roomId, name) => {
     socket.ign = name ? name : socket.id
@@ -83,7 +87,11 @@ io.on("connection", (socket) => {
     gameManager.broadcast(r, "log", `${socket.ign}: ${msg}`)
   })
   socket.on("action", (type, data) => {
-    // console.log(`${id} (${ign}) triggered ${type} on ${gid} (${r}): ${JSON.stringify(data)}`)
+    console.log(
+      `${socket.id} (${
+        socket.ign
+      }) triggered ${type} on ${gid} (${r}): ${JSON.stringify(data)}`
+    )
     try {
       const actionFn = g.actions[type]
       if (!actionFn) {

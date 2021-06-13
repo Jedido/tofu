@@ -51,6 +51,8 @@ export default {
       switch (this.$store.state.scene) {
         case "select":
           return RoomSelection
+        case "example":
+          return defineAsyncComponent(() => import("./example/ExampleGame.vue"))
         case "minesweeper":
           return defineAsyncComponent(() =>
             import("./minesweeper/MinesweeperGame.vue")

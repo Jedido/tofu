@@ -1,8 +1,6 @@
 <template>
   <header class="p-3 bg-emerald-700 text-emerald-50 grid grid-cols-6 gap-2">
-    <label for="ign">
-      <span class="mr-4 truncate">Username</span>
-    </label>
+    <span class="truncate text-right">Username</span>
     <div>
       <input
         type="text"
@@ -18,6 +16,7 @@
         row-span-2
         bg-emerald-600
         hover:bg-emerald-500
+        active:bg-emerald-800
         rounded
         shadow
       "
@@ -25,7 +24,7 @@
     >
       Set
     </button>
-    <p class="row-start-2 truncate">User ID</p>
+    <p class="row-start-2 truncate text-right">User ID</p>
     <span
       class="
         row-start-2
