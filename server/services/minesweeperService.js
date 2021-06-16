@@ -5,8 +5,11 @@ const BLANK = -40
 const BOOM = -50
 
 class MinesweeperService {
-  constructor(broadcastFn) {
-    this.broadcastFn = broadcastFn
+  constructor(roomId) {
+    const { broadcast } = require("../gameManager.js")
+    this.broadcastFn = (...args) => {
+      broadcast(roomId, ...args)
+    }
 
     // requests
     this.actions = {
@@ -28,7 +31,7 @@ class MinesweeperService {
   }
 
   revealBoard() {
-    let size = this.field.length
+    const size = this.field.length
     for (let x = 0; x < size; x++) {
       for (let y = 0; y < size; y++) {
         if (this.revealed[x][y] === HIDDEN) {
@@ -45,7 +48,7 @@ class MinesweeperService {
   }
 
   verify(field, x, y) {
-    let size = field.length
+    const size = field.length
     return x >= 0 && x < size && y >= 0 && y < size
   }
 
@@ -73,8 +76,8 @@ class MinesweeperService {
     this.revealed = []
     this.time = new Date()
     for (let x = 0; x < size; x++) {
-      let row = []
-      let rev = []
+      const row = []
+      const rev = []
       for (let y = 0; y < size; y++) {
         row[y] = 0
         rev[y] = HIDDEN
@@ -125,16 +128,16 @@ class MinesweeperService {
           `${socket.ign} blew everyone up after ${this.time} seconds.`
         )
       } else {
-        let queue = []
+        const queue = []
         queue.push([x, y])
         while (queue.length > 0) {
-          let next = queue.shift()
-          let a = parseInt(next[0])
-          let b = parseInt(next[1])
+          const next = queue.shift()
+          const a = parseInt(next[0])
+          const b = parseInt(next[1])
           if (this.verify(this.field, a, b)) {
-            let reveal = this.revealed[a][b]
+            const reveal = this.revealed[a][b]
             if (reveal === HIDDEN) {
-              let val = this.field[a][b]
+              const val = this.field[a][b]
               this.spaces--
               if (val === 0) {
                 queue.push([a + 1, b + 1])

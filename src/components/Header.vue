@@ -12,7 +12,6 @@
     <button
       class="
         focus:outline-none
-        px-3
         row-span-2
         bg-emerald-600
         hover:bg-emerald-500
@@ -35,6 +34,7 @@
         shadow-inner
         cursor-not-allowed
         select-none
+        truncate
       "
       >{{ this.$store.state.id }}</span
     >

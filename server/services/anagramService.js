@@ -1,79 +1,155 @@
 const fs = require("fs")
+const MS_TO_S = 1000
+const NEXT_WORD_DELAY = 500
+
+function shuffle(word) {
+  const arr = Array.from(word)
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const temp = arr[j]
+    arr[j] = arr[i]
+    arr[i] = temp
+  }
+  return arr.join("")
+}
 
 class AnagramService {
-  constructor(broadcastFn) {
-    this.broadcastFn = broadcastFn
+  constructor(roomId) {
+    const { broadcast, players } = require("../gameManager.js")
+    this.broadcastFn = (...args) => {
+      broadcast(roomId, ...args)
+    }
+    // players: id to { ign, score, round, startTime, time, submissions, strikes }
+    this.initPlayers = () => {
+      return players(roomId).reduce((acc, cur) => {
+        acc[cur.ign] = {
+          score: 0,
+          round: 0,
+          startTime: 0,
+          time: this.settings.cipherTime,
+          submissions: [],
+          strikes: 0,
+        }
+        return acc
+      }, {})
+    }
+    const file = fs.readFileSync("./server/assets/words.txt", "utf8")
+    this.wordList = file.trim().split("\n")
 
-    this.ONE_SECOND = 1000
-    this.scores = {} // competitive, uid to score
-    this.score = 0 // co-op, cumulative score
-    this.wordList = []
-    this.words = []
-    this.currentWord = ""
-    this.coop = true
-    this.gameTimerId = -1
-    this.wordTimerId = -1
-    this.roundNum = 0
-
+    // TODO: update to get players on init (no need for getting state)
     // requests
     this.actions = {
       "anagram-init": this.init.bind(this),
-      "anagram-get-state": this.getState.bind(this),
       "anagram-submit": this.submit.bind(this),
     }
 
     // responses
-    this.resultEvent = "anagram-result" // result of submission
-    this.updateScoreEvent = "anagram-update-score" // update score on screen
+    this.stateEvent = "anagram-start" // start the game (settings, players)
+    this.resultEvent = "anagram-result" // result of submission (word or false)
+    this.updatePlayerEvent = "anagram-update-player" // update score on screen
     this.endGameEvent = "anagram-end" // end the game
-    this.stateEvent = "anagram-state" // get the current state of the game
     this.cipherEvent = "anagram-cipher" // send the next scrambled phrase
 
-    this.getNewWord = this.getNewWord.bind(this)
-    this.gameTimer = this.gameTimer.bind(this)
-    this.wordTimer = this.wordTimer.bind(this)
+    this.nextCipher = this.nextCipher.bind(this)
+    this.generateCipher = this.generateCipher.bind(this)
+    this.endGame = this.endGame.bind(this)
+    this.wordTimeout = this.wordTimeout.bind(this)
+    this.currentWord = this.currentWord.bind(this)
   }
 
   // socket.emit, socket.ign, socket.id
   // socket.emit(this.resultEvent, someData, arg2, arg3)
 
-  init(message) {
-    this.roundNum = 0
-    this.score = 0
-    this.scores = {}
-    this.currentWord = ""
-    this.coop = message.coop
-    let file = fs.readFileSync("./server/assets/words.txt", "utf8")
-    this.wordList = file.trim().split("\n")
-    this.gameTimerId = setTimeout(this.gameTimer, this.ONE_SECOND * 60)
-    let newWord = this.getNewWord()
-    this.broadcastFn(this.stateEvent, {
-      cipher: newWord[1],
-      gameMode: this.coop,
-      roundNum: this.roundNum,
-      scores: this.scores,
-      score: this.score,
-    })
-    this.broadcastFn(this.cipherEvent, newWord[1], newWord[2])
-  }
+  init(settings) {
+    /*
+     * Game Mods (0 is infinite):
+     * gameMode: string (coop) - coop (share score), sync (first to get it), rush (at your own pace)
+     * showAnswer: boolean (false) - skip showing the answer after it's guessed
+     * oneshot: boolean (false) - only 1 guess per cipher (per person)
+     * strikes: num (0) - total number of misses before losing
+     * ciphers: num (0) - total number of ciphers
+     * cipherTime: num (DEFAULT_CIPHER_TIME) - base cipher time
+     * timerType: string (decrease) - normal (default), adaptive (+/-), decrease (only -)
+     * scoreLimit: num (0) - win game after score is reached (first to reach score wins)
+     * timeLimit: num (DEFAULT_GAME_TIME) - ends game after time is elapsed (highest score wins)
+     */
+    this.settings = settings
+    settings.showAnswer = false
 
-  getState() {
-    this.broadcastFn(this.stateEvent, {
-      cipher: this.words[this.words.length - 1][1],
-      gameMode: this.coop,
-      roundNum: this.roundNum,
-      scores: this.scores,
-      score: this.score,
-    })
+    this.players = this.initPlayers()
+    const players = Object.keys(this.players)
+    if (settings.gameMode === "coop") {
+      players.push("coop")
+      this.players.coop = {
+        score: 0,
+        round: 0,
+        startTime: 0,
+        time: settings.cipherTime,
+        submissions: [],
+        strikes: 0,
+      }
+    }
+
+    this.broadcastFn(this.stateEvent, { players, settings })
+
+    this.wordTimerId = -1
+    // 3 second countdown
+    this.gameTimerId = setTimeout(
+      this.endGame,
+      MS_TO_S * (parseInt(settings.timeLimit) + 3)
+    )
+    this.ciphers = []
+    this.generateCipher()
+    const newWord = this.ciphers[0]
+    setTimeout(() => {
+      this.wordTimerId = setTimeout(
+        this.wordTimeout,
+        settings.cipherTime * MS_TO_S
+      )
+      this.broadcastFn(
+        this.cipherEvent,
+        newWord[1],
+        settings.cipherTime * MS_TO_S
+      )
+    }, 3000)
   }
 
   submit(message, socket) {
-    if (this.coop) {
-      if (message === this.currentWord) {
-        // socket.emit(this.resultEvent, true)
-        this.score++
-        this.broadcastFn(this.updateScoreEvent, this.score)
-        this.wordTimer()
+    const player = this.players[socket.ign]
+    const curRound =
+      this.settings.gameMode === "coop" ? this.players.coop.round : player.round
+    while (player.submissions.length < curRound) {
+      player.submissions.push("?")
+    }
+    player.submissions[curRound] = message
+    if (
+      this.settings.gameMode === "sync" ||
+      this.settings.gameMode === "coop"
+    ) {
+      if (message === this.currentWord()) {
+        clearTimeout(this.wordTimerId)
+        this.players.coop.submissions.push(message)
+        if (this.settings.showAnswer) {
+          this.broadcastFn(this.resultEvent, message)
+        }
+        if (this.settings.gameMode === "coop") {
+          this.players.coop.score++
+          this.players.coop.round++
+          this.broadcastFn(
+            this.updatePlayerEvent,
+            "coop",
+            this.players.coop.score,
+            this.players.coop.strikes
+          )
+        }
+        this.players[socket.ign].score++
+        this.broadcastFn(
+          this.updatePlayerEvent,
+          socket.ign,
+          this.players[socket.ign].score,
+          this.players[socket.ign].strikes
+        )
+        this.nextCipher()
       } else {
         socket.emit(this.resultEvent, false)
       }
@@ -86,44 +162,92 @@ class AnagramService {
           socket.id,
           this.scores[socket.id]
         )
-        this.wordTimer()
+        this.wordTimeout()
       } else {
         socket.emit(this.resultEvent, false)
       }
     }
   }
 
-  getNewWord() {
-    let word =
-      this.wordList[Math.floor(Math.random() * this.wordList.length)].trim()
-    this.currentWord = word
-    let arr = Array.from(word)
-    for (let i = arr.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1))
-      let temp = arr[j]
-      arr[j] = arr[i]
-      arr[i] = temp
+  nextCipher(id) {
+    let newWord
+    if (
+      this.settings.gameMode !== "coop" &&
+      this.players[id].round < this.ciphers.length
+    ) {
+      newWord = this.ciphers[this.players[id].round]
+    } else {
+      newWord = this.generateCipher()
     }
-    const cipher = arr.join("")
-    this.words.push([word, cipher])
-    this.roundNum++
-    let time = Math.max(
-      this.ONE_SECOND * (10 - 0.5 * this.roundNum),
-      this.ONE_SECOND * 3
-    )
-    this.wordTimerId = setTimeout(this.wordTimer, time)
-    return [word, cipher, time]
+    if (this.settings.showAnswer) {
+      setTimeout(() => {
+        this.broadcastFn(
+          this.cipherEvent,
+          newWord[1],
+          this.players.coop.time * MS_TO_S
+        )
+        this.wordTimerId = setTimeout(
+          this.wordTimeout,
+          this.players.coop.time * MS_TO_S
+        )
+      }, NEXT_WORD_DELAY)
+    } else {
+      this.broadcastFn(
+        this.cipherEvent,
+        newWord[1],
+        this.players.coop.time * MS_TO_S
+      )
+      this.wordTimerId = setTimeout(
+        this.wordTimeout,
+        this.players.coop.time * MS_TO_S
+      )
+    }
   }
 
-  gameTimer() {
+  generateCipher() {
+    const word =
+      this.wordList[Math.floor(Math.random() * this.wordList.length)].trim()
+    const cipher = shuffle(word)
+    this.ciphers.push([word, cipher])
+    return [word, cipher]
+  }
+
+  currentWord(ign) {
+    return this.settings.gameMode === "coop"
+      ? this.ciphers[this.players.coop.round][0]
+      : this.ciphers[this.players[ign].round][0]
+  }
+
+  endGame() {
     clearTimeout(this.gameTimerId)
-    this.broadcastFn(this.endGameEvent, this.score, this.scores)
+    clearTimeout(this.wordTimerId)
+    const results = Object.entries(this.players).reduce(
+      (res, [userId, data]) => {
+        res[userId] = {
+          score: data.score,
+          submissions: data.submissions,
+        }
+        return res
+      },
+      {}
+    )
+    this.broadcastFn(this.endGameEvent, {
+      results,
+      ciphers: this.ciphers,
+    })
   }
 
-  wordTimer() {
-    clearTimeout(this.wordTimerId)
-    let newWord = this.getNewWord()
-    this.broadcastFn(this.cipherEvent, newWord[1], newWord[2])
+  wordTimeout() {
+    this.players.coop.submissions.push("?")
+    this.players.coop.round++
+    this.players.coop.strikes++
+    this.broadcastFn(
+      this.updatePlayerEvent,
+      "coop",
+      this.players.coop.score,
+      this.players.coop.strikes
+    )
+    this.nextCipher()
   }
 }
 AnagramService.prototype.id = "anagram"

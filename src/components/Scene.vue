@@ -1,11 +1,19 @@
 <template>
-  <main class="p-3 bg-amber-50">
-    <component
-      :is="activeScene"
+  <main class="p-3 bg-amber-50 overflow-auto">
+    <ExampleGame
+      v-if="this.$store.state.scene === 'example'"
+      :socket="socket"
+    />
+    <MinesweeperGame
+      v-if="this.$store.state.scene === 'minesweeper'"
       :socket="socket"
       :game-width="$store.state.sceneWidth"
-      v-on:launch-game="launchGame"
     />
+    <AnagramGame
+      v-if="this.$store.state.scene === 'anagram'"
+      :socket="socket"
+    />
+    <RoomSelection v-else v-on:launch-game="launchGame" />
   </main>
 </template>
 
@@ -20,6 +28,15 @@ export default {
   },
   components: {
     RoomSelection,
+    ExampleGame: defineAsyncComponent(() =>
+      import("./example/ExampleGame.vue")
+    ),
+    MinesweeperGame: defineAsyncComponent(() =>
+      import("./minesweeper/MinesweeperGame.vue")
+    ),
+    AnagramGame: defineAsyncComponent(() =>
+      import("./anagram/AnagramGame.vue")
+    ),
   },
   data() {
     return {
@@ -44,23 +61,6 @@ export default {
         "setSceneWidth",
         document.querySelector(".scene").clientWidth
       )
-    },
-  },
-  computed: {
-    activeScene() {
-      switch (this.$store.state.scene) {
-        case "select":
-          return RoomSelection
-        case "example":
-          return defineAsyncComponent(() => import("./example/ExampleGame.vue"))
-        case "minesweeper":
-          return defineAsyncComponent(() =>
-            import("./minesweeper/MinesweeperGame.vue")
-          )
-        case "anagram":
-          return defineAsyncComponent(() => import("./anagram/AnagramGame.vue"))
-      }
-      return null
     },
   },
 }

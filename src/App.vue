@@ -14,8 +14,8 @@
 import io from "socket.io-client"
 import EventLog from "./components/EventLog.vue"
 import Header from "./components/Header.vue"
-import Scene from "./components/Scene.vue"
 import DragBar from "./components/DragBar.vue"
+import Scene from "./components/Scene.vue"
 
 export default {
   name: "App",
@@ -39,8 +39,8 @@ export default {
     this.socket = io(`ws://${window.location.host}`)
     this.socket.on("connect", () => {
       console.log("connected to the service")
+      this.$store.commit("leaveRoom")
     })
-    console.log(window.location.pathname) // to use later?
   },
   mounted() {
     document.addEventListener("mouseup", () => {
@@ -71,7 +71,7 @@ export default {
       if (!this.dragging) {
         return false
       }
-      let dx = e.clientX - this.dragX
+      const dx = e.clientX - this.dragX
       this.sidebarWidth = this.oldWidth - dx
       this.resizeGame()
     },

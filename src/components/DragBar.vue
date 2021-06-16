@@ -30,7 +30,7 @@ export default {
       if (!this.dragging) {
         return false
       }
-      let dx = e.clientX - this.dragX
+      const dx = e.clientX - this.dragX
       this.$store.commit("setSidebarWidth", this.oldWidth - dx)
     },
   },

@@ -33,7 +33,7 @@ export const store = createStore({
     },
     leaveRoom(state) {
       state.room = ""
-      state.game = ""
+      state.scene = "select"
     },
   },
 })

@@ -60,6 +60,13 @@
           "trailingComma": "es5",
           "indent": 2
         }
+      ],
+      "prefer-const": [
+        "error",
+        {
+          "destructuring": "any",
+          "ignoreReadBeforeAssign": false
+        }
       ]
     }
   },

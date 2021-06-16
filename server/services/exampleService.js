@@ -1,6 +1,9 @@
 class ExampleService {
-  constructor(broadcastFn) {
-    this.broadcastFn = broadcastFn
+  constructor(roomId) {
+    const { broadcast } = require("../gameManager.js")
+    this.broadcastFn = (...args) => {
+      broadcast(roomId, ...args)
+    }
 
     // requests
     this.actions = {
