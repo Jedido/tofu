@@ -51,10 +51,11 @@ export default {
       this.logs = logs
     })
     this.socket.on("log", (msg) => {
-      this.logs.push(msg)
+      this.logs.unshift(msg)
     })
     this.socket.emit("get-logs")
     this.socket.on("set-room", (room) => {
+      this.logs = []
       this.$store.commit("setRoom", room)
     })
     window.addEventListener("resize", this.resize)
@@ -74,6 +75,7 @@ export default {
       this.$store.commit("leaveRoom")
     },
     joinRoom() {
+      this.logs = []
       this.socket.emit("join-room", this.room)
       this.$store.commit("setRoom", this.room)
     },

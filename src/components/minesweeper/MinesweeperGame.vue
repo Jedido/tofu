@@ -98,14 +98,14 @@ export default {
     this.on("board", (data) => {
       this.setBoard(data)
       this.$nextTick(() => {
-        this.revealed = document.querySelectorAll(".normal").length
+        this.revealed = this.board.filter((val) => val > 0).length
       })
     })
     this.on("update-space", (x, y, value) => {
       this.board[x * this.size + y] = value
       this.$nextTick(() => {
-        this.revealed = document.querySelectorAll(".normal").length
-        this.flags = document.querySelectorAll(".flag").length
+        this.revealed = this.board.filter((val) => val > 0).length
+        this.revealed = this.board.filter((val) => val === -20).length
       })
     })
     this.emit("get-board")

@@ -227,11 +227,7 @@ export default {
       cipher: "",
       cipherColor: "",
       answer: "",
-      players: {
-        user1: { score: "0", strikes: 0 },
-        user2: { score: "7", strikes: 1 },
-        user3: { score: "100", strikes: 3 },
-      },
+      players: {},
       inputDisabled: false,
       cipherAnimation: true,
       shake: "",
@@ -264,7 +260,7 @@ export default {
         ciphers: maxZero(this.settings.ciphers, "110"),
         gameMode: "coop",
         oneshot: false,
-        scoreLimit: "100",
+        scoreLimit: this.settings.scoreLimit,
         showAnswer: true,
         strikes: maxZero(this.settings.strikes, "11"),
         timeLimit: this.settings.timeLimit,
@@ -299,16 +295,20 @@ export default {
         this.answer = ""
       }
     },
-    handleResult(answer) {
+    handleResult(answer, failure = false) {
       if (!answer) {
         if (!this.shake) {
           this.shake = "shake"
         } else {
           this.cipherAnimation = !this.cipherAnimation
         }
+        if (this.settings.oneshot) {
+          this.cipherColor = "error"
+          this.inputDisabled = true
+        }
       } else {
         this.cipher = answer
-        this.cipherColor = "emerald-400"
+        this.cipherColor = failure ? "text-error" : "text-emerald-400"
         this.$refs.wordTimer.reset()
       }
     },

@@ -1,6 +1,6 @@
 const fs = require("fs")
 const MS_TO_S = 1000
-const NEXT_WORD_DELAY = 500
+const NEXT_WORD_DELAY = 400
 
 function shuffle(word) {
   const arr = Array.from(word)
@@ -74,12 +74,13 @@ class AnagramService {
      * timeLimit: num (DEFAULT_GAME_TIME) - ends game after time is elapsed (highest score wins)
      */
     this.settings = settings
-    settings.showAnswer = false
 
     this.players = this.initPlayers()
     const players = Object.keys(this.players)
+    this.numPlayers = players.length
+    this.numAnswered = 0
     if (settings.gameMode === "coop") {
-      players.push("coop")
+      players.unshift("coop")
       this.players.coop = {
         score: 0,
         round: 0,
@@ -89,6 +90,7 @@ class AnagramService {
         strikes: 0,
       }
     }
+    this.showingAnswer = false
 
     this.broadcastFn(this.stateEvent, { players, settings })
 
@@ -115,9 +117,16 @@ class AnagramService {
   }
 
   submit(message, socket) {
+    if (!message || this.showingAnswer) {
+      return
+    }
     const player = this.players[socket.ign]
     const curRound =
       this.settings.gameMode === "coop" ? this.players.coop.round : player.round
+    if (this.settings.oneshot && player.submissions.length >= curRound) {
+      // player already submitted once
+      return
+    }
     while (player.submissions.length < curRound) {
       player.submissions.push("?")
     }
@@ -126,12 +135,10 @@ class AnagramService {
       this.settings.gameMode === "sync" ||
       this.settings.gameMode === "coop"
     ) {
+      this.numAnswered++
       if (message === this.currentWord()) {
         clearTimeout(this.wordTimerId)
         this.players.coop.submissions.push(message)
-        if (this.settings.showAnswer) {
-          this.broadcastFn(this.resultEvent, message)
-        }
         if (this.settings.gameMode === "coop") {
           this.players.coop.score++
           this.players.coop.round++
@@ -149,7 +156,16 @@ class AnagramService {
           this.players[socket.ign].score,
           this.players[socket.ign].strikes
         )
-        this.nextCipher()
+        if (this.settings.showAnswer) {
+          this.showingAnswer = true
+          this.broadcastFn(this.resultEvent, message)
+          setTimeout(this.nextCipher, NEXT_WORD_DELAY)
+        } else {
+          if (this.settings.oneshot && this.numAnswered === this.numPlayers) {
+            this.wordTimeout()
+          }
+          this.nextCipher()
+        }
       } else {
         socket.emit(this.resultEvent, false)
       }
@@ -179,8 +195,10 @@ class AnagramService {
     } else {
       newWord = this.generateCipher()
     }
+    this.numAnswered = 0
     if (this.settings.showAnswer) {
       setTimeout(() => {
+        this.showingAnswer = false
         this.broadcastFn(
           this.cipherEvent,
           newWord[1],
@@ -238,6 +256,7 @@ class AnagramService {
   }
 
   wordTimeout() {
+    const current = this.currentWord()
     this.players.coop.submissions.push("?")
     this.players.coop.round++
     this.players.coop.strikes++
@@ -247,7 +266,12 @@ class AnagramService {
       this.players.coop.score,
       this.players.coop.strikes
     )
-    this.nextCipher()
+    if (this.settings.showAnswer) {
+      this.broadcastFn(this.resultEvent, current, true)
+      setTimeout(this.nextCipher, NEXT_WORD_DELAY)
+    } else {
+      this.nextCipher()
+    }
   }
 }
 AnagramService.prototype.id = "anagram"

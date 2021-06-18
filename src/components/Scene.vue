@@ -5,12 +5,12 @@
       :socket="socket"
     />
     <MinesweeperGame
-      v-if="this.$store.state.scene === 'minesweeper'"
+      v-else-if="this.$store.state.scene === 'minesweeper'"
       :socket="socket"
       :game-width="$store.state.sceneWidth"
     />
     <AnagramGame
-      v-if="this.$store.state.scene === 'anagram'"
+      v-else-if="this.$store.state.scene === 'anagram'"
       :socket="socket"
     />
     <RoomSelection v-else v-on:launch-game="launchGame" />

@@ -1,23 +1,33 @@
 <template>
   <div>
-    <div class="grid grid-cols-3 gap-3 text-gray-500">
+    <div class="grid grid-cols-6 gap-3 text-gray-500">
       <div class="flex flex-col gap-2">
-        <div>Answer</div>
+        <div class="font-semibold">Cipher</div>
         <div
           v-for="cipher in stats.ciphers"
           :key="cipher"
           class="px-3 py-1 bg-white rounded"
         >
-          {{ cipher[1] }} -> {{ cipher[0] }}
+          {{ cipher[1] }}
         </div>
       </div>
-      <div class="flex space-around gap-2 col-span-2 text-center">
+      <div class="flex flex-col gap-2">
+        <div class="font-semibold">Answer</div>
+        <div
+          v-for="cipher in stats.ciphers"
+          :key="cipher"
+          class="px-3 py-1 bg-white rounded"
+        >
+          {{ cipher[0] }}
+        </div>
+      </div>
+      <div class="flex space-around gap-2 col-span-4 text-center">
         <div
           v-for="key in Object.keys(stats.results)"
           :key="key"
           class="flex flex-col gap-2"
         >
-          <div>{{ key }}</div>
+          <div class="font-semibold">{{ key }}</div>
           <div
             v-for="(cipher, index) in stats.ciphers"
             :key="key + cipher"
@@ -29,6 +39,7 @@
           >
             {{ getSubmission(key, index) }}
           </div>
+          <div class="font-semibold">{{ stats.results[key].score }}</div>
         </div>
       </div>
     </div>
