@@ -1,3 +1,5 @@
+const GameService = require("./gameService.js")
+
 const fs = require("fs")
 const MS_TO_S = 1000
 const NEXT_WORD_DELAY = 400
@@ -13,12 +15,10 @@ function shuffle(word) {
   return arr.join("")
 }
 
-class AnagramService {
+class AnagramService extends GameService {
   constructor(roomId) {
-    const { broadcast, players } = require("../gameManager.js")
-    this.broadcastFn = (...args) => {
-      broadcast(roomId, ...args)
-    }
+    super(roomId)
+    const { players } = require("../gameManager.js")
     // players: id to { ign, score, round, startTime, time, submissions, strikes }
     this.initPlayers = () => {
       return players(roomId).reduce((acc, cur) => {

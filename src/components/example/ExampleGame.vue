@@ -24,6 +24,7 @@
           type="text"
           id="input"
           class="outline-none bg-amber-50 px-4 py-2 col-span-5"
+          autocomplete="off"
           placeholder="Send a message..."
         />
         <button

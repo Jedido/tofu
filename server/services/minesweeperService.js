@@ -1,15 +1,14 @@
+const GameService = require("./gameService.js")
+
 const BOMB = -10
 const FLAG = -20
 const HIDDEN = -30
 const BLANK = -40
 const BOOM = -50
 
-class MinesweeperService {
+class MinesweeperService extends GameService {
   constructor(roomId) {
-    const { broadcast } = require("../gameManager.js")
-    this.broadcastFn = (...args) => {
-      broadcast(roomId, ...args)
-    }
+    super(roomId)
 
     // requests
     this.actions = {

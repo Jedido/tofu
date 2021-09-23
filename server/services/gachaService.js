@@ -1,6 +1,6 @@
 const GameService = require("./gameService.js")
 
-class ExampleService extends GameService {
+class GachaService extends GameService {
   constructor(roomId) {
     super(roomId)
 
@@ -17,6 +17,6 @@ class ExampleService extends GameService {
     this.broadcastFn(this.receiveMessage, socket.ign, message)
   }
 }
-ExampleService.prototype.id = "example"
+GachaService.prototype.id = "gacha"
 
-module.exports = ExampleService
+module.exports = GachaService

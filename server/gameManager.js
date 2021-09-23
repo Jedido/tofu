@@ -3,14 +3,17 @@ const { Server } = require("socket.io")
 const ExampleService = require("./services/exampleService.js")
 const AnagramService = require("./services/anagramService.js")
 const MinesweeperService = require("./services/minesweeperService.js")
+const GachaService = require("./services/gachaService.js")
 
-const games = [MinesweeperService, AnagramService, ExampleService].reduce(
-  (acc, cur) => {
-    acc[cur.prototype.id] = cur
-    return acc
-  },
-  {}
-)
+const games = [
+  MinesweeperService,
+  AnagramService,
+  ExampleService,
+  GachaService,
+].reduce((acc, cur) => {
+  acc[cur.prototype.id] = cur
+  return acc
+}, {})
 const gameRooms = {}
 let io
 

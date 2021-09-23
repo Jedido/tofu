@@ -13,6 +13,10 @@
       v-else-if="this.$store.state.scene === 'anagram'"
       :socket="socket"
     />
+    <GachaGame
+      v-else-if="this.$store.state.scene === 'gacha'"
+      :socket="socket"
+    />
     <RoomSelection v-else v-on:launch-game="launchGame" />
   </main>
 </template>
@@ -37,6 +41,7 @@ export default {
     AnagramGame: defineAsyncComponent(() =>
       import("./anagram/AnagramGame.vue")
     ),
+    GachaGame: defineAsyncComponent(() => import("./gacha/GachaGame.vue")),
   },
   data() {
     return {
