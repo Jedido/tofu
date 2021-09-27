@@ -18,10 +18,9 @@ function shuffle(word) {
 class AnagramService extends GameService {
   constructor(roomId) {
     super(roomId)
-    const { players } = require("../gameManager.js")
     // players: id to { ign, score, round, startTime, time, submissions, strikes }
     this.initPlayers = () => {
-      return players(roomId).reduce((acc, cur) => {
+      return this.players().reduce((acc, cur) => {
         acc[cur.ign] = {
           score: 0,
           round: 0,

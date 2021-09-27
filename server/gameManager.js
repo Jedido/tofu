@@ -55,11 +55,12 @@ function initGameManager(server) {
             )})`
           )
         } else {
-          // console.log(
-          //   `${socket.id} (${socket.ign}) triggered ${type} on ${
-          //     gameRooms[socket.roomId].gameId
-          //   } (${socket.roomId}): ${JSON.stringify(data)}`
-          // )
+          // logging
+          console.log(
+            `${socket.id} (${socket.ign}) triggered ${type} on ${
+              gameRooms[socket.roomId].gameId
+            } (${socket.roomId}): ${JSON.stringify(data)}`
+          )
           actionFn(data, socket)
         }
       } catch (e) {
