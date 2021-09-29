@@ -2,81 +2,97 @@
   "0": {
     "name": "Earth Legendary",
     "img": "earth_legendary.png",
+    "type": 0,
     "rarity": 0
   },
   "1": {
     "name": "Earth Epic",
     "img": "earth_epic.png",
+    "type": 0,
     "rarity": 1
   },
   "2": {
     "name": "Earth Rare",
     "img": "earth_rare.png",
+    "type": 0,
     "rarity": 2
   },
   "3": {
     "name": "Earth Common",
     "img": "earth_common.png",
+    "type": 0,
     "rarity": 3
   },
   "4": {
     "name": "Sea Legendary",
     "img": "sea_legendary.png",
+    "type": 1,
     "rarity": 0
   },
   "5": {
     "name": "Sea Epic",
     "img": "sea_epic.png",
+    "type": 1,
     "rarity": 1
   },
   "6": {
     "name": "Sea Rare",
     "img": "sea_rare.png",
+    "type": 1,
     "rarity": 2
   },
   "7": {
     "name": "Sea Common",
     "img": "sea_common.png",
+    "type": 1,
     "rarity": 3
   },
   "8": {
     "name": "Sky Legendary",
     "img": "sky_legendary.png",
+    "type": 2,
     "rarity": 0
   },
   "9": {
     "name": "Sky Epic",
     "img": "sky_epic.png",
+    "type": 2,
     "rarity": 1
   },
   "10": {
     "name": "Sky Rare",
     "img": "sky_rare.png",
+    "type": 2,
     "rarity": 2
   },
   "11": {
     "name": "Sky Common",
     "img": "sky_common.png",
+    "type": 2,
     "rarity": 3
   },
   "12": {
     "name": "Holy Legendary",
     "img": "holy_legendary.png",
+    "type": 3,
     "rarity": 0
   },
   "13": {
     "name": "Holy Epic",
     "img": "holy_epic.png",
+    "type": 3,
     "rarity": 1
   },
   "14": {
     "name": "Holy Rare",
     "img": "holy_rare.png",
+    "type": 3,
     "rarity": 2
   },
   "15": {
     "name": "Holy Common",
     "img": "holy_common.png",
+    "type": 3,
     "rarity": 3
   }
 }

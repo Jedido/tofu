@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import Flag from "../../img/flag.svg"
-import Explosion from "../../img/explosion.svg"
-import Mine from "../../img/mine.svg"
+import Flag from "@/assets/images/flag.svg"
+import Explosion from "@/assets/images/explosion.svg"
+import Mine from "@/assets/images/mine.svg"
 
 export default {
   name: "AnagramGame",

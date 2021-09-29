@@ -1,20 +1,27 @@
 <template>
-  <div id="gacha" class="select-none">
-    <p class="text-center text-3xl mb-4">Gacha Game</p>
-    <div v-if="state === 1" class="grid-cols-5">
+  <div id="gacha" class="select-none bg-white">
+    <p class="text-center text-3xl py-4">Gacha Game</p>
+    <div v-if="state === 1" class="flex flex-wrap justify-around">
       <GachaCard
         v-for="(character, index) in recruitQueue"
         :key="index"
         :character="character"
         @recruit="recruit(index)"
       />
-      <button class="bg-emerald-700 row-span-5" @click="endRecruit">
+      <button
+        class="bg-emerald-500 w-full rounded py-4 mt-4"
+        @click="endRecruit"
+      >
         End Session
       </button>
     </div>
-    <div v-else>
-      <button @click="startRecruiting">Start Recruiting!</button>
-    </div>
+    <button
+      v-else
+      class="bg-emerald-500 w-full rounded py-4 mt-4"
+      @click="startRecruiting"
+    >
+      Start Recruiting!
+    </button>
   </div>
 </template>
 
@@ -41,7 +48,6 @@ export default {
       this.state = 1
     })
     this.on("recruit-result", (index, character) => {
-      console.log(character)
       this.recruitQueue[index] = character
     })
     this.on("summary", (sessionResult) => {
