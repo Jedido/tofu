@@ -258,13 +258,13 @@ export default {
       const settings = {
         cipherTime: maxZero(this.settings.cipherTime, "31"),
         ciphers: maxZero(this.settings.ciphers, "110"),
-        gameMode: "coop",
-        oneshot: false,
+        gameMode: this.settings.gameMode,
+        oneshot: this.settings.oneshot,
         scoreLimit: this.settings.scoreLimit,
-        showAnswer: true,
+        showAnswer: this.settings.showAnswer,
         strikes: maxZero(this.settings.strikes, "11"),
         timeLimit: this.settings.timeLimit,
-        timerType: "faster",
+        timerType: this.settings.timerType,
       }
       this.emit("init", settings)
     },

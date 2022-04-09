@@ -13,9 +13,11 @@
         ]"
         :style="{ width: `${(score / max) * 100}%` }"
       >
-        <div v-if="showStrikes && strikes != maxStrikes">
-          <span class="font-semibold text-error ml-1">{{ strikeText }}</span>
-        </div>
+        <span
+          v-if="showStrikes && strikes != maxStrikes"
+          class="font-semibold text-error ml-1 whitespace-nowrap"
+          >{{ strikeText }}</span
+        >
       </div>
     </div>
     <span class="font-semibold">{{ score }}</span>

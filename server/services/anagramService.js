@@ -4,15 +4,20 @@ const fs = require("fs")
 const MS_TO_S = 1000
 const NEXT_WORD_DELAY = 400
 
-function shuffle(word) {
-  const arr = Array.from(word)
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    const temp = arr[j]
-    arr[j] = arr[i]
-    arr[i] = temp
-  }
-  return arr.join("")
+function shuffle(phrase) {
+  let res = ""
+  // split into words, for each word:
+  phrase.split(" ").forEach((word) => {
+    const arr = Array.from(word)
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      const temp = arr[j]
+      arr[j] = arr[i]
+      arr[i] = temp
+    }
+    res += arr.join("")
+  })
+  return res
 }
 
 class AnagramService extends GameService {
@@ -24,8 +29,7 @@ class AnagramService extends GameService {
         acc[cur.ign] = {
           score: 0,
           round: 0,
-          startTime: 0,
-          time: this.settings.cipherTime,
+          time: parseInt(this.settings.cipherTime),
           submissions: [],
           strikes: 0,
         }
@@ -43,7 +47,7 @@ class AnagramService extends GameService {
     }
 
     // responses
-    this.stateEvent = "anagram-start" // start the game (settings, players)
+    this.startEvent = "anagram-start" // start the game (settings, players)
     this.resultEvent = "anagram-result" // result of submission (word or false)
     this.updatePlayerEvent = "anagram-update-player" // update score on screen
     this.endGameEvent = "anagram-end" // end the game
@@ -63,14 +67,15 @@ class AnagramService extends GameService {
     /*
      * Game Mods (0 is infinite):
      * gameMode: string (coop) - coop (share score), sync (first to get it), rush (at your own pace)
-     * showAnswer: boolean (false) - skip showing the answer after it's guessed
+     * showAnswer: boolean (true) - skip showing the answer after it's guessed
      * oneshot: boolean (false) - only 1 guess per cipher (per person)
      * strikes: num (0) - total number of misses before losing
      * ciphers: num (0) - total number of ciphers
-     * cipherTime: num (DEFAULT_CIPHER_TIME) - base cipher time
-     * timerType: string (decrease) - normal (default), adaptive (+/-), decrease (only -)
+     * cipherTime: num (10) - base cipher time
+     * timerType: string (normal) - normal, adaptive (+/-), faster (only -)
      * scoreLimit: num (0) - win game after score is reached (first to reach score wins)
-     * timeLimit: num (DEFAULT_GAME_TIME) - ends game after time is elapsed (highest score wins)
+     * timeLimit: num (60) - ends game after time is elapsed (highest score wins)
+     * working settings: gamemode = coop, showAnswer = true/false, cipherTime = num != 0, timerType = normal, timeLimit = num != 0
      */
     this.settings = settings
 
@@ -83,15 +88,14 @@ class AnagramService extends GameService {
       this.players.coop = {
         score: 0,
         round: 0,
-        startTime: 0,
-        time: settings.cipherTime,
+        time: parseInt(settings.cipherTime),
         submissions: [],
         strikes: 0,
       }
     }
     this.showingAnswer = false
 
-    this.broadcastFn(this.stateEvent, { players, settings })
+    this.broadcastFn(this.startEvent, { players, settings })
 
     this.wordTimerId = -1
     // 3 second countdown
@@ -130,25 +134,21 @@ class AnagramService extends GameService {
       player.submissions.push("?")
     }
     player.submissions[curRound] = message
-    if (
-      this.settings.gameMode === "sync" ||
-      this.settings.gameMode === "coop"
-    ) {
+    if (this.settings.gameMode === "coop") {
       this.numAnswered++
       if (message === this.currentWord()) {
         clearTimeout(this.wordTimerId)
         this.players.coop.submissions.push(message)
-        if (this.settings.gameMode === "coop") {
-          this.players.coop.score++
-          this.players.coop.round++
-          this.broadcastFn(
-            this.updatePlayerEvent,
-            "coop",
-            this.players.coop.score,
-            this.players.coop.strikes
-          )
-        }
+        this.players.coop.score++
+        this.players.coop.round++
+        this.broadcastFn(
+          this.updatePlayerEvent,
+          "coop",
+          this.players.coop.score,
+          this.players.coop.strikes
+        )
         this.players[socket.ign].score++
+        // TODO increment all players' round?
         this.broadcastFn(
           this.updatePlayerEvent,
           socket.ign,
@@ -158,15 +158,29 @@ class AnagramService extends GameService {
         if (this.settings.showAnswer) {
           this.showingAnswer = true
           this.broadcastFn(this.resultEvent, message)
-          setTimeout(this.nextCipher, NEXT_WORD_DELAY)
-        } else {
-          if (this.settings.oneshot && this.numAnswered === this.numPlayers) {
-            this.wordTimeout()
-          }
-          this.nextCipher()
         }
+        if (this.settings.timerType === "adaptive") {
+          this.players.coop.time -= 0.5
+        }
+        this.nextCipher()
       } else {
+        // if (this.settings.oneshot && this.numAnswered === this.numPlayers) {
+        //   this.wordTimeout()
+        // }
+        this.players.coop.strikes++
         socket.emit(this.resultEvent, false)
+        this.broadcastFn(
+          this.updatePlayerEvent,
+          "coop",
+          this.players.coop.score,
+          this.players.coop.strikes
+        )
+        if (
+          this.settings.strikes > 0 &&
+          this.players.coop.strikes >= this.settings.strikes
+        ) {
+          this.endGame()
+        }
       }
     } else {
       if (message === this.currentWord) {
@@ -184,17 +198,25 @@ class AnagramService extends GameService {
     }
   }
 
-  nextCipher(id) {
+  // probably pass in socket
+  nextCipher(ign) {
+    if (this.players.coop.round === parseInt(this.settings.ciphers)) {
+      this.endGame()
+    }
     let newWord
+    if (this.settings.timerType === "faster") {
+      this.players.coop.time -= 0.5
+      this.players.coop.time = Math.max(this.players.coop.time, 3)
+    }
     if (
       this.settings.gameMode !== "coop" &&
-      this.players[id].round < this.ciphers.length
+      this.players[ign].round < this.ciphers.length
     ) {
-      newWord = this.ciphers[this.players[id].round]
+      newWord = this.ciphers[this.players[ign].round]
     } else {
       newWord = this.generateCipher()
     }
-    this.numAnswered = 0
+    this.numAnswered = 0 // for co-op/sync oneshot
     if (this.settings.showAnswer) {
       setTimeout(() => {
         this.showingAnswer = false
@@ -254,11 +276,16 @@ class AnagramService extends GameService {
     })
   }
 
+  // needs a socket somehow
   wordTimeout() {
+    this.showingAnswer = true
     const current = this.currentWord()
     this.players.coop.submissions.push("?")
     this.players.coop.round++
     this.players.coop.strikes++
+    if (this.settings.timerType === "adaptive") {
+      this.players.coop.time += 0.5
+    }
     this.broadcastFn(
       this.updatePlayerEvent,
       "coop",
