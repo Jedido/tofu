@@ -4,12 +4,14 @@ const ExampleService = require("./services/exampleService.js")
 const AnagramService = require("./services/anagramService.js")
 const MinesweeperService = require("./services/minesweeperService.js")
 const GachaService = require("./services/gachaService.js")
+const WatchService = require("./services/watchService.js")
 
 const games = [
   MinesweeperService,
   AnagramService,
   ExampleService,
   GachaService,
+  WatchService,
 ].reduce((acc, cur) => {
   acc[cur.prototype.id] = cur
   return acc

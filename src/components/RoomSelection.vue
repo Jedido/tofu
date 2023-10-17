@@ -22,6 +22,7 @@ export default {
         { name: "Minesweeper", scene: "minesweeper" },
         { name: "Example Game", scene: "example" },
         { name: "Gacha Game", scene: "gacha" },
+        { name: "Watch Together", scene: "watch" },
       ],
       room: "",
     }

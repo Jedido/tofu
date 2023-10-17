@@ -4,7 +4,7 @@
     <Scene class="scene" :socket="socket" />
     <DragBar class="dragbar" />
     <EventLog :socket="socket" />
-    <footer class="p-3 bg-emerald-700 footer">
+    <footer class="p-3 bg-emerald-700 text-emerald-50 footer">
       You can download this app on github.com.
     </footer>
   </div>

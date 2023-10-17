@@ -1,6 +1,6 @@
 <template>
   <div
-    class="sidebar p-3 bg-amber-50 w-100 overflow-auto"
+    class="sidebar bg-amber-50 w-100 overflow-auto"
     :style="{
       width: `${md ? `${$store.state.sidebarWidth}px` : '100%'}`,
     }"
@@ -24,7 +24,7 @@
       <div id="logs-content" v-else>
         <p>
           Room: {{ $store.state.room }}
-          <button @click="leaveRoom()">Leave Room</button>
+          <button class="bg-amber-50" @click="leaveRoom()">Leave Room</button>
         </p>
         <h3>Event Log</h3>
         <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
@@ -92,7 +92,7 @@ export default {
 #logs-content {
   background: white;
   box-sizing: border-box;
-  padding: 8px;
+  padding: 12px;
   height: 100%;
   width: 100%;
   font-size: 14px;

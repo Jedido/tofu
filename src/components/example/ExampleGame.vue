@@ -44,9 +44,6 @@ import socket from "../../mixins/socket.js"
 export default {
   name: "ExampleGame",
   mixins: [socket],
-  props: {
-    gameWidth: Number,
-  },
   data() {
     return {
       message: "",
