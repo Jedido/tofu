@@ -105,7 +105,7 @@ export default {
       this.board[x * this.size + y] = value
       this.$nextTick(() => {
         this.revealed = this.board.filter((val) => val > 0).length
-        this.revealed = this.board.filter((val) => val === -20).length
+        this.flags = this.board.filter((val) => val === -20).length
       })
     })
     this.emit("get-board")

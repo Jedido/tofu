@@ -5,25 +5,16 @@
     @click="revealSpace()"
     @contextmenu.prevent="flagSpace()"
   >
-    <Mine v-if="value === mine" />
-    <Explosion v-else-if="value === explosion" />
-    <Flag v-else-if="value === flag" />
+    <img v-if="value === mine" src="@/assets/images/mine.svg"/>
+    <img v-else-if="value === explosion" src="@/assets/images/explosion.svg"/>
+    <img v-else-if="value === flag" src="@/assets/images/flag.svg"/>
     {{ color ? value : "" }}
   </div>
 </template>
 
 <script>
-import Flag from "@/assets/images/flag.svg"
-import Explosion from "@/assets/images/explosion.svg"
-import Mine from "@/assets/images/mine.svg"
-
 export default {
   name: "AnagramGame",
-  components: {
-    Flag,
-    Explosion,
-    Mine,
-  },
   props: {
     value: Number,
     active: Boolean,

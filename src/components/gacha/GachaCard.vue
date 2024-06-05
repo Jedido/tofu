@@ -100,15 +100,15 @@ export default {
   animation-iteration-count: infinite;
 }
 .sea-back {
-  background: url("../../assets/images/heart.png") no-repeat center;
+  background: url("@/assets/images/heart.png") no-repeat center;
 }
 .sky-back {
-  background: url("../../assets/images/club.png") no-repeat center;
+  background: url("@/assets/images/club.png") no-repeat center;
 }
 .earth-back {
-  background: url("../../assets/images/spade.png") no-repeat center;
+  background: url("@/assets/images/spade.png") no-repeat center;
 }
 .holy-back {
-  background: url("../../assets/images/diamond.png") no-repeat center;
+  background: url("@/assets/images/diamond.png") no-repeat center;
 }
 </style>
