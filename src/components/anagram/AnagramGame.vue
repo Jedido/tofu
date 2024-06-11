@@ -178,7 +178,7 @@
           :key="player"
           v-bind="{
             max: settings.scoreLimit,
-            name: player,
+            name: state.ign,
             score: state.score,
             strikes: state.strikes,
             maxStrikes: settings.strikes,
@@ -269,7 +269,6 @@ export default {
       this.emit("init", settings)
     },
     handleStart({ settings, players }) {
-      console.log(settings)
       this.settings = settings
       this.status = "ongoing"
       this.inputDisabled = false
@@ -280,7 +279,8 @@ export default {
       }, 3000)
       this.$refs.gameTimer.reset()
       this.players = players.reduce((acc, cur) => {
-        acc[cur] = {
+        acc[cur.id] = {
+          ign: cur.ign,
           score: "0",
           strikes: "0",
         }

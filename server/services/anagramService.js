@@ -26,7 +26,8 @@ class AnagramService extends GameService {
     // players: id to { ign, score, round, startTime, time, submissions, strikes }
     this.initPlayers = () => {
       return this.players().reduce((acc, cur) => {
-        acc[cur.ign] = {
+        acc[cur.id] = {
+          ign: cur.ign,
           score: 0,
           round: 0,
           time: parseInt(this.settings.cipherTime),
@@ -60,9 +61,6 @@ class AnagramService extends GameService {
     this.currentWord = this.currentWord.bind(this)
   }
 
-  // socket.emit, socket.ign, socket.id
-  // socket.emit(this.resultEvent, someData, arg2, arg3)
-
   init(settings) {
     /*
      * Game Mods (0 is infinite):
@@ -80,12 +78,15 @@ class AnagramService extends GameService {
     this.settings = settings
 
     this.players = this.initPlayers()
-    const players = Object.keys(this.players)
+    const players = Object.keys(this.players).map(id => {
+      return { id, ign: this.players[id].ign }
+    })
     this.numPlayers = players.length
     this.numAnswered = 0
     if (settings.gameMode === "coop") {
-      players.unshift("coop")
+      players.unshift({ id: "coop", ign: "co-op" })
       this.players.coop = {
+        ign: "co-op",
         score: 0,
         round: 0,
         time: parseInt(settings.cipherTime),
@@ -123,7 +124,7 @@ class AnagramService extends GameService {
     if (!message || this.showingAnswer) {
       return
     }
-    const player = this.players[socket.ign]
+    const player = this.players[socket.id]
     const curRound =
       this.settings.gameMode === "coop" ? this.players.coop.round : player.round
     if (this.settings.oneshot && player.submissions.length >= curRound) {
@@ -147,13 +148,13 @@ class AnagramService extends GameService {
           this.players.coop.score,
           this.players.coop.strikes
         )
-        this.players[socket.ign].score++
+        this.players[socket.id].score++
         // TODO increment all players' round?
         this.broadcastFn(
           this.updatePlayerEvent,
-          socket.ign,
-          this.players[socket.ign].score,
-          this.players[socket.ign].strikes
+          socket.id,
+          this.players[socket.id].score,
+          this.players[socket.id].strikes
         )
         if (this.settings.showAnswer) {
           this.showingAnswer = true
