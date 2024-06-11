@@ -1,0 +1,141 @@
+[{
+  "name": "FISH",
+  "questions": [{
+    "points": 100,
+    "type": "image",
+    "question": "https://recipes.net/wp-content/uploads/2024/03/what-is-sake-salmon-sashimi-1709357859.jpg",
+    "answer": "Salmon"
+  }, {
+    "points": 200,
+    "type": "image",
+    "question": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO9phZ16gpcah06acqcIos8o1_XuRP-3KPUw&s",
+    "answer": "Goldfish"
+  }, {
+    "points": 300,
+    "type": "image",
+    "question": "https://static.wikia.nocookie.net/characters/images/a/aa/Nemo-FN.png",
+    "answer": "Clownfish"
+  }, {
+    "points": 400,
+    "type": "image",
+    "question": "https://images.nintendolife.com/f541f83695ec2/1280x720.jpg",
+    "answer": "Coelacanth"
+  }, {
+    "points": 500,
+    "type": "image",
+    "question": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/202970/ss_c8dbd43d5eaaf11241d6a8afcec24bc51608b615.1920x1080.jpg",
+    "answer": "Cod"
+  }]
+}, {
+  "name": "TOFU",
+  "questions": [{
+    "points": 100,
+    "type": "text",
+    "question": "A form of fermented tofu that has a strong odor",
+    "answer": "Stinky Tofu"
+  }, {
+    "points": 200,
+    "type": "text",
+    "question": "A popular dish from Sichuan province known for its fiery bright red sauce",
+    "answer": "Mapo Tofu"
+  }, {
+    "points": 300,
+    "type": "text",
+    "question": "An appetizer of crisp deep-fried tofu served in a dashi sauce",
+    "answer": "Agedashi Tofu"
+  }, {
+    "points": 400,
+    "type": "text",
+    "question": "A spicy dish made with \"extra soft tofu\", as translated from its name",
+    "answer": "Tofu Soup (sundubu jjigae)"
+  }, {
+    "points": 500,
+    "type": "text",
+    "question": "Made with tender tofu, this can be either a sweet or savory snack",
+    "answer": "Dou Hua (silky tofu)"
+  }]
+}, {
+  "name": "GAME QUOTES",
+  "questions": [{
+    "points": 100,
+    "type": "text",
+    "question": "\"When it is angered, it immediately discharges the energy stored in the pouches in its cheeks.\"",
+    "answer": "Pokemon"
+  }, {
+    "points": 200,
+    "type": "text",
+    "question": "\"You are filled with determination.\"",
+    "answer": "Undertale"
+  }, {
+    "points": 300,
+    "type": "text",
+    "question": "\"Your world has been blessed with Cobalt!\"",
+    "answer": "Terraria"
+  }, {
+    "points": 400,
+    "type": "text",
+    "question": "\"Gods grant me strength.\"",
+    "answer": "Hades"
+  }, {
+    "points": 500,
+    "type": "text",
+    "question": "\"Glory to Arstotzka!\"",
+    "answer": "Papers, Please"
+  }]
+}, {
+  "name": "THE LOO",
+  "questions": [{
+    "points": 100,
+    "type": "text",
+    "question": "A bubber inflatable object. Make sure it doesn't pop!",
+    "answer": "Balloon"
+  }, {
+    "points": 200,
+    "type": "text",
+    "question": "A popular animated franchise from the 20th century, featuring an ensemble of different anthropomorphized animals.",
+    "answer": "Looney Tunes"
+  }, {
+    "points": 300,
+    "type": "text",
+    "question": "A colorful breakfast snack that some may consider is spelled incorrectly.",
+    "answer": "Froot Loops"
+  }, {
+    "points": 400,
+    "type": "text",
+    "question": "A fluid commonly said to be more viscous than water",
+    "answer": "Blood"
+  }, {
+    "points": 500,
+    "type": "text",
+    "question": "A device used to weave cloth and tapestry",
+    "answer": "Loom"
+  }]
+}, {
+  "name": "ANIME VILLAINS",
+  "questions": [{
+    "points": 100,
+    "type": "image",
+    "question": "https://ih1.redbubble.net/image.5372764227.5170/sss,small,product,750x1000.u8.jpg",
+    "answer": "Kenjaku"
+  }, {
+    "points": 200,
+    "type": "image",
+    "question": "https://static.wikia.nocookie.net/sao-abridged/images/c/c0/Heathcliff.jpg",
+    "answer": "Heathcliff"
+  }, {
+    "points": 300,
+    "type": "image",
+    "question": "https://static.wikia.nocookie.net/onepiece/images/f/fd/Crocodile_Anime_Infobox.png",
+    "answer": "Crocodile"
+  }, {
+    "points": 400,
+    "type": "image",
+    "question": "https://static.wikia.nocookie.net/villains/images/3/3e/Raditz03.png",
+    "answer": "Raditz"
+  }, {
+    "points": 500,
+    "type": "image",
+    "question": "https://static.wikia.nocookie.net/divided-destiny/images/0/08/Father_%2821%29.jpg",
+    "answer": "Father"
+  }]
+}]

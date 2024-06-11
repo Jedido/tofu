@@ -5,6 +5,7 @@ const AnagramService = require("./services/anagramService.js")
 const MinesweeperService = require("./services/minesweeperService.js")
 const GachaService = require("./services/gachaService.js")
 const WatchService = require("./services/watchService.js")
+const JeopardyService = require("./services/jeopardyService.js")
 
 const games = [
   MinesweeperService,
@@ -12,6 +13,7 @@ const games = [
   ExampleService,
   GachaService,
   WatchService,
+  JeopardyService,
 ].reduce((acc, cur) => {
   acc[cur.prototype.id] = cur
   return acc
@@ -28,7 +30,7 @@ function initGameManager(server) {
       createRoom(gameId, socket)
     })
     socket.on("join-room", (roomId) => {
-      joinRoom(roomId, socket)
+      joinRoom(roomId.toUpperCase(), socket)
     })
     socket.on("leave-room", () => {
       leaveRoom(socket.roomId, socket)
@@ -126,6 +128,11 @@ function leaveRoom(roomId, socket) {
   broadcast(roomId, "log", `${socket.ign} has left the room.`)
   if (!io.sockets.adapter.rooms.get(roomId)) {
     removeGame(roomId)
+  } else {
+    const onDisconnect = gameRooms[roomId].game.actions["disconnect"]
+    if (onDisconnect) {
+      onDisconnect(socket)
+    }
   }
 }
 function hasRoom(roomId) {
