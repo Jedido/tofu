@@ -67,9 +67,9 @@
       </button>
     </div>
     <div v-else>
-      <div v-if="status === 'categories'" class="grid grid-cols-5 gap-2">
-        <div v-for="category in categories" class="flex flex-col gap-2 w-100">
-          <h2 class="text-center">{{ category.name }}</h2>
+      <div v-if="status === 'categories'" class="grid grid-cols-5 grid-rows-6 gap-2 grid-flow-col">
+        <template v-for="category in categories">
+          <h2 class="text-center mt-auto leading-tight">{{ category.name }}</h2>
           <button
             v-for="question in category.questions"
             class="
@@ -87,16 +87,13 @@
           >
             {{ question.points }}
           </button>
-        </div>
+        </template>
       </div>
       <div
         v-else-if="status === 'question'"
-        class="text-2xl bg-white mx-6 h-80"
+        class="text-2xl bg-white mx-6 h-80 p-3"
       >
-        <img v-if="question.type === 'image'" class="h-full m-auto" :src="question.question" />
-        <div v-else class="p-6 flex justify-center items-center h-full text-center">
-          {{ question.question }}
-        </div>
+        <JeopardyQuestion :question="question" :level="level" :preload="hosting" :class="{ 'hidden': questionHidden }"/>
       </div>
       <button
         v-if="hosting"
@@ -133,11 +130,11 @@
       </button>
       <h3 class="mt-3 text-xl text-center">Scores</h3>
       <div class="flex justify-around">
-        <div v-for="player in players">
+        <div v-for="player in players" class="text-center">
           <div class="text-lg">{{ player.ign }}: {{ player.points }}</div>
-          <div v-if="hosting" class="flex flex-col justify-between gap-2">
+          <form v-if="hosting" class="flex flex-col justify-between gap-2">
+            <input type="text" v-model="points"/>
             <button
-              v-for="i in 11"
               class="
                 p-2
                 text-amber-50
@@ -146,11 +143,23 @@
                 active:bg-emerald-800
                 rounded
               "
-              @click.prevent="addPoints(player, i * 100 - 600)"
+              @click.prevent="addPoints(player, points)"
             >
-              {{ i * 100 - 600 }}
+              Add
             </button>
-          </div>
+            <button
+              class="
+                p-2
+                bg-amber-300
+                hover:bg-amber-200
+                active:bg-amber-400
+                rounded
+              "
+              @click.prevent="addPoints(player, -points)"
+            >
+              Remove
+            </button>
+          </form>
         </div>
       </div>
     </div>
@@ -160,23 +169,29 @@
 <script>
 import { debounce } from "lodash";
 import socket from "../../mixins/socket.js"
+import JeopardyQuestion from "./JeopardyQuestion.vue"
 
 export default {
   name: "JeopardyGame",
   mixins: [socket],
+  components: {
+    JeopardyQuestion
+  },
   data() {
     return {
       status: "menu",
       host: "None",
       hosting: false,
+      questionHidden: false,
       players: [],
       categories: [],
-      question: {}
+      question: {},
+      level: 1,
+      points: 0
     }
   },
   mounted() {
     this.on("update-players", (players) => {
-      console.log(players)
       this.players = players
     })
     this.on("update-host", (host) => {
@@ -186,13 +201,20 @@ export default {
     this.on("show-categories", (categories) => {
       this.status = "categories"
       this.categories = categories
-      console.log(categories)
+      this.level = 1
     })
     this.on("show-question", (question) => {
       this.status = "question"
       this.question = question
+      this.points = question.points
     })
     this.emit("set-player")
+    this.on("next-clue", () => {
+      this.level++
+    })
+    this.on("hide-question", (show) => {
+      this.questionHidden = show
+    })
   },
   methods: {
     addPoints(player, points) {

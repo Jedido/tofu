@@ -1,4 +1,5 @@
 const GameService = require("./gameService.js")
+const fs = require("fs")
 
 class JeopardyService extends GameService {
   constructor(roomId) {
@@ -19,7 +20,10 @@ class JeopardyService extends GameService {
     this.updateHost = "jeopardy-update-host"
     this.showCategories = "jeopardy-show-categories"
     this.showQuestion = "jeopardy-show-question"
-    this.categories = [] // Fill this out
+    this.showNextClue = "jeopardy-next-clue"
+    this.hideQuestion = "jeopardy-hide-question"
+    // TODO: Allow a selection
+    this.categories = JSON.parse(fs.readFileSync("./server/assets/jeopardy2.json", "utf8"))
     this.host = {
       id: null,
       ign: "None"
@@ -35,10 +39,14 @@ class JeopardyService extends GameService {
     }
   }
 
-  removePlayer(socket) {
+  dropOut(socket) {
     if (this.host.id === socket.id) {
       this.broadcastFn("log", "The host has disconnected! The game must be restarted.")
     }
+    this.removePlayer(socket)
+  }
+
+  removePlayer(socket) {
     let index = this.players.findIndex(player => player.id === socket.id)
     if (index > -1) {
       this.players.splice(index, 1)
@@ -115,6 +123,11 @@ class JeopardyService extends GameService {
     if (player > -1) {
       this.players[player].ign = socket.ign
       this.broadcastFn("log", `${socket.ign} buzzed in`)
+      this.broadcastFn(this.hideQuestion, true)
+    } else if (this.host.id === socket.id) {
+      socket.emit("log", `Now accepting responses`)
+      this.broadcastFn(this.hideQuestion, false)
+      this.broadcastFn(this.showNextClue)
     }
   }
 
