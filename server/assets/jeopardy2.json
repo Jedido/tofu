@@ -132,12 +132,12 @@
   "questions": [{
     "points": 100,
     "type": "text",
-    "question": "A baby's first words, or perhaps Chinese for the figure hearing them.",
+    "question": "A baby's first words, or perhaps the Chinese for the figure hearing them.",
     "answer": "Baba"
   }, {
     "points": 200,
     "type": "text",
-    "question": "A puzzle game where you push words to form your own rules.",
+    "question": "A puzzle game where you play as an unidentified creature to push words to form the game's rules.",
     "answer": "Baba is You"
   }, {
     "points": 300,

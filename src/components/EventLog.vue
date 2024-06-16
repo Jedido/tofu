@@ -7,24 +7,24 @@
   >
     <div id="logs-container">
       <div id="logs-content" v-if="!$store.state.room">
-        <h3>Join a Room</h3>
         <form>
           <label>
-            <p>Room Code</p>
+            <p class="text-lg">Join with a Room Code</p>
             <input
               v-model="room"
               type="text"
               maxlength="5"
               spellcheck="false"
+              class="outline-none"
             />
           </label>
-          <button @click.prevent="joinRoom()">Join</button>
+          <button class="border-2 border-emerald-500 rounded hover:border-emerald-400 mt-3 mx-auto" @click.prevent="joinRoom()">Join</button>
         </form>
       </div>
-      <div id="logs-content" v-else>
+      <div id="logs-content" content="flex flex-col" v-else>
         <p>
           Room: {{ $store.state.room }}
-          <button class="bg-amber-50" @click="leaveRoom()">Leave Room</button>
+          <button class="border-2 border-amber-500 rounded hover:border-amber-400 mt-3 mx-auto" @click="leaveRoom()">Leave Room</button>
         </p>
         <h3>Event Log</h3>
         <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
@@ -52,8 +52,9 @@ export default {
     })
     this.socket.on("log", (msg) => {
       this.logs.unshift(msg)
+      this.logs = this.logs.slice(0, 50)
     })
-    this.socket.emit("get-logs")
+    // this.socket.emit("get-logs")
     this.socket.on("set-room", (room) => {
       this.logs = []
       this.$store.commit("setRoom", room)
@@ -128,7 +129,6 @@ input {
 }
 button {
   display: block;
-  margin: 12px auto 0px auto;
   padding: 8px 20px;
 }
 </style>

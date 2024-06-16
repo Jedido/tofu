@@ -1,11 +1,13 @@
 <template>
-  <div class="scene">
-    <h2>Select a Game</h2>
-    <GameChoice
-      v-for="(game, index) in games"
-      v-bind="{ ...$attrs, ...game }"
-      :key="index"
-    />
+  <div class="bg-white p-4">
+    <h2 class="text-xl mb-2">Select a Game</h2>
+    <div class="grid grid-cols-3 gap-3 w-full">
+      <GameChoice
+        v-for="(game, index) in games"
+        v-bind="{ ...$attrs, ...game }"
+        :key="index"
+      />
+    </div>
   </div>
 </template>
 

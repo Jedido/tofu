@@ -1,7 +1,5 @@
 <template>
-  <div class="game-choice">
-    <button @click="$emit('launchGame', scene)">{{ name }}</button>
-  </div>
+  <button class="border-2 border-emerald-500 rounded hover:border-emerald-400 bg-white px-3 py-8" @click="$emit('launchGame', scene)">{{ name }}</button>
 </template>
 
 <script>
@@ -14,13 +12,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.game-choice {
-  background: #eee;
-  margin-bottom: 8px;
-}
-button {
-  padding: 20px;
-  width: 100%;
-}
-</style>
+<style scoped></style>

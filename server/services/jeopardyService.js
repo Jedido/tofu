@@ -7,6 +7,7 @@ class JeopardyService extends GameService {
 
     // requests
     this.actions = {
+      "jeopardy-start-game": this.startGame.bind(this),
       "jeopardy-set-player": this.joinAsPlayer.bind(this),
       "jeopardy-set-host": this.joinAsHost.bind(this),
       "jeopardy-add-points": this.addPoints.bind(this),
@@ -23,7 +24,6 @@ class JeopardyService extends GameService {
     this.showNextClue = "jeopardy-next-clue"
     this.hideQuestion = "jeopardy-hide-question"
     // TODO: Allow a selection
-    this.categories = JSON.parse(fs.readFileSync("./server/assets/jeopardy2.json", "utf8"))
     this.host = {
       id: null,
       ign: "None"
@@ -74,6 +74,12 @@ class JeopardyService extends GameService {
       this.removePlayer(socket)
       this.broadcastHostUpdate(socket)
     }
+  }
+
+  startGame({ categories }, socket) {
+    this.categories = JSON.parse(categories)
+    // save the file
+    this.displayCategories(categories, socket)
   }
 
   addPoints({ id, points }, socket) {

@@ -48,23 +48,26 @@
           </li>
         </ul>
       </div>
-      <button
-        v-if="hosting"
-        class="
-          mt-4
-          py-4
-          focus:outline-none
-          text-amber-50
-          bg-emerald-600
-          hover:bg-emerald-500
-          active:bg-emerald-800
-          rounded
-          col-span-6
-        "
-        @click.prevent="emit('display-categories')"
-      >
-        Start Game
-      </button>
+      <form v-if="hosting" class="col-span-6 flex flex-col">
+        <p class="mb-2">Questions</p>
+        <textarea type="text" class="font-mono text-sm" rows="24" cols="60" v-model="questionsJson">
+        </textarea>
+        <button
+          class="
+            mt-4
+            py-4
+            focus:outline-none
+            text-amber-50
+            bg-emerald-600
+            hover:bg-emerald-500
+            active:bg-emerald-800
+            rounded
+          "
+          @click.prevent="emit('start-game', { categories: questionsJson })"
+        >
+          Start Game
+        </button>
+      </form>
     </div>
     <div v-else>
       <div v-if="status === 'categories'" class="grid grid-cols-5 grid-rows-6 gap-2 grid-flow-col">
@@ -187,7 +190,8 @@ export default {
       categories: [],
       question: {},
       level: 1,
-      points: 0
+      points: 0,
+      questionsJson: ""
     }
   },
   mounted() {
