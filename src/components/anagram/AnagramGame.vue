@@ -318,7 +318,6 @@ export default {
     },
     endGame(data) {
       this.status = "end"
-      console.log(data)
       this.endGameStats = data
     },
     handleCipher(cipher, time = 10000) {

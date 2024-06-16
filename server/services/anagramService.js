@@ -264,6 +264,7 @@ class AnagramService extends GameService {
     const results = Object.entries(this.players).reduce(
       (res, [userId, data]) => {
         res[userId] = {
+          ign: data.ign,
           score: data.score,
           submissions: data.submissions,
         }

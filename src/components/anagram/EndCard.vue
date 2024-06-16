@@ -27,7 +27,7 @@
           :key="key"
           class="flex flex-col gap-2"
         >
-          <div class="font-semibold">{{ key }}</div>
+          <div class="font-semibold">{{ stats.results[key].ign }}</div>
           <div
             v-for="(cipher, index) in stats.ciphers"
             :key="key + cipher"
