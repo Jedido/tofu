@@ -63,20 +63,19 @@
             active:bg-emerald-800
             rounded
           "
-          @click.prevent="emit('start-game', { categories: questionsJson })"
+          @click.prevent="emit('start-game', { jeopardy: questionsJson })"
         >
           Start Game
         </button>
       </form>
     </div>
     <div v-else>
-      <div v-if="status === 'categories'" class="grid grid-cols-5 grid-rows-6 gap-2 grid-flow-col">
+      <div v-if="status === 'categories'" class="grid gap-2 grid-flow-col h-100" :style="[jeopardyGridStyle]">
         <template v-for="category in categories">
-          <h2 class="text-center mt-auto leading-tight">{{ category.name }}</h2>
+          <h2 class="font-bold font-mono text-center my-auto leading-tight">{{ category.name }}</h2>
           <button
             v-for="question in category.questions"
             class="
-              py-4
               focus:outline-none
               text-amber-50
               bg-emerald-600
@@ -94,49 +93,139 @@
       </div>
       <div
         v-else-if="status === 'question'"
-        class="text-2xl bg-white mx-6 h-80 p-3"
+        class="text-2xl bg-white mx-6 h-100 p-3"
       >
-        <JeopardyQuestion :question="question" :level="level" :preload="hosting" :class="{ 'hidden': questionHidden }"/>
+        <JeopardyQuestion :question="question" :level="level" :preload="hosting" :buzzer="buzzer" />
       </div>
-      <button
-        v-if="hosting"
-        class="
-          py-4
-          mt-2
-          w-full
-          focus:outline-none
-          text-amber-50
-          bg-emerald-600
-          hover:bg-emerald-500
-          active:bg-emerald-800
-          rounded
-        "
-        @click.prevent="emit('display-categories')"
-      >
-        Categories
-      </button>
-      <button
-        class="
-          py-4
-          mt-2
-          w-full
-          focus:outline-none
-          text-amber-50
-          bg-emerald-600
-          hover:bg-emerald-500
-          active:bg-emerald-800
-          rounded
-        "
-        @click.prevent="buzz()"
-      >
-        Buzz
-      </button>
+      <div v-if="hosting" class="w-full grid grid-cols-2 gap-2 mt-2">
+        <button
+          v-if="status !== 'categories'"
+          class="
+            py-4
+            focus:outline-none
+            text-amber-50
+            bg-emerald-600
+            hover:bg-emerald-500
+            active:bg-emerald-800
+            rounded
+          "
+          @click.prevent="emit('display-categories')"
+        >
+          Show Categories
+        </button>
+        <button
+          v-else
+          class="
+            focus:outline-none
+            text-amber-50
+            bg-emerald-600
+            hover:bg-emerald-500
+            active:bg-emerald-800
+            rounded
+          "
+          @click.prevent="emit('next-round')"
+        >
+          Go to Next Round
+        </button>
+        <button
+          class="
+            py-4
+            focus:outline-none
+            text-amber-50
+            bg-emerald-600
+            hover:bg-emerald-500
+            active:bg-emerald-800
+            rounded
+          "
+          @click.prevent="buzz()"
+        >
+          Continue Question
+        </button>
+        <button
+          class="
+            py-4
+            focus:outline-none
+            text-amber-50
+            bg-emerald-600
+            hover:bg-emerald-500
+            active:bg-emerald-800
+            rounded
+          "
+          @click.prevent="emit('show-submission', { show: !showSubmission })"
+        >
+          {{ showSubmission ? "Stop Accepting Submissions" : "Start Accepting Submissions" }}
+        </button>
+        <button
+          class="
+            py-4
+            focus:outline-none
+            text-amber-50
+            bg-emerald-600
+            hover:bg-emerald-500
+            active:bg-emerald-800
+            rounded
+          "
+          @click.prevent="emit('get-submissions')"
+        >
+          Show Submitted Answers
+        </button>
+      </div>
+      <div v-else>
+        <div v-if="showSubmission" class="my-2 flex flex-col">
+          <p class="mx-auto text-lg">Submission</p>
+          <input
+            type="text" 
+            class="
+              mx-auto
+              px-4
+              text-lg
+              w-1/2
+              text-center
+              rounded
+              border-2 border-gray-300
+              focus:outline-none
+              disabled:bg-gray-200
+            "
+            v-model="submission" 
+            @keyup="submitAnswer"
+          />
+        </div>
+        <button
+          v-else
+          class="
+            py-4
+            mt-2
+            w-full
+            focus:outline-none
+            text-amber-50
+            bg-emerald-600
+            hover:bg-emerald-500
+            active:bg-emerald-800
+            rounded
+          "
+          @click.prevent="buzz()"
+        >
+          Buzz
+        </button>
+      </div>
       <h3 class="mt-3 text-xl text-center">Scores</h3>
+      <div v-if="hosting" class="flex justify-center gap-2 my-1">
+        <p>Points:</p>
+        <input
+          type="text"
+          v-model="points"
+          class="
+            text-center
+            border-2 border-gray-300
+            focus:outline-none
+          "
+          id="score-input"
+        />
+      </div>
       <div class="flex justify-around">
         <div v-for="player in players" class="text-center">
           <div class="text-lg">{{ player.ign }}: {{ player.points }}</div>
           <form v-if="hosting" class="flex flex-col justify-between gap-2">
-            <input type="text" v-model="points"/>
             <button
               class="
                 p-2
@@ -185,13 +274,15 @@ export default {
       status: "menu",
       host: "None",
       hosting: false,
-      questionHidden: false,
+      buzzer: "",
       players: [],
       categories: [],
       question: {},
       level: 1,
       points: 0,
-      questionsJson: ""
+      questionsJson: "",
+      showSubmission: false,
+      submission: ""
     }
   },
   mounted() {
@@ -205,9 +296,10 @@ export default {
     this.on("show-categories", (categories) => {
       this.status = "categories"
       this.categories = categories
-      this.level = 1
+      this.buzzer = ""
     })
     this.on("show-question", (question) => {
+      this.level = 1
       this.status = "question"
       this.question = question
       this.points = question.points
@@ -216,8 +308,12 @@ export default {
     this.on("next-clue", () => {
       this.level++
     })
-    this.on("hide-question", (show) => {
-      this.questionHidden = show
+    this.on("buzzer", (player) => {
+      this.buzzer = player
+    })
+    this.on("toggle-submission", (show) => {
+      this.showSubmission = show
+      this.submission = ""
     })
   },
   methods: {
@@ -233,7 +329,30 @@ export default {
     },
     buzz: debounce(function() {
       this.emit("buzz")
-    }, 100)
+    }, 100),
+    submitAnswer(e) {
+      if (e.keyCode === 13) {
+        this.emit("submit", { submission: this.submission })
+        this.submission = ""
+      }
+    }
+  },
+  computed: {
+    jeopardyGridStyle() {
+      return {
+        "grid-template-columns": `repeat(${this.categories.length},minmax(0,1fr))`,
+        "grid-template-rows": `repeat(${this.categories[0].questions.length + 1},minmax(0,1fr))`
+      }
+    } 
   }
 }
 </script>
+
+<style scoped>
+#score-input {
+  width: 50px;
+}
+.h-100 {
+  height: 24rem;
+}
+</style>

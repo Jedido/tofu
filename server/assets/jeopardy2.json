@@ -1,186 +1,197 @@
-[{
-  "name": "ANIME GOBLINS",
-  "questions": [{
-    "points": 100,
-    "type": "image",
-    "question": "https://www.looper.com/img/gallery/this-is-the-most-powerful-monster-in-goblin-slayer/intro-1636995390.webp",
-    "answer": "Goblin Slayer"
-  }, {
-    "points": 200,
-    "type": "image",
-    "question": "https://static1.cbrimages.com/wordpress/wp-content/uploads/2021/04/Gobta-Winking-Slime-Diaries-Header.jpg",
-    "answer": "Tensura - Tensei Shitara Slime Datta no Ken (Gobta)"
-  }, {
-    "points": 300,
-    "type": "image",
-    "question": "https://static.wikia.nocookie.net/overlordmaruyama/images/d/d2/Goblin.png",
-    "answer": "Overlord"
-  }, {
-    "points": 400,
-    "type": "image",
-    "question": "https://i0.wp.com/notananime.wordpress.com/wp-content/uploads/2018/10/screen-shot-2018-10-21-at-12-26-46-am-e1540107268794.png?w=2118&h=&ssl=1",
-    "answer": "Sword Art Online (Underworld)"
-  }, {
-    "points": 500,
-    "type": "image",
-    "question": "https://i.imgur.com/xRms06B.jpg",
-    "answer": "Hai to Gensou no Grimgar"
-  }]
-}, {
-  "name": "FROM LOW TO HIGH",
-  "questions": [{
-    "points": 100,
-    "type": "text",
-    "question": "Number of Sides: Cylinder, Triangular Prism, Tetrahedron",
-    "answer": "Cylinder (3), Tetrahedron (4), Triangular Prism (5)"
-  }, {
-    "points": 200,
-    "type": "text",
-    "question": "Height: Eiffel Tower, St Louis Arch, Empire State Building",
-    "answer": "St. Louis Arch (630'), Eiffel Tower (984'), Empire State Building (1250')"
-  }, {
-    "points": 300,
-    "type": "text",
-    "question": "Release Year: Link's Awakening, Super Mario World, Pokemon Red",
-    "answer": "Super Mario World (1990), Link's Awakening (1993), Pokemon Red (1996)"
-  }, {
-    "points": 400,
-    "type": "text",
-    "question": "Deaths in the US (2023): Covid-19, Cancer, Heart Disease",
-    "answer": "Covid-19 (416893), Cancer (605213), Heart Disease (695547)"
-  }, {
-    "points": 500,
-    "type": "text",
-    "question": "Population: Michigan, Washington, Ohio",
-    "answer": "Washington, Michigan, Ohio"
-  }]
-}, {
-  "name": "LEAGUE OF LEGENDS CHAMPIONS",
-  "questions": [{
-    "points": 100,
-    "type": "tier",
-    "question": [{
-      "type": "text",
-      "question": "Passive: Echoing Flames"
-    }, {
-      "type": "text",
-      "question": "Title: The Dreadnought"
-    }, {
-      "type": "text",
-      "question": "\"Shotgun Knees\""
-    }],
-    "answer": "Urgot"
-  }, {
-    "points": 200,
-    "type": "tier",
-    "question": [{
-      "type": "text",
-      "question": "Has attack speed, move speed, armor, and health regeneration buffs"
-    }, {
-      "type": "text",
-      "question": "Inspired by a real myth"
-    }, {
+{
+  "num_rounds": 2,
+  "rounds": [[{
+    "name": "ANIME GOBLINS",
+    "questions": [{
+      "points": 100,
       "type": "image",
-      "question": "https://static.wikia.nocookie.net/leagueoflegends/images/7/75/Wukong_Warrior_Trickster.png"
-    }],
-    "answer": "Wukong"
-  }, {
-    "points": 300,
-    "type": "tier",
-    "question": [{
-      "type": "text",
-      "question": "The only champion in the Hirana Order"
+      "question": "https://www.looper.com/img/gallery/this-is-the-most-powerful-monster-in-goblin-slayer/intro-1636995390.webp",
+      "answer": "Goblin Slayer"
     }, {
-      "type": "text",
-      "question": "Uses spirit magic from the Freljord"
+      "points": 200,
+      "type": "image",
+      "question": "https://static1.cbrimages.com/wordpress/wp-content/uploads/2021/04/Gobta-Winking-Slime-Diaries-Header.jpg",
+      "answer": "Tensura - Tensei Shitara Slime Datta no Ken (Gobta)"
     }, {
-      "type": "text",
-      "question": "Has an ultimate skin"
-    }],
-    "answer": "Udyr"
-  }, {
-    "points": 400,
-    "type": "tier",
-    "question": [{
-      "type": "text",
-      "question": "In the past, given as hostage to a Darkin"
+      "points": 300,
+      "type": "image",
+      "question": "https://static.wikia.nocookie.net/overlordmaruyama/images/d/d2/Goblin.png",
+      "answer": "Overlord"
     }, {
-      "type": "text",
-      "question": "A friend of the pale sorceress, Leblanc"
+      "points": 400,
+      "type": "image",
+      "question": "https://i0.wp.com/notananime.wordpress.com/wp-content/uploads/2018/10/screen-shot-2018-10-21-at-12-26-46-am-e1540107268794.png?w=2118&h=&ssl=1",
+      "answer": "Sword Art Online (Underworld)"
     }, {
-      "type": "text",
-      "question": "With some blood sacrifices, he resurrected Sion"
-    }],
-    "answer": "Vladimir"
+      "points": 500,
+      "type": "image",
+      "question": "https://i.imgur.com/xRms06B.jpg",
+      "answer": "Hai to Gensou no Grimgar"
+    }]
   }, {
-    "points": 500,
-    "type": "tier",
-    "question": [{
+    "name": "FROM LOW TO HIGH",
+    "questions": [{
+      "points": 100,
       "type": "text",
-      "question": "Full Tilt"
+      "question": "Number of Sides: Cylinder, Triangular Prism, Tetrahedron",
+      "answer": "Cylinder (3), Tetrahedron (4), Triangular Prism (5)"
     }, {
+      "points": 200,
       "type": "text",
-      "question": "Enrolled at the Roseguard Academy"
+      "question": "Height: Eiffel Tower, St Louis Arch, Empire State Building",
+      "answer": "St. Louis Arch (630'), Eiffel Tower (984'), Empire State Building (1250')"
     }, {
+      "points": 300,
       "type": "text",
-      "question": "Ferromancy"
-    }],
-    "answer": "Rell"
-  }]
-}, {
-  "name": "CHINESE FATHER'S DAY",
-  "questions": [{
-    "points": 100,
-    "type": "text",
-    "question": "A baby's first words, or perhaps the Chinese for the figure hearing them.",
-    "answer": "Baba"
+      "question": "Release Year: Link's Awakening, Super Mario World, Pokemon Red",
+      "answer": "Super Mario World (1990), Link's Awakening (1993), Pokemon Red (1996)"
+    }, {
+      "points": 400,
+      "type": "text",
+      "question": "Deaths in the US (2023): Covid-19, Cancer, Heart Disease",
+      "answer": "Covid-19 (416893), Cancer (605213), Heart Disease (695547)"
+    }, {
+      "points": 500,
+      "type": "text",
+      "question": "Population: Michigan, Washington, Ohio",
+      "answer": "Washington, Michigan, Ohio"
+    }]
   }, {
-    "points": 200,
-    "type": "text",
-    "question": "A puzzle game where you play as an unidentified creature to push words to form the game's rules.",
-    "answer": "Baba is You"
+    "name": "LEAGUE OF LEGENDS CHAMPIONS",
+    "questions": [{
+      "points": 100,
+      "type": "tier",
+      "question": [{
+        "type": "text",
+        "question": "Passive: Echoing Flames"
+      }, {
+        "type": "text",
+        "question": "Title: The Dreadnought"
+      }, {
+        "type": "text",
+        "question": "\"Shotgun Knees\""
+      }],
+      "answer": "Urgot"
+    }, {
+      "points": 200,
+      "type": "tier",
+      "question": [{
+        "type": "text",
+        "question": "Has attack speed, move speed, armor, and health regeneration buffs"
+      }, {
+        "type": "text",
+        "question": "Inspired by a real myth"
+      }, {
+        "type": "image",
+        "question": "https://static.wikia.nocookie.net/leagueoflegends/images/7/75/Wukong_Warrior_Trickster.png"
+      }],
+      "answer": "Wukong"
+    }, {
+      "points": 300,
+      "type": "tier",
+      "question": [{
+        "type": "text",
+        "question": "The only champion in the Hirana Order"
+      }, {
+        "type": "text",
+        "question": "Uses spirit magic from the Freljord"
+      }, {
+        "type": "text",
+        "question": "Has an ultimate skin"
+      }],
+      "answer": "Udyr"
+    }, {
+      "points": 400,
+      "type": "tier",
+      "question": [{
+        "type": "text",
+        "question": "In the past, given as hostage to a Darkin"
+      }, {
+        "type": "text",
+        "question": "A friend of the pale sorceress, Leblanc"
+      }, {
+        "type": "text",
+        "question": "With some blood sacrifices, he resurrected Sion"
+      }],
+      "answer": "Vladimir"
+    }, {
+      "points": 500,
+      "type": "tier",
+      "question": [{
+        "type": "text",
+        "question": "Full Tilt"
+      }, {
+        "type": "text",
+        "question": "Enrolled at the Roseguard Academy"
+      }, {
+        "type": "text",
+        "question": "Ferromancy"
+      }],
+      "answer": "Rell"
+    }]
   }, {
-    "points": 300,
-    "type": "text",
-    "question": "A heroic individual who fought against the Forty Thieves, as recounted by the Genie to Aladdin.",
-    "answer": "Ali Baba"
+    "name": "CHINESE FATHER'S DAY",
+    "questions": [{
+      "points": 100,
+      "type": "text",
+      "question": "A baby's first words, or perhaps the Chinese for the figure hearing them.",
+      "answer": "Baba"
+    }, {
+      "points": 200,
+      "type": "text",
+      "question": "A puzzle game where you play as an unidentified creature to push words to form the game's rules.",
+      "answer": "Baba is You"
+    }, {
+      "points": 300,
+      "type": "text",
+      "question": "A heroic individual who fought against the Forty Thieves, as recounted by the Genie to Aladdin.",
+      "answer": "Ali Baba"
+    }, {
+      "points": 400,
+      "type": "text",
+      "question": "A Lebanese appetizer consisting of chopped eggplant, olive oil, seasonings, and tahini.",
+      "answer": "Baba Ganoush"
+    }, {
+      "points": 500,
+      "type": "text",
+      "question": "An enigmatic character from Slavic folklore, sometimes depicted as a nice old woman and sometimes an ugly, ferocious one.",
+      "answer": "Baba Yaga"
+    }]
   }, {
-    "points": 400,
-    "type": "text",
-    "question": "A Lebanese appetizer consisting of chopped eggplant, oline oil, seasonings, and tahini.",
-    "answer": "Baba Ganoush"
-  }, {
-    "points": 500,
-    "type": "text",
-    "question": "An enigmatic character from Slavic folklore, sometimes depicted as a nice old woman and sometimes an ugly, ferocious one.",
-    "answer": "Baba Yaga"
-  }]
-}, {
-  "name": "LET HIM COOK",
-  "questions": [{
-    "points": 100,
-    "type": "text",
-    "question": "A British celebrity chef known for television programs about competitive cookery and food.",
-    "answer": "Gordon Ramsay"
-  }, {
-    "points": 200,
-    "type": "text",
-    "question": "A furry fictional chef that may not be the one cooking, but is definitely pulling the strings.",
-    "answer": "Remy"
-  }, {
-    "points": 300,
-    "type": "text",
-    "question": "A chef and serial killer featured in a psychological thriller.",
-    "answer": "Hannibal Lecter"
-  }, {
-    "points": 400,
-    "type": "text",
-    "question": "An American chef that is also an author, Emmy award winner, and host of various shows on the Food Network.",
-    "answer": "Guy Fieri"
-  }, {
-    "points": 500,
-    "type": "text",
-    "question": "A British chef famous for his approachable cooking style and efforts to improve school food with campaigns like \"Feed Me Better.\"",
-    "answer": "Jamie Oliver"
-  }]
-}]
+    "name": "LET HIM COOK",
+    "questions": [{
+      "points": 100,
+      "type": "text",
+      "question": "A British celebrity chef known for television programs about competitive cookery and food.",
+      "answer": "Gordon Ramsay"
+    }, {
+      "points": 200,
+      "type": "text",
+      "question": "A furry fictional chef that may not be the one cooking, but is definitely pulling the strings.",
+      "answer": "Remy"
+    }, {
+      "points": 300,
+      "type": "text",
+      "question": "A chef and serial killer featured in a psychological thriller.",
+      "answer": "Hannibal Lecter"
+    }, {
+      "points": 400,
+      "type": "text",
+      "question": "An American chef that is also an author, Emmy award winner, and host of various shows on the Food Network.",
+      "answer": "Guy Fieri"
+    }, {
+      "points": 500,
+      "type": "text",
+      "question": "A British chef famous for his approachable cooking style and efforts to improve school food with campaigns like \"Feed Me Better.\"",
+      "answer": "Jamie Oliver"
+    }]
+  }], [{
+    "name": "CHEF",
+    "questions": [{
+      "points": "Final Question!",
+      "type": "text",
+      "question": "A British chef famous for his approachable cooking style and efforts to improve school food with campaigns like \"Feed Me Better.\"",
+      "answer": "Jamie Oliver"
+    }]
+  }]]
+}

@@ -1,5 +1,8 @@
 <template>
-  <div v-if="question.type === 'image'" class="h-full col-span-2">
+  <div v-if="!!buzzer" class="flex justify-center items-center h-full text-center">
+    {{ buzzer }} buzzed in!
+  </div>
+  <div v-else-if="question.type === 'image'" class="h-full col-span-2">
     <div v-if="!preload && level <= 1" class="flex justify-center items-center text-center h-full">Waiting for the host to continue...</div>
     <img v-show="preload || level > 1" class="m-auto h-full" :src="question.question" />
   </div>
@@ -17,7 +20,8 @@ export default {
   props: {
     question: Object,
     level: Number,
-    preload: Boolean
+    preload: Boolean,
+    buzzer: String
   },
   computed: {
     hints() {

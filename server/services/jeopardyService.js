@@ -14,6 +14,10 @@ class JeopardyService extends GameService {
       "jeopardy-display-categories": this.displayCategories.bind(this),
       "jeopardy-display-question": this.displayQuestion.bind(this),
       "jeopardy-buzz": this.broadcastBuzzer.bind(this),
+      "jeopardy-next-round": this.nextRound.bind(this),
+      "jeopardy-show-submission": this.showSubmission.bind(this),
+      "jeopardy-submit": this.submit.bind(this),
+      "jeopardy-get-submissions": this.revealSubmissions.bind(this),
       "disconnect": this.removePlayer.bind(this)
     }
     // responses
@@ -22,13 +26,15 @@ class JeopardyService extends GameService {
     this.showCategories = "jeopardy-show-categories"
     this.showQuestion = "jeopardy-show-question"
     this.showNextClue = "jeopardy-next-clue"
-    this.hideQuestion = "jeopardy-hide-question"
+    this.toggleSubmission = "jeopardy-toggle-submission"
+    this.buzzer = "jeopardy-buzzer"
     // TODO: Allow a selection
     this.host = {
       id: null,
       ign: "None"
     }
     this.players = []
+    this.activePlayer = ""
   }
 
   buildPlayerInfo(socket) {
@@ -76,10 +82,15 @@ class JeopardyService extends GameService {
     }
   }
 
-  startGame({ categories }, socket) {
-    this.categories = JSON.parse(categories)
-    // save the file
-    this.displayCategories(categories, socket)
+  startGame({ jeopardy }, socket) {
+    try {
+      this.game = JSON.parse(jeopardy)
+      this.round = 0
+      this.categories = this.game.rounds[this.round]
+      this.displayCategories(jeopardy, socket)
+    } catch (error) {
+      socket.emit("log", `An error occurred while trying to start the game: ${error}`)
+    }
   }
 
   addPoints({ id, points }, socket) {
@@ -87,7 +98,8 @@ class JeopardyService extends GameService {
       return
     }
     let index = this.players.findIndex(player => player.id === id)
-    this.players[index].points += points
+    this.players[index].points += parseInt(points)
+    socket.emit("log", `${points} points to ${this.players[index].ign}`)
     this.broadcastPlayerUpdate()
   }
 
@@ -109,6 +121,19 @@ class JeopardyService extends GameService {
     this.broadcastFn(this.showCategories, categories)
   }
 
+  nextRound(_, socket) {
+    if (this.host.id !== socket.id) {
+      return
+    }
+    if (this.round + 1 < this.game.num_rounds) {
+      this.round++
+      this.categories = this.game.rounds[this.round]
+      this.displayCategories(this.round, socket)
+    } else {
+      socket.emit("log", "You are already on the final round!")
+    }
+  }
+
   displayQuestion({ category, points }, socket) {
     if (this.host.id !== socket.id) {
       return
@@ -124,16 +149,49 @@ class JeopardyService extends GameService {
     socket.emit("log", `${category} for ${question.points}: ${question.answer}`)
   }
 
+  showSubmission({ show }, socket) {
+    if (this.host.id !== socket.id) {
+      return
+    }
+    this.broadcastFn(this.toggleSubmission, show)
+    if (show) {
+      this.submissions = {}
+      this.players.forEach(player => {
+        this.submissions[player.id] = []
+      })
+    }
+  }
+
+  submit({ submission }, socket) {
+    this.submissions[socket.id].unshift(submission)
+  }
+
+  revealSubmissions(_, socket) {
+    if (this.host.id !== socket.id) {
+      return
+    }
+    this.players.forEach(player => {
+      const ign = player.ign
+      const answers = this.submissions[player.id]
+      socket.emit("log", `${ign} submitted: ${answers.join(", ")}`)
+    })
+  }
+
   broadcastBuzzer(_, socket) {
-    let player = this.players.findIndex(player => player.id === socket.id)
-    if (player > -1) {
-      this.players[player].ign = socket.ign
-      this.broadcastFn("log", `${socket.ign} buzzed in`)
-      this.broadcastFn(this.hideQuestion, true)
-    } else if (this.host.id === socket.id) {
-      socket.emit("log", `Now accepting responses`)
-      this.broadcastFn(this.hideQuestion, false)
-      this.broadcastFn(this.showNextClue)
+    if (this.host.id === socket.id) {
+      if (this.activePlayer) {
+        this.activePlayer = ""
+        this.broadcastFn(this.buzzer, this.activePlayer)
+      } else {
+        this.broadcastFn(this.showNextClue)
+      }
+    } else if (!this.activePlayer) {
+      let player = this.players.findIndex(player => player.id === socket.id)
+      if (player > -1) {
+        this.players[player].ign = socket.ign
+        this.activePlayer = socket.ign
+        this.broadcastFn(this.buzzer, this.activePlayer)
+      }
     }
   }
 
