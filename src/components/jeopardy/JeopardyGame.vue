@@ -78,14 +78,12 @@
             class="
               focus:outline-none
               text-amber-50
-              bg-emerald-600
               hover:bg-emerald-500
               active:bg-emerald-800
-              disabled:bg-gray-300
               rounded
             "
+            :class="[question.completed ? 'bg-gray-300' : 'bg-emerald-600']"
             @click.prevent="openQuestion(category.name, question.points)"
-            :disabled="question.completed"
           >
             {{ question.points }}
           </button>
