@@ -1,6 +1,5 @@
 <template>
   <div id="jeopardy" class="select-none text-gray-700">
-    <h2 class="text-2xl text-center mb-2">Jeopardy!</h2>
     <div class="grid grid-cols-6 gap-3" v-if="status === 'menu'">
       <button
         class="
@@ -187,6 +186,7 @@
             v-model="submission" 
             @keyup="submitAnswer"
           />
+          <p v-if="lastSubmission" class="mx-auto">Your Response: {{ lastSubmission }}</p>
         </div>
         <button
           v-else
@@ -280,7 +280,8 @@ export default {
       points: 0,
       questionsJson: "",
       showSubmission: false,
-      submission: ""
+      submission: "",
+      lastSubmission: ""
     }
   },
   mounted() {
@@ -311,6 +312,7 @@ export default {
     })
     this.on("toggle-submission", (show) => {
       this.showSubmission = show
+      this.lastSubmission = ""
       this.submission = ""
     })
   },
@@ -331,6 +333,7 @@ export default {
     submitAnswer(e) {
       if (e.keyCode === 13) {
         this.emit("submit", { submission: this.submission })
+        this.lastSubmission = this.submission
         this.submission = ""
       }
     }
