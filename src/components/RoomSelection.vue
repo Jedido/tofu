@@ -25,7 +25,8 @@ export default {
         { name: "Example Game", scene: "example" },
         { name: "Gacha Game", scene: "gacha" },
         { name: "Watch Together", scene: "watch" },
-        { name: "Jeopardy!", scene: "jeopardy" }
+        { name: "Jeopardy!", scene: "jeopardy" },
+        { name: "Squaredle", scene: "squaredle" },
       ],
       room: "",
     }

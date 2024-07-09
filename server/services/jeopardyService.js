@@ -141,6 +141,7 @@ class JeopardyService extends GameService {
     let index = this.categories.findIndex(c => c.name === category)
     let question = this.categories[index].questions.find(question => question.points === points)
     question.completed = true
+    this.activePlayer = ""
     this.broadcastFn(this.showQuestion, {
       question: question.question,
       points: question.points,

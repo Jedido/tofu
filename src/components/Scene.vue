@@ -25,6 +25,11 @@
       v-else-if="this.$store.state.scene === 'jeopardy'"
       :socket="socket"
     />
+    <SquaredleGame
+      v-else-if="this.$store.state.scene === 'squaredle'"
+      :socket="socket"
+      :game-width="$store.state.sceneWidth"
+    />
     <RoomSelection v-else v-on:launch-game="launchGame" />
   </main>
 </template>
@@ -53,7 +58,8 @@ export default {
     WatchGame: defineAsyncComponent(() => import("./watch/WatchGame.vue")),
     JeopardyGame: defineAsyncComponent(() =>
       import("./jeopardy/JeopardyGame.vue")
-    )
+    ),
+    SquaredleGame: defineAsyncComponent(() => import("./squaredle/SquaredleGame.vue")),
   },
   data() {
     return {

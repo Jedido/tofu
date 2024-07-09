@@ -1,0 +1,305 @@
+{
+  "num_rounds": 3,
+  "rounds": [[{
+    "name": "COMPUTER GAMES",
+    "questions": [{
+      "points": 100,
+      "type": "text",
+      "question": "A horror game where the players sell scrap to try to meet their quota",
+      "answer": "Lethal Company"
+    }, {
+      "points": 200,
+      "type": "text",
+      "question": "A delicious idle game. Don't let your grandma(s) down!",
+      "answer": "Cookie Clicker"
+    }, {
+      "points": 300,
+      "type": "text",
+      "question": "A game about \"cave-diving\", or, as some might put it, this",
+      "answer": "Spelunky"
+    }, {
+      "points": 400,
+      "type": "text",
+      "question": "A casual RPG where the player fishes in the daytime and serves sushi at night",
+      "answer": "Dave the Diver"
+    }, {
+      "points": 500,
+      "type": "text",
+      "question": "A roguelite game that has popularized the \"bullet heaven\" genre in 2022, contrary to its hellish setting",
+      "answer": "Vampire Survivors"
+    }]
+  }, {
+    "name": "FINISH THE LYRICS",
+    "questions": [{
+      "points": 100,
+      "type": "text",
+      "question": "Yesterday, all my troubles ______",
+      "answer": "Seemed so far away (Beatles)"
+    }, {
+      "points": 200,
+      "type": "text",
+      "question": "This is ten percent luck, twenty percent skill, fifteen percent ______________",
+      "answer": "Concentrated power of will (Linkin Park)"
+    }, {
+      "points": 300,
+      "type": "text",
+      "question": "And I said, Romeo, save me, ______________",
+      "answer": "I've been feeling so alone (Taylor Swift)"
+    }, {
+      "points": 400,
+      "type": "text",
+      "question": "But my breath fogged up the glass, so __________________",
+      "answer": "I drew a new face and I laughed (Jason Mraz)"
+    }, {
+      "points": 500,
+      "type": "text",
+      "question": "Just in time, I'm so glad you have ______________ like me",
+      "answer": "A one track mind (Train)"
+    }]
+  }, {
+    "name": "FISH",
+    "questions": [{
+      "points": 100,
+      "type": "text",
+      "question": "A medial, unpaired fin that is located on the midline of the backs of some fish",
+      "answer": "Dorsal Fin"
+    }, {
+      "points": 200,
+      "type": "image",
+      "question": "https://www.sushi-pedia.com/static/07be0a9411a4f6ac429adf1d41c3d4fe/a3699/sushi-aji-horse-mackerel-nigiri-opener.avif",
+      "answer": "Horse Mackerel - This fish is known in Japanese as aji"
+    }, {
+      "points": 300,
+      "type": "text",
+      "question": "The production and emission of light by certain marine creatures.",
+      "answer": "Bioluminescence"
+    }, {
+      "points": 400,
+      "type": "image",
+      "question": "https://th-thumbnailer.cdn-si-edu.com/XT9DZ4QTIKxvIId2VlpjWBkFZrw=/fit-in/1072x0/filters:focal(436x361:437x362)/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer_public/8b/2b/8b2baae0-c2c7-4f0b-bcee-adb24b9362bf/psychrolutes_phrictus_1.jpg",
+      "answer": "Blobfish - A deep sea creature once crowned the world's ugliest animal"
+    }, {
+      "points": 500,
+      "type": "text",
+      "question": "A nickname for the Patagonion toothfish, especially when cooked into this popular seafood dish.",
+      "answer": "Chilean Sea Bass"
+    }]
+  }, {
+    "name": "COLOR THEORY",
+    "questions": [{
+      "points": 100,
+      "type": "text",
+      "question": "The lowest frequency of light visible to humans",
+      "answer": "Red"
+    }, {
+      "points": 200,
+      "type": "text",
+      "question": "Before Queen Victoria, red was the most popular dress color for this occasion",
+      "answer": "Wedding"
+    }, {
+      "points": 300,
+      "type": "text",
+      "question": "Due to its rarity, this color was known as the color of royalty well into the 1800s",
+      "answer": "Purple"
+    }, {
+      "points": 400,
+      "type": "text",
+      "question": "This virtue is what the color red in the US flag represents",
+      "answer": "Courage"
+    }, {
+      "points": 500,
+      "type": "text",
+      "question": "Studies have shown that certain hues of this color can actually reduce aggression",
+      "answer": "Pink"
+    }]
+  }, {
+    "name": "-PHOBIA",
+    "questions": [{
+      "points": 100,
+      "type": "text",
+      "question": "Fear of heights",
+      "answer": "Acrophobia"
+    }, {
+      "points": 200,
+      "type": "text",
+      "question": "Fear of men",
+      "answer": "Androphobia"
+    }, {
+      "points": 300,
+      "type": "text",
+      "question": "Fear of children",
+      "answer": "Pedophobia"
+    }, {
+      "points": 400,
+      "type": "text",
+      "question": "Fear of dentists",
+      "answer": "Dentophobia"
+    }, {
+      "points": 500,
+      "type": "text",
+      "question": "Fear of the dark",
+      "answer": "Noctiphobia"
+    }]
+  }], [{
+    "name": "GAME SYNONYMS",
+    "questions": [{
+      "points": 200,
+      "type": "text",
+      "question": "Burnt",
+      "answer": "Overcooked"
+    }, {
+      "points": 400,
+      "type": "text",
+      "question": "High chance of precipitation",
+      "answer": "Risk of Rain"
+    }, {
+      "points": 600,
+      "type": "text",
+      "question": "Wildlife junction",
+      "answer": "Animal Crossing"
+    }, {
+      "points": 800,
+      "type": "text",
+      "question": "Kill the Steeple",
+      "answer": "Slay the Spire"
+    }, {
+      "points": 1000,
+      "type": "text",
+      "question": "It is my shift to watch",
+      "answer": "I'm on Observation Duty"
+    }]
+  }, {
+    "name": "ANIMEGRAM",
+    "questions": [{
+      "points": 200,
+      "type": "text",
+      "question": "ET;SGSIATEN",
+      "answer": "Steins;Gate"
+    }, {
+      "points": 400,
+      "type": "text",
+      "question": "LCEAHB",
+      "answer": "Bleach"
+    }, {
+      "points": 600,
+      "type": "text",
+      "question": "ATGMNIA",
+      "answer": "Gintama"
+    }, {
+      "points": 800,
+      "type": "text",
+      "question": "AVIGALNAN DS",
+      "answer": "Vinland Saga"
+    }, {
+      "points": 1000,
+      "type": "text",
+      "question": "DETOEEVLREANGI VR",
+      "answer": "Violet Evergarden"
+    }]
+  }, {
+    "name": "MODERN SLANG",
+    "questions": [{
+      "points": 200,
+      "type": "text",
+      "question": "Term used to describe something that is exceptional, impressive, or of high quality. Often referring to a catchy or energetic piece of music. \"That song is a ______\"",
+      "answer": "Banger"
+    }, {
+      "points": 400,
+      "type": "text",
+      "question": "Extremely good, excellent. Also used to describe good food. \"This salad is ______\"",
+      "answer": "Bussin'"
+    }, {
+      "points": 600,
+      "type": "text",
+      "question": "Used to describe someone or something that is over-the-top, excessive, or dramatic in behavior, appearance, or actions.",
+      "answer": "Extra"
+    }, {
+      "points": 800,
+      "type": "text",
+      "question": "When something of value is underestimated or overlooked but is deserving of attention. \"People always ______ this song\"",
+      "answer": "Sleep on"
+    }, {
+      "points": 1000,
+      "type": "text",
+      "question": "Used to describe the state of a person losing touch with the real world as a result of the consumption of meaningless, chronically online, hyperstimulating content.",
+      "answer": "Brainrot"
+    }]
+  }, {
+    "name": "SOURCE YOUR MEME",
+    "questions": [{
+      "points": 200,
+      "type": "image",
+      "question": "https://i.kym-cdn.com/photos/images/newsfeed/001/449/491/cb0.png",
+      "answer": "The Office"
+    }, {
+      "points": 400,
+      "type": "image",
+      "question": "https://i.kym-cdn.com/photos/images/original/002/191/049/031.jpg",
+      "answer": "The Incredibles"
+    }, {
+      "points": 600,
+      "type": "image",
+      "question": "https://i.kym-cdn.com/photos/images/newsfeed/001/697/668/738.jpg",
+      "answer": "Friends"
+    }, {
+      "points": 800,
+      "type": "image",
+      "question": "https://i.kym-cdn.com/photos/images/newsfeed/001/438/402/00a.jpg",
+      "answer": "Chappelle's Show (Dave Chappelle)"
+    }, {
+      "points": 1000,
+      "type": "image",
+      "question": "https://i.kym-cdn.com/photos/images/newsfeed/001/989/992/e2c.png",
+      "answer": "Coraline"
+    }]
+  }, {
+    "name": "SUBREDDIT TOP POST",
+    "questions": [{
+      "points": 200,
+      "type": "text",
+      "question": "People who haven't pooped in 2019 yet, why are you still holding on to last years shit?",
+      "answer": "r/askreddit"
+    }, {
+      "points": 400,
+      "type": "text",
+      "question": "Whoever created the tradition of not seeing the bride in the wedding dress beforehand saved countless husbands everywhere from hours of dress shopping and will forever be a hero to all men.",
+      "answer": "r/showerthoughts"
+    }, {
+      "points": 600,
+      "type": "image",
+      "question": "https://i.redd.it/5ugttvttk3a31.jpg",
+      "answer": "Captioned: Take your time, you got this - r/gaming"
+    }, {
+      "points": 800,
+      "type": "image",
+      "question": "https://i.redd.it/b15afrw7i2q41.jpg",
+      "answer": "Caught our Japanese exchange student about to drink this because it says “soda” and has fruit on the label - r/forbiddensnacks"
+    }, {
+      "points": 1000,
+      "type": "image",
+      "question": "https://i.redd.it/sja6jlta3oz21.png",
+      "answer": "Petition to change the icon for this subreddit to this - r/dontdeadopeninside"
+    }]
+  }],
+  [{
+    "name": "SEATTLE",
+    "questions": [{
+      "points": "Final Question!",
+      "type": "tier",
+      "question": [{
+        "type": "text",
+        "question": "A: Motto - The City of Goodwill"
+      }, {
+        "type": "text",
+        "question": "B: Song - Seattle the Peerless City"
+      }, {
+        "type": "text",
+        "question": "C: Bird - American Goldfinch"
+      }, {
+        "type": "text",
+        "question": "D: None of the Above"
+      }],
+      "answer": "C"
+    }]
+  }]]
+}

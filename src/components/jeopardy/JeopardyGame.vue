@@ -49,7 +49,7 @@
       </div>
       <form v-if="hosting" class="col-span-6 flex flex-col">
         <p class="mb-2">Questions</p>
-        <textarea type="text" class="font-mono text-sm" rows="24" cols="60" v-model="questionsJson">
+        <textarea type="text" class="font-mono text-sm" rows="24" cols="30" v-model="questionsJson">
         </textarea>
         <button
           class="
@@ -355,5 +355,15 @@ export default {
 }
 .h-100 {
   height: 24rem;
+}
+
+@media (max-width: 768px) {
+  .h-100 {
+    height: 16rem;
+  }
+  .py-4 {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
 }
 </style>
