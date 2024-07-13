@@ -6,28 +6,30 @@
     }"
   >
     <div id="logs-container">
-      <div id="logs-content" v-if="!$store.state.room">
-        <form>
-          <label>
-            <p class="text-lg">Join with a Room Code</p>
-            <input
-              v-model="room"
-              type="text"
-              maxlength="5"
-              spellcheck="false"
-              class="outline-none"
-            />
-          </label>
-          <button class="border-2 border-emerald-500 rounded hover:border-emerald-400 mt-3 mx-auto" @click.prevent="joinRoom()">Join</button>
-        </form>
-      </div>
-      <div id="logs-content" content="flex flex-col" v-else>
-        <p>
-          Room: {{ $store.state.room }}
-          <button class="border-2 border-amber-500 rounded hover:border-amber-400 mt-3 mx-auto" @click="leaveRoom()">Leave Room</button>
-        </p>
-        <h3>Event Log</h3>
-        <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
+      <div id="logs-content" class="flex flex-col overflow-auto border-2">
+        <template v-if="!$store.state.room">
+          <form>
+            <label>
+              <p class="text-lg">Join with a Room Code</p>
+              <input
+                v-model="room"
+                type="text"
+                maxlength="5"
+                spellcheck="false"
+                class="outline-none"
+              />
+            </label>
+            <button class="border-2 border-emerald-500 rounded hover:border-emerald-400 mt-3 mx-auto" @click.prevent="joinRoom()">Join</button>
+          </form>
+        </template>
+        <template v-else>
+          <p>
+            Room: {{ $store.state.room }}
+            <button class="border-2 border-amber-500 rounded hover:border-amber-400 mt-3 mx-auto" @click="leaveRoom()">Leave Room</button>
+          </p>
+          <h3>Event Log</h3>
+          <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
+        </template>
       </div>
     </div>
   </div>
@@ -89,9 +91,9 @@ export default {
   display: block;
   box-sizing: border-box;
   height: 100%;
+  background: white;
 }
 #logs-content {
-  background: white;
   box-sizing: border-box;
   padding: 12px;
   height: 100%;

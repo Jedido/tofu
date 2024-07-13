@@ -61,8 +61,12 @@ class SquaredleService extends GameService {
       this.answers = new Map()
       for (let i = 0; i < size; i++) {
         this.board[i] = []
-        this.instanceCount[i] = new Array(size).fill(0)
-        this.startingCount[i] = new Array(size).fill(0)
+        this.instanceCount[i] = []
+        this.startingCount[i] = []
+        for (let j = 0; j < size; j++) {
+          this.instanceCount[i][j] = 0
+          this.startingCount[i][j] = 0
+        }
       }
       const startingWord = startingWords[Math.floor(Math.random() * startingWords.length)]
       const ox = Math.floor(Math.random() * size)
@@ -76,15 +80,16 @@ class SquaredleService extends GameService {
 
       for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
-          if (!this.instanceCount[i][j]) {
+          if (!this.board[i][j]) {
             this.board[i][j] = this.getRandomLetter()
           }
         }
       }
-    } while (!this.solve() || Array.from(this.answers.keys()).length > 80);
+    } while (!this.solve() || Array.from(this.answers.keys()).length > size * size * size);
     const answer = Array.from(this.answers.keys())
     answer.sort()
     console.log(JSON.stringify(answer))
+    this.gameStatus = "ongoing"
     this.broadcastFn(this.boardEvent, this.getState())
   }
 
@@ -209,7 +214,9 @@ class SquaredleService extends GameService {
   }
 
   requestBoard(_, socket) {
-    socket.emit(this.boardEvent, this.getState())
+    if (this.gameStatus !== "menu") {
+      socket.emit(this.boardEvent, this.getState())
+    }
   }
 
   getState() {

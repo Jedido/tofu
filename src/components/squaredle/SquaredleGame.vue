@@ -18,10 +18,10 @@
       :style="{
         'grid-template-rows': `repeat(${size}, 1fr)`,
         'grid-template-columns': `repeat(${size}, 1fr)`,
-        fontSize: `${cellSize * 0.75}px`,
-        lineHeight: `${cellSize * 0.75}px`,
-        height: `${gameWidth / 2 - 24}px`,
-        width: `${gameWidth / 2 - 24}px`,
+        fontSize: `${cellSize * 1.2}px`,
+        lineHeight: `${cellSize * 1.2}px`,
+        height: `${boardWidth - 24}px`,
+        width: `${boardWidth - 24}px`,
         gap: `${cellSize / 10}px`
       }"
     >
@@ -31,10 +31,10 @@
         :class="[highlightedIndexes.includes(index) ? 'bg-amber-900 text-amber-200 border-amber-200' : (cell.instances ? 'bg-amber-200 hover:bg-amber-300 border-amber-300' : 'bg-gray-300 border-gray-400 text-gray-400')]"
       >
         {{ cell.letter }}
-        <p v-if="cell.starts && completionRate > 0.3" class="absolute bottom-0 left-0 text-emerald-500" :style="{ fontSize: `${cellSize / 5}px`, lineHeight: `${cellSize / 5}px`, marginLeft: `${cellSize / 24}px` }">
+        <p v-if="cell.starts && completionRate > 0.3" class="absolute bottom-0 left-0 text-emerald-500" :style="{ fontSize: `${cellSize / 2}px`, lineHeight: `${cellSize / 2}px`, marginLeft: `${cellSize / 10}px` }">
           {{ cell.starts }}
         </p>
-        <p v-if="cell.instances && completionRate > 0.45" class="absolute bottom-0 right-0 text-gray-400" :style="{ fontSize: `${cellSize / 5}px`, lineHeight: `${cellSize / 5}px`, marginRight: `${cellSize / 24}px` }">
+        <p v-if="cell.instances && completionRate > 0.45" class="absolute bottom-0 right-0 text-gray-400" :style="{ fontSize: `${cellSize / 2}px`, lineHeight: `${cellSize / 2}px`, marginRight: `${cellSize / 10}px` }">
           {{ cell.instances }}
         </p>
       </button>
@@ -79,9 +79,21 @@
         <p v-for="word in bonusWords">{{ word }}</p>
       </div>
     </div>
-    <button class="bg-emerald-600 p-3 my-2 border border-2 border-emerald-800 text-amber-50 rounded" @click="emit('init', { size: 4 })">
-      New Game
-    </button>
+    <div class="grid grid-cols-6 p-3 my-2 gap-2">
+        <div class="col-span-4 flex flex-col py-2">
+          <div>Board Size: {{ boardSize }}</div>
+          <input
+            v-model="boardSize"
+            type="range"
+            min="3"
+            max="9"
+            class="slider"
+          />
+        </div>
+        <button class="bg-emerald-600 border border-2 border-emerald-800 text-amber-50 rounded col-span-2" @click="emit('init', { size: boardSize })">
+          New Game
+        </button>
+    </div>
   </div>
 </template>
 
@@ -102,7 +114,8 @@ export default {
       wordsByLength: {},
       bonusWords: [],
       highlightedIndexes: [],
-      size: 0,
+      boardSize: 4,
+      size: 4,
       answer: "",
       lastGuess: "",
       guessType: ""
@@ -113,6 +126,7 @@ export default {
       this.foundWords = foundWords
       this.allWords = allWords
       this.wordsByLength = {}
+      this.size = board.length
       for (const word of Object.keys(allWords)) {
         const len = word.length
         if (!this.wordsByLength[len]) {
@@ -124,7 +138,7 @@ export default {
         list.sort()
       }
       this.board = board.reduce((acc, cur) => acc.concat(cur), [])
-      this.size = board.length
+      console.log(this.board)
     })
     this.on("reveal-word", (word) => {
       if (!this.foundWords.includes(word)) {
@@ -146,6 +160,7 @@ export default {
       this.lastGuess = word
       this.guessType = guessType
     })
+    this.emit("get")
   },
   methods: {
     inputKeydown(e) {
@@ -247,8 +262,14 @@ export default {
     }
   },
   computed: {
+    boardWidth() {
+      if (this.gameWidth < 768) {
+        return this.gameWidth * 2 / 3
+      }
+      return this.gameWidth / 2
+    },
     cellSize() {
-      return (this.gameWidth / 2 - 48) / this.size - 4
+      return (this.boardWidth / 2 - 48) / this.size - 4
     },
     completionRate() {
       return this.foundWords.length / Object.keys(this.allWords).length
@@ -257,4 +278,38 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.slider {
+  margin-top: 8px;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #f3f4f6;
+  border: 1px solid #9ca3af;
+  outline: none;
+  transition: background-color 0.2s;
+}
+
+.slider:hover {
+  background: #e5e7eb;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #10b981;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #10b981;
+  cursor: pointer;
+}
+</style>
