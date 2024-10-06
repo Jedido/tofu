@@ -99,7 +99,7 @@ class JeopardyService extends GameService {
     }
     let index = this.players.findIndex(player => player.id === id)
     this.players[index].points += parseInt(points)
-    socket.emit("log", `${points} points to ${this.players[index].ign}`)
+    socket.emit("log", `${points} points to ${this.players[index].ign} (total: ${this.players[index].points})`)
     this.broadcastPlayerUpdate()
   }
 
