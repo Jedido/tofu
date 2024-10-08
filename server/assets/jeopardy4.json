@@ -1,0 +1,235 @@
+{
+    "num_rounds": 2,
+    "rounds": [
+        [
+            {
+                "name": "OK THEN",
+                "questions": [
+                    {
+                        "points": 100,
+                        "type": "text",
+                        "question": "What is the last word of this sentence?",
+                        "answer": "sentence"
+                    },
+                    {
+                        "points": 200,
+                        "type": "text",
+                        "question": "How many months in the year have 28 days?",
+                        "answer": "12, all of them"
+                    },
+                    {
+                        "points": 300,
+                        "type": "text",
+                        "question": "What is something you never eat for breakfast?",
+                        "answer": "Lunch, Dinner"
+                    },
+                    {
+                        "points": 400,
+                        "type": "text",
+                        "question": "Johnny's mother had three children. The first child was named April The second child was named May. What was the third child's name.",
+                        "answer": "No"
+                    },
+                    {
+                        "points": 500,
+                        "type": "text",
+                        "question": "What tastes better than it smells?",
+                        "answer": "Tongue"
+                    }
+                ]
+            },
+            {
+                "name": "SPELL BEE",
+                "questions": [
+                    {
+                        "points": 100,
+                        "type": "text",
+                        "question": "text here",
+                        "answer": "Word"
+                    },
+                    {
+                        "points": 200,
+                        "type": "text",
+                        "question": "🐔",
+                        "answer": "Chicken, Rooster"
+                    },
+                    {
+                        "points": 300,
+                        "type": "text",
+                        "question": "The song by Fall Out Boy, \"Thanks for the Memories\"",
+                        "answer": "Thnks fr th Mmrs"
+                    },
+                    {
+                        "points": 400,
+                        "type": "text",
+                        "question": "Do what this category asked you to do.",
+                        "answer": "BEE"
+                    },
+                    {
+                        "points": 500,
+                        "type": "zoom",
+                        "question": {
+                          "image": "https://i.natgeofe.com/n/4f5aaece-3300-41a4-b2a8-ed2708a0a27c/domestic-dog_thumb_square.jpg",
+                          "x": 0.5,
+                          "y": 0.5,
+                          "scale": 0.01,
+                          "speed": 10
+                        },
+                        "answer": "DOG"
+                    }
+                ]
+            },
+            {
+                "name": "AUTO BATTLER",
+                "questions": [
+                    {
+                        "points": 100,
+                        "type": "text",
+                        "question": "Auto battler that started the trend",
+                        "answer": "Dota's Auto Chess"
+                    },
+                    {
+                        "points": 200,
+                        "type": "text",
+                        "question": "Riot Games' Auto Battler",
+                        "answer": "Team Fight Tactics"
+                    },
+                    {
+                        "points": 300,
+                        "type": "text",
+                        "question": "An auto battler that is derived from a popular online turn-based card game.",
+                        "answer": "Hearthstone Battlegrounds"
+                    },
+                    {
+                        "points": 400,
+                        "type": "text",
+                        "question": "An auto battler on Steam that features inventory management.",
+                        "answer": "Backpack Battles"
+                    },
+                    {
+                        "points": 500,
+                        "type": "tier",
+                        "question": [
+                            {
+                                "type": "text",
+                                "question": "Dog"
+                            },
+                            {
+                                "type": "text",
+                                "question": "Team Wood Games"
+                            },
+                            {
+                                "type": "text",
+                                "question": "Pig"
+                            },
+                            {
+                                "type": "text",
+                                "question": "🐢"
+                            }
+                        ],
+                        "answer": "Super Auto Pets"
+                    }
+                ]
+            },
+            {
+                "name": "COLOR THEORY",
+                "questions": [
+                    {
+                        "points": 100,
+                        "type": "text",
+                        "question": "The lowest frequency of light visible to humans",
+                        "answer": "Red"
+                    },
+                    {
+                        "points": 200,
+                        "type": "text",
+                        "question": "Before Queen Victoria, red was the most popular dress color for this occasion",
+                        "answer": "Wedding"
+                    },
+                    {
+                        "points": 300,
+                        "type": "text",
+                        "question": "Due to its rarity, this color was known as the color of royalty well into the 1800s",
+                        "answer": "Purple"
+                    },
+                    {
+                        "points": 400,
+                        "type": "text",
+                        "question": "This virtue is what the color red in the US flag represents",
+                        "answer": "Courage"
+                    },
+                    {
+                        "points": 500,
+                        "type": "text",
+                        "question": "Studies have shown that certain hues of this color can actually reduce aggression",
+                        "answer": "Pink"
+                    }
+                ]
+            },
+            {
+                "name": "GAME SCREENSHOTS",
+                "questions": [
+                    {
+                        "points": 100,
+                        "type": "blur",
+                        "question": "Fear of heights",
+                        "answer": "Acrophobia"
+                    },
+                    {
+                        "points": 200,
+                        "type": "blur",
+                        "question": "Fear of men",
+                        "answer": "Androphobia"
+                    },
+                    {
+                        "points": 300,
+                        "type": "blur",
+                        "question": "Fear of children",
+                        "answer": "Pedophobia"
+                    },
+                    {
+                        "points": 400,
+                        "type": "blur",
+                        "question": "Fear of dentists",
+                        "answer": "Dentophobia"
+                    },
+                    {
+                        "points": 500,
+                        "type": "blur",
+                        "question": "Fear of the dark",
+                        "answer": "Noctiphobia"
+                    }
+                ]
+            }
+        ],
+        [
+            {
+                "name": "SEATTLE",
+                "questions": [
+                    {
+                        "points": "Final Question!",
+                        "type": "tier",
+                        "question": [
+                            {
+                                "type": "text",
+                                "question": "A: Motto - The City of Goodwill"
+                            },
+                            {
+                                "type": "text",
+                                "question": "B: Song - Seattle the Peerless City"
+                            },
+                            {
+                                "type": "text",
+                                "question": "C: Bird - American Goldfinch"
+                            },
+                            {
+                                "type": "text",
+                                "question": "D: None of the Above"
+                            }
+                        ],
+                        "answer": "C"
+                    }
+                ]
+            }
+        ]
+    ]
+}

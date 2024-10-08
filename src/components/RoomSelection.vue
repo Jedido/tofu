@@ -27,6 +27,7 @@ export default {
         { name: "Watch Together", scene: "watch" },
         { name: "Jeopardy!", scene: "jeopardy" },
         { name: "Squaredle", scene: "squaredle" },
+        { name: "Sandbox", scene: "sandbox" }
       ],
       room: "",
     }

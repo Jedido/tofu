@@ -84,7 +84,8 @@ class JeopardyService extends GameService {
 
   startGame({ jeopardy }, socket) {
     try {
-      this.game = JSON.parse(jeopardy)
+      this.game = JSON.parse(fs.readFileSync("./server/assets/jeopardy4.json"))
+    //   this.game = JSON.parse(jeopardy)
       this.round = 0
       this.categories = this.game.rounds[this.round]
       this.displayCategories(jeopardy, socket)

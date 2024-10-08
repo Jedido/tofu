@@ -30,6 +30,11 @@
       :socket="socket"
       :game-width="$store.state.sceneWidth"
     />
+    <SandboxGame
+      v-else-if="this.$store.state.scene === 'sandbox'"
+      :socket="socket"
+      :game-width="$store.state.sceneWidth"
+    />
     <RoomSelection v-else v-on:launch-game="launchGame" />
   </main>
 </template>
@@ -60,6 +65,7 @@ export default {
       import("./jeopardy/JeopardyGame.vue")
     ),
     SquaredleGame: defineAsyncComponent(() => import("./squaredle/SquaredleGame.vue")),
+    SandboxGame: defineAsyncComponent(() => import("./sandbox/SandboxGame.vue")),
   },
   data() {
     return {

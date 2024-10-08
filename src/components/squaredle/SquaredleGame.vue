@@ -281,6 +281,7 @@ export default {
 <style scoped>
 .slider {
   margin-top: 8px;
+  appearance: none;
   -webkit-appearance: none;
   width: 100%;
   height: 8px;

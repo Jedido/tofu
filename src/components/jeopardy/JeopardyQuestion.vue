@@ -6,6 +6,12 @@
     <div v-if="!preload && level <= 1" class="flex justify-center items-center text-center h-full">Waiting for the host to continue...</div>
     <img v-show="preload || level > 1" class="m-auto h-full" :src="question.question" />
   </div>
+  <div v-else-if="question.type === 'zoom'" class="h-full flex justify-center items-center">
+    <ZoomImage :state="imageQuestionState" v-bind="question.question" />
+  </div>
+  <div v-else-if="question.type === 'blur'" class="h-full flex justify-center items-center">
+    <BlurImage :state="imageQuestionState" v-bind="question.question" />
+  </div>
   <div v-else-if="question.type === 'text'" class="flex justify-center items-center h-full text-center">
     {{ question.question }}
   </div>
@@ -15,8 +21,15 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue"
+
 export default {
   name: "JeopardyQuestion",
+  components: {
+    ZoomImage: defineAsyncComponent(() =>
+      import("./ZoomImage.vue")
+    )
+  },
   props: {
     question: Object,
     level: Number,
@@ -26,6 +39,15 @@ export default {
   computed: {
     hints() {
       return this.question.question.slice(0, this.level)
+    },
+    imageQuestionState() {
+      if (this.level <= 1) {
+        return 'start'
+      } else if (this.level === 2) {
+        return 'active'
+      } else {
+        return 'full'
+      }
     }
   }
 }

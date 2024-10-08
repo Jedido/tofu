@@ -309,6 +309,9 @@ export default {
     })
     this.on("buzzer", (player) => {
       this.buzzer = player
+      if (!this.buzzer && this.question.type === "zoom" || this.question.type === "blur") {
+        this.level--
+      }
     })
     this.on("toggle-submission", (show) => {
       this.showSubmission = show
