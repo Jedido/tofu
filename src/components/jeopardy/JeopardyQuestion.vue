@@ -28,6 +28,9 @@ export default {
   components: {
     ZoomImage: defineAsyncComponent(() =>
       import("./ZoomImage.vue")
+    ),
+    BlurImage: defineAsyncComponent(() =>
+      import("./BlurImage.vue")
     )
   },
   props: {

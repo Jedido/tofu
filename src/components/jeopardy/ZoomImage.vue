@@ -1,6 +1,6 @@
 <template>
   <div class="m-auto h-80 w-80 relative overflow-hidden border-4 border-emerald-400 rounded">
-    <img class="relative" :style="imageStyle" :src="image" @contextmenu.prevent />
+    <img class="relative" :style="imageStyle" :src="image" @contextmenu.prevent @dragstart.prevent />
   </div>
 </template>
 

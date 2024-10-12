@@ -1,6 +1,6 @@
 <template>
   <div class="h-full border-4 border-emerald-400 rounded overflow-hidden">
-    <img class="max-h-full" :style="imageStyle" :src="image" @contextmenu.prevent />
+    <img class="max-h-full" :style="imageStyle" :src="image" @contextmenu.prevent @dragstart.prevent />
   </div>
 </template>
 
