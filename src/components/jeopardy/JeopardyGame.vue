@@ -71,10 +71,11 @@
     <div v-else>
       <div v-if="status === 'categories'" class="grid gap-2 grid-flow-col h-100" :style="[jeopardyGridStyle]">
         <template v-for="category in categories">
-          <h2 class="font-bold font-mono text-center my-auto leading-tight">{{ category.name }}</h2>
+          <h2 class="font-bold font-mono text-center my-auto leading-tight overflow-auto">{{ category.name }}</h2>
           <button
             v-for="question in category.questions"
             class="
+              py-4
               focus:outline-none
               text-amber-50
               hover:bg-emerald-500
@@ -94,52 +95,75 @@
       >
         <JeopardyQuestion :question="question" :level="level" :preload="hosting" :buzzer="buzzer" />
       </div>
-      <div v-if="hosting" class="w-full grid grid-cols-2 gap-2 mt-2">
+      <div v-if="hosting" class="w-full grid grid-cols-6 gap-2 mt-2">
+        <template v-if="status === 'categories'">
+          <button
+            class="
+              py-4
+              col-span-6
+              focus:outline-none
+              text-amber-50
+              bg-emerald-600
+              hover:bg-emerald-500
+              active:bg-emerald-800
+              rounded
+            "
+            @click.prevent="emit('next-round')"
+          >
+            Next Round
+          </button>
+
+        </template>
+        <template v-else>
+          <button
+            class="
+              col-span-2
+              py-4
+              focus:outline-none
+              text-amber-50
+              bg-emerald-600
+              hover:bg-emerald-500
+              active:bg-emerald-800
+              rounded
+            "
+            @click.prevent="emit('display-categories')"
+          >
+            Categories
+          </button>
+          <button
+            class="
+              col-span-2
+              py-4
+              focus:outline-none
+              text-amber-50
+              bg-emerald-600
+              hover:bg-emerald-500
+              active:bg-emerald-800
+              rounded
+            "
+            @click.prevent="buzz()"
+          >
+            Next
+          </button>
+          <button
+            class="
+              col-span-2
+              py-4
+              focus:outline-none
+              text-amber-50
+              bg-emerald-600
+              hover:bg-emerald-500
+              active:bg-emerald-800
+              rounded
+            "
+            @click.prevent="buzz()"
+          >
+            Show Answer
+          </button>
+        </template>
         <button
-          v-if="status !== 'categories'"
           class="
-            py-4
-            focus:outline-none
-            text-amber-50
-            bg-emerald-600
-            hover:bg-emerald-500
-            active:bg-emerald-800
-            rounded
-          "
-          @click.prevent="emit('display-categories')"
-        >
-          Show Categories
-        </button>
-        <button
-          v-else
-          class="
-            focus:outline-none
-            text-amber-50
-            bg-emerald-600
-            hover:bg-emerald-500
-            active:bg-emerald-800
-            rounded
-          "
-          @click.prevent="emit('next-round')"
-        >
-          Go to Next Round
-        </button>
-        <button
-          class="
-            py-4
-            focus:outline-none
-            text-amber-50
-            bg-emerald-600
-            hover:bg-emerald-500
-            active:bg-emerald-800
-            rounded
-          "
-          @click.prevent="buzz()"
-        >
-          Continue Question
-        </button>
-        <button
-          class="
+            col-span-3
             py-4
             focus:outline-none
             text-amber-50
@@ -150,10 +174,11 @@
           "
           @click.prevent="emit('show-submission', { show: !showSubmission })"
         >
-          {{ showSubmission ? "Stop Accepting Submissions" : "Start Accepting Submissions" }}
+          {{ showSubmission ? "Stop Submissions" : "Accept Submissions" }}
         </button>
         <button
           class="
+            col-span-3
             py-4
             focus:outline-none
             text-amber-50
@@ -164,7 +189,7 @@
           "
           @click.prevent="emit('get-submissions')"
         >
-          Show Submitted Answers
+          Show Submissions
         </button>
       </div>
       <div v-else>
@@ -174,6 +199,7 @@
             type="text" 
             class="
               mx-auto
+              py-4
               px-4
               text-lg
               w-1/2
@@ -356,14 +382,8 @@ export default {
 #score-input {
   width: 50px;
 }
-.h-100 {
-  height: 24rem;
-}
 
 @media (max-width: 768px) {
-  .h-100 {
-    height: 16rem;
-  }
   .py-4 {
     padding-top: 4px;
     padding-bottom: 4px;

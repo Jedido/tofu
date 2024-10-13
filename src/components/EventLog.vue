@@ -1,16 +1,23 @@
 <template>
   <div
-    class="sidebar bg-amber-50 w-100 overflow-auto"
+    class="sidebar bg-amber-50 w-100"
+    :class="{ 'logs-hidden': hideLogs }"
     :style="{
       width: `${md ? `${$store.state.sidebarWidth}px` : '100%'}`,
     }"
   >
     <div id="logs-container">
-      <div id="logs-content" class="flex flex-col overflow-auto border-2">
+      <div id="logs-content" class="flex flex-col border-2 relative">
+        <div
+          class="show-logs-button absolute top-1.5 right-3 bg-emerald-400 text-amber-50 rounded py-1 cursor-pointer w-12 text-center"
+          @click="hideLogs = !hideLogs"
+        >
+          {{ hideLogs ? 'show' : 'hide' }}
+        </div>
         <template v-if="!$store.state.room">
           <form>
             <label>
-              <p class="text-lg">Join with a Room Code</p>
+              <p class="text-lg select-none">Join with a Room Code</p>
               <input
                 v-model="room"
                 type="text"
@@ -28,7 +35,9 @@
             <button class="border-2 border-amber-500 rounded hover:border-amber-400 mt-3 mx-auto" @click="leaveRoom()">Leave Room</button>
           </p>
           <h3>Event Log</h3>
-          <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
+          <div class="overflow-auto">
+            <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
+          </div>
         </template>
       </div>
     </div>
@@ -46,6 +55,7 @@ export default {
       logs: [],
       md: window.innerWidth >= 768,
       room: "",
+      hideLogs: false
     }
   },
   mounted() {
@@ -132,5 +142,19 @@ input {
 button {
   display: block;
   padding: 8px 20px;
+}
+.logs-hidden {
+  height: 40px;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .logs-hidden {
+    bottom: auto;
+    height: auto;
+  }
+  .show-logs-button {
+    display: none;
+  }
 }
 </style>

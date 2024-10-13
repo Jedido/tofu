@@ -1,41 +1,43 @@
 <template>
-  <main class="p-3 bg-amber-50 overflow-auto">
-    <ExampleGame
-      v-if="this.$store.state.scene === 'example'"
-      :socket="socket"
-    />
-    <MinesweeperGame
-      v-else-if="this.$store.state.scene === 'minesweeper'"
-      :socket="socket"
-      :game-width="$store.state.sceneWidth"
-    />
-    <AnagramGame
-      v-else-if="this.$store.state.scene === 'anagram'"
-      :socket="socket"
-    />
-    <GachaGame
-      v-else-if="this.$store.state.scene === 'gacha'"
-      :socket="socket"
-    />
-    <WatchGame
-      v-else-if="this.$store.state.scene === 'watch'"
-      :socket="socket"
-    />
-    <JeopardyGame
-      v-else-if="this.$store.state.scene === 'jeopardy'"
-      :socket="socket"
-    />
-    <SquaredleGame
-      v-else-if="this.$store.state.scene === 'squaredle'"
-      :socket="socket"
-      :game-width="$store.state.sceneWidth"
-    />
-    <SandboxGame
-      v-else-if="this.$store.state.scene === 'sandbox'"
-      :socket="socket"
-      :game-width="$store.state.sceneWidth"
-    />
-    <RoomSelection v-else v-on:launch-game="launchGame" />
+  <main class="p-3 overflow-auto bg-amber-50">
+    <div id="main-content" class="mx-auto">
+      <ExampleGame
+        v-if="this.$store.state.scene === 'example'"
+        :socket="socket"
+      />
+      <MinesweeperGame
+        v-else-if="this.$store.state.scene === 'minesweeper'"
+        :socket="socket"
+        :game-width="$store.state.sceneWidth"
+      />
+      <AnagramGame
+        v-else-if="this.$store.state.scene === 'anagram'"
+        :socket="socket"
+      />
+      <GachaGame
+        v-else-if="this.$store.state.scene === 'gacha'"
+        :socket="socket"
+      />
+      <WatchGame
+        v-else-if="this.$store.state.scene === 'watch'"
+        :socket="socket"
+      />
+      <JeopardyGame
+        v-else-if="this.$store.state.scene === 'jeopardy'"
+        :socket="socket"
+      />
+      <SquaredleGame
+        v-else-if="this.$store.state.scene === 'squaredle'"
+        :socket="socket"
+        :game-width="$store.state.sceneWidth"
+      />
+      <SandboxGame
+        v-else-if="this.$store.state.scene === 'sandbox'"
+        :socket="socket"
+        :game-width="$store.state.sceneWidth"
+      />
+      <RoomSelection v-else v-on:launch-game="launchGame" />
+    </div>
   </main>
 </template>
 
@@ -95,4 +97,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+#main-content {
+  max-width: 48rem;
+}
+</style>

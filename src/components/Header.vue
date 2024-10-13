@@ -1,5 +1,5 @@
 <template>
-  <header class="p-3 bg-emerald-700 text-emerald-50 grid grid-cols-6 gap-2">
+  <header class="p-3 bg-emerald-700 text-emerald-50 grid gap-2">
     <span class="truncate text-right">Username</span>
     <div>
       <input

@@ -88,16 +88,28 @@ export default {
 }
 
 .content {
-  grid-template-rows: min-content auto auto min-content;
+  grid-template-rows: min-content auto min-content;
   grid-template-areas:
     "header"
     "scene"
-    "sidebar"
-    "footer";
+    "sidebar";
 }
 
 .sidebar {
   grid-area: sidebar;
+}
+
+.footer {
+  display: none;
+}
+
+.header {
+  grid-area: header;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+}
+
+.dragbar {
+  display: none;
 }
 
 @media (min-width: 768px) {
@@ -109,14 +121,16 @@ export default {
       "scene dragbar sidebar"
       "footer footer footer";
   }
-}
-
-.header {
-  grid-area: header;
-}
-
-.footer {
-  grid-area: footer;
+  .dragbar {
+    display: block;
+  }
+  .footer {
+    display: block;
+    grid-area: footer;
+  }
+  .header {
+    grid-template-columns: repeat(6,minmax(0,1fr));
+  }
 }
 
 .dragbar:hover {

@@ -176,14 +176,4 @@ export default {
   background: #10b981;
   cursor: pointer;
 }
-
-.h-100 {
-  height: 24rem;
-}
-
-@media (max-width: 768px) {
-  .h-100 {
-    height: 16rem;
-  }
-}
 </style>
