@@ -18,6 +18,9 @@
   <div v-else-if="question.type === 'tier'" class="grid grid-cols-2 gap-2 h-full">
     <JeopardyQuestion v-for="q in hints" :question="q" preload/>
   </div>
+  <div v-if="level === 0" class="text-center mx-auto px-3 py-2 w-fit relative bottom-1/4 bg-white border-2 border-emerald-500 rounded">
+    {{ question.answer }}
+  </div>
 </template>
 
 <script>
@@ -44,7 +47,7 @@ export default {
       return this.question.question.slice(0, this.level)
     },
     imageQuestionState() {
-      if (this.level <= 1) {
+      if (this.level === 1) {
         return 'start'
       } else if (this.level === 2) {
         return 'active'

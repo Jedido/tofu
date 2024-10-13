@@ -44,3 +44,15 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+@media (max-width: 768px) {
+  .h-80 {
+    height: 16rem;
+  }
+  .w-80 {
+    width: 16rem;
+  }
+}
+</style>

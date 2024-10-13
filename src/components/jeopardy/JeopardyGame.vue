@@ -72,21 +72,13 @@
       <div v-if="status === 'categories'" class="grid gap-2 grid-flow-col h-100" :style="[jeopardyGridStyle]">
         <template v-for="category in categories">
           <h2 class="font-bold font-mono text-center my-auto leading-tight overflow-auto">{{ category.name }}</h2>
-          <button
+          <JeopardyButton
             v-for="question in category.questions"
-            class="
-              py-4
-              focus:outline-none
-              text-amber-50
-              hover:bg-emerald-500
-              active:bg-emerald-800
-              rounded
-            "
             :class="[question.completed ? 'bg-gray-300' : 'bg-emerald-600']"
             @click.prevent="openQuestion(category.name, question.points)"
           >
             {{ question.points }}
-          </button>
+          </JeopardyButton>
         </template>
       </div>
       <div
@@ -97,100 +89,33 @@
       </div>
       <div v-if="hosting" class="w-full grid grid-cols-6 gap-2 mt-2">
         <template v-if="status === 'categories'">
-          <button
-            class="
-              py-4
-              col-span-6
-              focus:outline-none
-              text-amber-50
-              bg-emerald-600
-              hover:bg-emerald-500
-              active:bg-emerald-800
-              rounded
-            "
-            @click.prevent="emit('next-round')"
-          >
+          <JeopardyButton class="col-span-6" @click.prevent="emit('next-round')">
             Next Round
-          </button>
-
+          </JeopardyButton>
         </template>
         <template v-else>
-          <button
-            class="
-              col-span-2
-              py-4
-              focus:outline-none
-              text-amber-50
-              bg-emerald-600
-              hover:bg-emerald-500
-              active:bg-emerald-800
-              rounded
-            "
-            @click.prevent="emit('display-categories')"
-          >
-            Categories
-          </button>
-          <button
-            class="
-              col-span-2
-              py-4
-              focus:outline-none
-              text-amber-50
-              bg-emerald-600
-              hover:bg-emerald-500
-              active:bg-emerald-800
-              rounded
-            "
-            @click.prevent="buzz()"
-          >
+          <JeopardyButton class="col-span-2" @click.prevent="emit('question-reset')">
+            Reset
+          </JeopardyButton>
+          <JeopardyButton v-if="buzzer" class="col-span-2" @click.prevent="emit('clear-buzzer')">
+            Unhide
+          </JeopardyButton>
+          <JeopardyButton v-else class="col-span-2" @click.prevent="emit('question-next')">
             Next
-          </button>
-          <button
-            class="
-              col-span-2
-              py-4
-              focus:outline-none
-              text-amber-50
-              bg-emerald-600
-              hover:bg-emerald-500
-              active:bg-emerald-800
-              rounded
-            "
-            @click.prevent="buzz()"
-          >
+          </JeopardyButton>
+          <JeopardyButton v-if="level !== 0" class="col-span-2" @click.prevent="emit('show-answer')" >
             Show Answer
-          </button>
+          </JeopardyButton>
+          <JeopardyButton v-else class="col-span-2" @click.prevent="emit('display-categories')">
+            Categories
+          </JeopardyButton>
         </template>
-        <button
-          class="
-            col-span-3
-            py-4
-            focus:outline-none
-            text-amber-50
-            bg-emerald-600
-            hover:bg-emerald-500
-            active:bg-emerald-800
-            rounded
-          "
-          @click.prevent="emit('show-submission', { show: !showSubmission })"
-        >
+        <JeopardyButton class="col-span-3" @click.prevent="emit('show-submission', { show: !showSubmission })">
           {{ showSubmission ? "Stop Submissions" : "Accept Submissions" }}
-        </button>
-        <button
-          class="
-            col-span-3
-            py-4
-            focus:outline-none
-            text-amber-50
-            bg-emerald-600
-            hover:bg-emerald-500
-            active:bg-emerald-800
-            rounded
-          "
-          @click.prevent="emit('get-submissions')"
-        >
+        </JeopardyButton>
+        <JeopardyButton class="col-span-3" @click.prevent="emit('get-submissions')">
           Show Submissions
-        </button>
+        </JeopardyButton>
       </div>
       <div v-else>
         <div v-if="showSubmission" class="my-2 flex flex-col">
@@ -214,23 +139,9 @@
           />
           <p v-if="lastSubmission" class="mx-auto">Your Response: {{ lastSubmission }}</p>
         </div>
-        <button
-          v-else
-          class="
-            py-4
-            mt-2
-            w-full
-            focus:outline-none
-            text-amber-50
-            bg-emerald-600
-            hover:bg-emerald-500
-            active:bg-emerald-800
-            rounded
-          "
-          @click.prevent="buzz()"
-        >
+        <JeopardyButton v-else class="mt-2" @click.prevent="buzz()">
           Buzz
-        </button>
+        </JeopardyButton>
       </div>
       <h3 class="mt-3 text-xl text-center">Scores</h3>
       <div v-if="hosting" class="flex justify-center gap-2 my-1">
@@ -286,12 +197,14 @@
 import { debounce } from "lodash";
 import socket from "../../mixins/socket.js"
 import JeopardyQuestion from "./JeopardyQuestion.vue"
+import JeopardyButton from "./JeopardyButton.vue"
 
 export default {
   name: "JeopardyGame",
   mixins: [socket],
   components: {
-    JeopardyQuestion
+    JeopardyQuestion,
+    JeopardyButton
   },
   data() {
     return {
@@ -324,14 +237,15 @@ export default {
       this.buzzer = ""
     })
     this.on("show-question", (question) => {
+      this.buzzer = ""
       this.level = 1
       this.status = "question"
       this.question = question
       this.points = question.points
     })
     this.emit("set-player")
-    this.on("next-clue", () => {
-      this.level++
+    this.on("set-question-state", (level) => {
+      this.level = level
     })
     this.on("buzzer", (player) => {
       this.buzzer = player
@@ -371,7 +285,7 @@ export default {
     jeopardyGridStyle() {
       return {
         "grid-template-columns": `repeat(${this.categories.length},minmax(0,1fr))`,
-        "grid-template-rows": `repeat(${this.categories[0].questions.length + 1},minmax(0,1fr))`
+        "grid-template-rows": `auto repeat(${this.categories[0].questions.length},minmax(0,1fr))`
       }
     } 
   }
@@ -387,6 +301,9 @@ export default {
   .py-4 {
     padding-top: 4px;
     padding-bottom: 4px;
+  }
+  .h-100 {
+    height: 20rem;
   }
 }
 </style>

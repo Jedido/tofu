@@ -18,6 +18,10 @@ class JeopardyService extends GameService {
       "jeopardy-show-submission": this.showSubmission.bind(this),
       "jeopardy-submit": this.submit.bind(this),
       "jeopardy-get-submissions": this.revealSubmissions.bind(this),
+      "jeopardy-question-reset": this.resetQuestion.bind(this),
+      "jeopardy-clear-buzzer": this.clearBuzzer.bind(this),
+      "jeopardy-question-next": this.continueQuestion.bind(this),
+      "jeopardy-show-answer": this.showAnswer.bind(this),
       "disconnect": this.removePlayer.bind(this)
     }
     // responses
@@ -25,7 +29,7 @@ class JeopardyService extends GameService {
     this.updateHost = "jeopardy-update-host"
     this.showCategories = "jeopardy-show-categories"
     this.showQuestion = "jeopardy-show-question"
-    this.showNextClue = "jeopardy-next-clue"
+    this.setQuestionState = "jeopardy-set-question-state"
     this.toggleSubmission = "jeopardy-toggle-submission"
     this.buzzer = "jeopardy-buzzer"
     // TODO: Allow a selection
@@ -87,6 +91,7 @@ class JeopardyService extends GameService {
       this.game = JSON.parse(fs.readFileSync("./server/assets/jeopardy4.json"))
     //   this.game = JSON.parse(jeopardy)
       this.round = 0
+      this.questionState = 0
       this.categories = this.game.rounds[this.round]
       this.displayCategories(jeopardy, socket)
     } catch (error) {
@@ -143,12 +148,14 @@ class JeopardyService extends GameService {
     let question = this.categories[index].questions.find(question => question.points === points)
     question.completed = true
     this.activePlayer = ""
+    this.questionState = 1
     this.broadcastFn(this.showQuestion, {
       question: question.question,
+      answer: question.answer,
       points: question.points,
       type: question.type
     })
-    socket.emit("log", `${category} for ${question.points}: ${question.answer}`)
+    socket.emit("log", `${category} for ${question.points}: ${question.answer} ${question.description}`)
   }
 
   showSubmission({ show }, socket) {
@@ -179,15 +186,36 @@ class JeopardyService extends GameService {
     })
   }
 
-  broadcastBuzzer(_, socket) {
+  resetQuestion(_, socket) {
     if (this.host.id === socket.id) {
-      if (this.activePlayer) {
-        this.activePlayer = ""
-        this.broadcastFn(this.buzzer, this.activePlayer)
-      } else {
-        this.broadcastFn(this.showNextClue)
-      }
-    } else if (!this.activePlayer) {
+      this.questionState = 1
+      this.broadcastFn(this.setQuestionState, this.questionState)
+    }
+  }
+
+  clearBuzzer(_, socket) {
+    if (this.host.id === socket.id) {
+      this.activePlayer = ""
+      this.broadcastFn(this.buzzer, this.activePlayer)
+    }
+  }
+
+  continueQuestion(_, socket) {
+    if (this.host.id === socket.id) {
+      this.questionState++
+      this.broadcastFn(this.setQuestionState, this.questionState)
+    }
+  }
+
+  showAnswer(_, socket) {
+    if (this.host.id === socket.id) {
+      this.questionState = 0
+      this.broadcastFn(this.setQuestionState, this.questionState)
+    }
+  }
+
+  broadcastBuzzer(_, socket) {
+    if (!this.activePlayer) {
       let player = this.players.findIndex(player => player.id === socket.id)
       if (player > -1) {
         this.players[player].ign = socket.ign
