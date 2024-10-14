@@ -1,10 +1,10 @@
 <template>
   <div class="grid h-screen content">
-    <Header class="header" :socket="socket" />
-    <Scene class="scene" :socket="socket" />
-    <DragBar class="dragbar" />
-    <EventLog :socket="socket" />
-    <footer class="p-3 bg-emerald-700 text-emerald-50 footer">
+    <Header id="header" :socket="socket" />
+    <Scene id="scene" :socket="socket" />
+    <DragBar id="dragbar" />
+    <EventLog id="sidebar" :socket="socket" />
+    <footer id="footer" class="p-3 bg-emerald-700 text-emerald-50">
       You can download this app on github.com.
     </footer>
   </div>
@@ -95,20 +95,19 @@ export default {
     "sidebar";
 }
 
-.sidebar {
+#sidebar {
   grid-area: sidebar;
 }
 
-.footer {
+#footer {
   display: none;
 }
 
-.header {
+#header {
   grid-area: header;
-  grid-template-columns: repeat(3,minmax(0,1fr));
 }
 
-.dragbar {
+#dragbar {
   display: none;
 }
 
@@ -121,15 +120,12 @@ export default {
       "scene dragbar sidebar"
       "footer footer footer";
   }
-  .dragbar {
+  #dragbar {
     display: block;
   }
-  .footer {
+  #footer {
     display: block;
     grid-area: footer;
-  }
-  .header {
-    grid-template-columns: repeat(6,minmax(0,1fr));
   }
 }
 
@@ -137,7 +133,7 @@ export default {
   cursor: col-resize;
 }
 
-.scene {
+#scene {
   grid-area: scene;
 }
 

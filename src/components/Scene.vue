@@ -90,7 +90,7 @@ export default {
     resizeGame() {
       this.$store.commit(
         "setSceneWidth",
-        document.querySelector(".scene").clientWidth
+        document.querySelector("#scene").clientWidth
       )
     },
   },

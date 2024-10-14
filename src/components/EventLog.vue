@@ -1,6 +1,6 @@
 <template>
   <div
-    class="sidebar bg-amber-50 w-100"
+    class="bg-amber-50"
     :class="{ 'logs-hidden': hideLogs }"
     :style="{
       width: `${md ? `${$store.state.sidebarWidth}px` : '100%'}`,
@@ -19,6 +19,7 @@
             <label>
               <p class="text-lg select-none">Join with a Room Code</p>
               <input
+                id="room-input"
                 v-model="room"
                 type="text"
                 maxlength="5"
@@ -30,14 +31,29 @@
           </form>
         </template>
         <template v-else>
-          <p>
+          <p class="px-2">
             Room: {{ $store.state.room }}
             <button class="border-2 border-amber-500 rounded hover:border-amber-400 mt-3 mx-auto" @click="leaveRoom()">Leave Room</button>
           </p>
-          <h3>Event Log</h3>
-          <div class="overflow-auto">
+          <div class="overflow-auto h-48 flex flex-col-reverse justify-start p-2">
             <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
           </div>
+          <form class="flex w-full border-gray-200 border-t-2" @submit.prevent="sendMessage()">
+            <input
+              v-model="message"
+              maxlength="200"
+              type="text"
+              id="input"
+              class="outline-none bg-gray-50 px-2 py-2 col-span-5 grow"
+              autocomplete="off"
+              placeholder="Send a message..."
+            />
+            <img
+              src="@/assets/images/send.svg"
+              class="cursor-pointer bg-gray-50"
+              @click="this.sendMessage()"
+            />
+          </form>
         </template>
       </div>
     </div>
@@ -55,7 +71,8 @@ export default {
       logs: [],
       md: window.innerWidth >= 768,
       room: "",
-      hideLogs: false
+      hideLogs: false,
+      message: ""
     }
   },
   mounted() {
@@ -64,6 +81,10 @@ export default {
     })
     this.socket.on("log", (msg) => {
       this.logs.unshift(msg)
+      this.logs = this.logs.slice(0, 50)
+    })
+    this.socket.on("log-message", ({ ign, msg }) => {
+      this.logs.unshift(`${ign}: ${msg}`)
       this.logs = this.logs.slice(0, 50)
     })
     // this.socket.emit("get-logs")
@@ -92,6 +113,12 @@ export default {
       this.socket.emit("join-room", this.room)
       this.$store.commit("setRoom", this.room)
     },
+    sendMessage() {
+      if (this.message) {
+        this.socket.emit("send-message", this.message)
+        this.message = ""
+      }
+    }
   },
 }
 </script>
@@ -105,7 +132,7 @@ export default {
 }
 #logs-content {
   box-sizing: border-box;
-  padding: 12px;
+  padding-top: 12px;
   height: 100%;
   width: 100%;
   font-size: 14px;
@@ -122,7 +149,7 @@ h3 {
 form {
   text-align: center;
 }
-input {
+#room-input {
   border: none;
   width: 7.5ch;
   padding: 0px;
@@ -155,6 +182,9 @@ button {
   }
   .show-logs-button {
     display: none;
+  }
+  .h-48 {
+    height: calc(100vh - 244px);
   }
 }
 </style>

@@ -40,13 +40,18 @@ function initGameManager(server) {
       leaveRoom(socket.roomId, socket)
     })
     socket.on("set-ign", (ign) => {
-      if (ign.search("user ") === -1) {
-        const oldIgn = socket.ign
-        socket.ign = ign
-        io.to(socket.roomId).emit(
-          "log",
-          `${oldIgn} has changed their name to ${ign}`
-        )
+      console.log(`${socket.id} (${oldIgn}) has changed their name to ${ign}`)
+      const oldIgn = socket.ign
+      socket.ign = ign
+      socket.emit("set-user", socket.ign, socket.id)
+      broadcast(socket.roomId, "log", `${oldIgn} has changed their name to ${ign}`)
+    })
+    socket.on("send-message", (msg) => {
+      if (!hasRoom(socket.roomId)) {
+        console.log(`Unknown room ${socket.roomId}`)
+        return
+      } else {
+        broadcast(socket.roomId, "log-message", { ign: socket.ign, msg })
       }
     })
     socket.on("action", (type, data) => {
