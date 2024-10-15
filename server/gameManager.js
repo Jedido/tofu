@@ -40,7 +40,7 @@ function initGameManager(server) {
       leaveRoom(socket.roomId, socket)
     })
     socket.on("set-ign", (ign) => {
-      console.log(`${socket.id} (${oldIgn}) has changed their name to ${ign}`)
+      console.log(`${socket.id} (${socket.ign}) has changed their name to ${ign}`)
       const oldIgn = socket.ign
       socket.ign = ign
       socket.emit("set-user", socket.ign, socket.id)
