@@ -119,6 +119,7 @@ function createRoom(gameId, socket) {
 }
 function joinRoom(roomId, socket) {
   if (!hasRoom(roomId)) {
+    socket.emit("alert", `Could not find room ${roomId}`)
     return
   }
   const gameId = gameRooms[roomId].gameId

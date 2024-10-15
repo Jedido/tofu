@@ -9,25 +9,16 @@
           title="edit"
           v-model="ign"
           class="outline-none w-full bg-emerald-600 rounded px-2 shadow disabled:shadow-inner disabled:bg-emerald-800 disabled:text-emerald-200"
-          @blur="resetIgn()"
           :disabled="!editIgn"
         />
         <div v-if="!editIgn" class="absolute left-0 right-0 top-0 bottom-0 cursor-pointer" @click="focusIgn()"></div>
       </div>
       <div>
-        <button
-          class="
-            focus:outline-none
-            bg-emerald-600
-            hover:bg-emerald-500
-            active:bg-emerald-800
-            rounded
-            shadow
-          "
-          @click="setIgn()"
-        >
-          Set
-        </button>
+        <IconButton v-if="!editIgn" icon="✏️" @click="setIgn()" />
+        <div v-else class="flex gap-2">
+          <IconButton icon="✅" @click="setIgn()"/>
+          <IconButton icon="❌" @click="resetIgn()"/>
+        </div>
         <!-- ADD CHECK AND CANCEL -->
       </div>
       <p class="row-start-2 truncate text-right">ID</p>
@@ -51,8 +42,13 @@
 </template>
 
 <script>
+import IconButton from './IconButton.vue';
+
 export default {
   name: "Header",
+  components: {
+    IconButton
+  },
   props: {
     msg: String,
     socket: Object,

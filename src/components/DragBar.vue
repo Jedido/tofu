@@ -18,6 +18,11 @@ export default {
     window.addEventListener("mouseup", () => {
       this.dragging = false
     })
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 768 && window.innerWidth - this.$store.state.sidebarWidth <= 384) {
+        this.$store.commit("setSidebarWidth", window.innerWidth - 384)
+      }
+    })
     document.addEventListener("mousemove", this.dragUpdate)
   },
   methods: {
@@ -31,7 +36,9 @@ export default {
         return false
       }
       const dx = e.clientX - this.dragX
-      this.$store.commit("setSidebarWidth", this.oldWidth - dx)
+      if (window.innerWidth - this.oldWidth + dx > 384 && this.oldWidth - dx > 0) {
+        this.$store.commit("setSidebarWidth", this.oldWidth - dx)
+      }
     },
   },
 }

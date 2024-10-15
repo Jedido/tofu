@@ -31,8 +31,7 @@ export default {
       socket: null,
       oldWidth: 300,
       sidebarWidth: 300,
-      gameWidth: 0,
-      md: window.innerWidth >= 768,
+      gameWidth: 0
     }
   },
   created() {
@@ -51,6 +50,9 @@ export default {
     })
     window.addEventListener("resize", this.resizeGame)
     this.resizeGame()
+    this.socket.on("alert", (message) => {
+      alert(message)
+    })
   },
   methods: {
     launchGame(game) {
@@ -60,7 +62,6 @@ export default {
     },
     resizeGame() {
       this.gameWidth = document.querySelector(".content").clientWidth
-      this.md = window.innerWidth >= 768
     },
     startDrag(e) {
       this.dragging = true
@@ -129,7 +130,7 @@ export default {
   }
 }
 
-.dragbar:hover {
+#dragbar:hover {
   cursor: col-resize;
 }
 

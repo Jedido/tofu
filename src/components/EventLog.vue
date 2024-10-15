@@ -7,7 +7,7 @@
     }"
   >
     <div id="logs-container">
-      <div id="logs-content" class="flex flex-col border-2 relative">
+      <div id="logs-content" class="flex flex-col border-2 relative overflow-hidden">
         <div
           class="show-logs-button absolute top-1.5 right-3 bg-emerald-400 text-amber-50 rounded py-1 cursor-pointer w-12 text-center"
           @click="hideLogs = !hideLogs"
@@ -15,7 +15,7 @@
           {{ hideLogs ? 'show' : 'hide' }}
         </div>
         <template v-if="!$store.state.room">
-          <form>
+          <form class="mb-2">
             <label>
               <p class="text-lg select-none">Join with a Room Code</p>
               <input
@@ -87,7 +87,6 @@ export default {
       this.logs.unshift(`${ign}: ${msg}`)
       this.logs = this.logs.slice(0, 50)
     })
-    // this.socket.emit("get-logs")
     this.socket.on("set-room", (room) => {
       this.logs = []
       this.$store.commit("setRoom", room)
@@ -111,7 +110,7 @@ export default {
     joinRoom() {
       this.logs = []
       this.socket.emit("join-room", this.room)
-      this.$store.commit("setRoom", this.room)
+      this.room = ""
     },
     sendMessage() {
       if (this.message) {

@@ -296,6 +296,9 @@ export default {
 #score-input {
   width: 50px;
 }
+.h-100 {
+  height: 24rem;
+}
 
 @media (max-width: 768px) {
   .py-4 {
