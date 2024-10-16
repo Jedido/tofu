@@ -8,7 +8,7 @@
       <MinesweeperGame
         v-else-if="this.$store.state.scene === 'minesweeper'"
         :socket="socket"
-        :game-width="$store.state.sceneWidth"
+        :game-width="$store.state.gameWidth"
       />
       <AnagramGame
         v-else-if="this.$store.state.scene === 'anagram'"
@@ -29,12 +29,10 @@
       <SquaredleGame
         v-else-if="this.$store.state.scene === 'squaredle'"
         :socket="socket"
-        :game-width="$store.state.sceneWidth"
+        :game-width="$store.state.gameWidth"
       />
       <SandboxGame
         v-else-if="this.$store.state.scene === 'sandbox'"
-        :socket="socket"
-        :game-width="$store.state.sceneWidth"
       />
       <RoomSelection v-else v-on:launch-game="launchGame" />
     </div>
@@ -75,23 +73,17 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener("resize", this.resizeGame)
     this.socket.on("set-scene", (scene) => {
       this.$store.commit("setScene", scene)
     })
-    this.resizeGame()
+    this.$store.commit("setSidebarWidth", 300)
+    this.$store.commit("setGameWidth", document.querySelector("#scene").clientWidth)
   },
   methods: {
     launchGame(game) {
       this.scene = game
       this.$store.commit("setScene", game)
       this.socket.emit("create-room", game, this.$store.state.ign)
-    },
-    resizeGame() {
-      this.$store.commit(
-        "setSceneWidth",
-        document.querySelector("#scene").clientWidth
-      )
     },
   },
 }

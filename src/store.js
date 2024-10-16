@@ -7,7 +7,7 @@ export const store = createStore({
       scene: "select",
       id: "",
       ign: "",
-      sceneWidth: 0,
+      gameWidth: 0,
       sidebarWidth: 300,
     }
   },
@@ -24,11 +24,10 @@ export const store = createStore({
     setId(state, id) {
       state.id = id
     },
-    setSceneWidth(state, width) {
-      state.sceneWidth = width
+    setGameWidth(state, width) {
+      state.gameWidth = width
     },
     setSidebarWidth(state, width) {
-      state.sceneWidth += state.sidebarWidth - width
       state.sidebarWidth = width
     },
     leaveRoom(state) {
