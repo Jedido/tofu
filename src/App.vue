@@ -42,12 +42,6 @@ export default {
     })
   },
   mounted() {
-    document.addEventListener("mouseup", () => {
-      if (this.dragging) {
-        this.resizeGame()
-      }
-      this.dragging = false
-    })
     window.addEventListener("resize", this.resizeGame)
     this.resizeGame()
     this.socket.on("alert", (message) => {

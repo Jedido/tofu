@@ -34,7 +34,6 @@ export default {
         }
       }
     })
-    console.log(this.mobile)
     document.addEventListener("mousemove", this.dragUpdate)
   },
   methods: {
@@ -48,19 +47,14 @@ export default {
         return false
       }
       const dx = e.clientX - this.dragX
-      const newGameWidth = window.innerWidth - this.oldWidth + dx
-      if (newGameWidth >= config.GAME_MIN_WIDTH) {
-        if (this.oldWidth - dx < config.SIDEBAR_MIN_WIDTH) {
-          this.$store.commit("setSidebarWidth", config.SIDEBAR_MIN_WIDTH)
-          this.$store.commit("setGameWidth", window.innerWidth - config.SIDEBAR_MIN_WIDTH)
-        } else {
-          this.$store.commit("setSidebarWidth", this.oldWidth - dx)
-          this.$store.commit("setGameWidth", newGameWidth)
-        }
-      } else {
-        this.$store.commit("setSidebarWidth", window.innerWidth - config.GAME_MIN_WIDTH)
-        this.$store.commit("setGameWidth", config.GAME_MIN_WIDTH)
+      let targetSidebarWidth = this.oldWidth - dx
+      if (targetSidebarWidth < config.SIDEBAR_MIN_WIDTH) {
+        targetSidebarWidth = config.SIDEBAR_MIN_WIDTH
+      } else if (window.innerWidth - targetSidebarWidth < config.GAME_MIN_WIDTH) {
+        targetSidebarWidth = window.innerWidth - config.GAME_MIN_WIDTH
       }
+      this.$store.commit("setSidebarWidth", targetSidebarWidth)
+      this.$store.commit("setGameWidth", window.innerWidth - targetSidebarWidth)
     },
   },
 }
