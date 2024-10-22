@@ -38,7 +38,12 @@ export default {
     this.socket = io(`ws://${window.location.host}`)
     this.socket.on("connect", () => {
       console.log("connected to the service")
-      this.$store.commit("leaveRoom")
+      if (this.$store.state.room) {
+        this.socket.emit("join-room", this.$store.state.room)
+      }
+      if (localStorage.getItem("ign")) {
+        this.socket.emit("set-ign", localStorage.getItem("ign"))
+      }
     })
   },
   mounted() {
@@ -129,7 +134,9 @@ export default {
 }
 
 #scene {
+  overflow: overlay;
   grid-area: scene;
+  scrollbar-width: none;
 }
 
 .noselect {

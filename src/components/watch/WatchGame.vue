@@ -1,6 +1,6 @@
 <template>
-  <div id="watch" class="select-none text-amber-900">
-    <p class="text-center text-3xl mb-4">Watch Together!</p>
+  <div id="watch" class="select-none text-amber-900 overflow-x-hidden">
+    <h1 v-if="this.md" class="text-center text-3xl mb-4">Watch Together!</h1>
     <div
       class="
         flex flex-col
@@ -8,103 +8,161 @@
         bg-amber-100
         rounded
         mt-auto
-        border-4 border-amber-200
-        mx-10
+        mx-auto
+        w-fit
       "
     >
-      <div class="h-full p-4 w-full overflow-y-auto leading-4 text-sm">
-        <video id="watch-video" class="w-full" controls preload="none">
-          <source v-if="videoUrl" :src="videoUrl" :type="videoType" />
-        </video>
-      </div>
-      <div class="grid grid-cols-6 w-full border-t-2 border-amber-200">
+      <div id="youtube"></div>
+      <form class="grid grid-cols-6 w-full border-2 border-amber-200 border-box" @submit.prevent="submit()">
         <input
           v-model="url"
           type="text"
           id="input"
-          class="outline-none bg-amber-50 px-4 py-2 col-span-5"
+          class="outline-none bg-amber-50 px-4 py-2 col-span-4"
           autocomplete="off"
-          placeholder="Enter a video file URL..."
+          placeholder="Enter a youtube URL or query..."
         />
         <button
           class="focus:outline-none bg-amber-200 hover:bg-amber-300 text-lg"
-          @click="load()"
         >
-          Load Video
+          Submit
         </button>
+        <button
+          class="focus:outline-none bg-amber-200 hover:bg-amber-300 text-lg"
+          @click.prevent="sync()"
+        >
+          Sync
+        </button>
+      </form>
+    </div>
+    <div v-show="searchResults.length > 0" class="flex flex-col gap-2 mx-auto">
+      <h3 class="text-center text-xl mt-4">Results</h3>
+      <div 
+        v-for="result in searchResults" 
+        class="search-result grid grid-cols-2 gap-2 cursor-pointer bg-white mx-auto"
+        @click="() => load(result.id)"
+      >
+        <img class="row-span-2" :src="result.thumbnail" />
+        <div class="flex flex-col gap-2 pr-2 pt-2">
+          <p class="overflow-y-auto max-h-20">{{ result.title }}</p>
+          <p class="text-xs ml-auto">by <strong>{{ result.channel }}</strong></p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import socket from "../../mixins/socket.js"
+import socket from "@/mixins/socket.js"
+import breakpoints from "@/mixins/breakpoints.js"
 
 export default {
   name: "WatchGame",
-  mixins: [socket],
+  mixins: [socket, breakpoints],
   data() {
     return {
+      youtube: null,
       url: "",
-      blobUrl: "",
-      videoUrl: "",
-      videoType: "",
-      isPlaying: false,
+      ready: false,
+      searchResults: []
     }
   },
   mounted() {
-    const video = document.getElementById("watch-video")
-    video.volume = localStorage.getItem("videoVolume") || 1
-    this.on("request-load", ({ url, type }) => {
-      this.videoUrl = url
-      this.videoType = type
-      video.preload = "auto"
-      video.load()
+    let scripts = Array
+      .from(document.querySelectorAll('script'))
+      .map(scr => scr.src);
+
+    if (!scripts.includes('https://www.youtube.com/iframe_api')) {
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    } else {
+      document.getElementById('youtube').replaceWith(window.youtube.g)
+    }
+
+    window.onYouTubeIframeAPIReady = () => {
+      window.youtube = new YT.Player('youtube', {
+        width: this.videoWidth,
+        height: this.videoHeight,
+        videoId: '',
+        playerVars: {
+          "playsinline": 1
+        },
+        events: {
+          onReady: () => this.ready = true,
+          onStateChange: this.stateChange
+        }
+      })
+    }
+    this.on("request-load", ({ id }) => {
+      window.youtube.cueVideoById(id)
     })
     this.on("request-jump", ({ time }) => {
-      console.log(`jump to ${time}`)
-      video.currentTime = time
+      window.youtube.seekTo(time)
     })
     this.on("request-play", () => {
-      console.log("play")
-      video.play()
+      window.youtube.playVideo()
     })
     this.on("request-pause", () => {
-      console.log("pause")
-      video.pause()
+      window.youtube.pauseVideo()
     })
-
-    video.addEventListener("canplaythrough", () => {
-      this.emit("canplay")
+    this.on("search-results", ({ results }) => {
+      this.searchResults = results
     })
-    video.addEventListener("play", () => {
-      this.emit("play")
-    })
-    video.addEventListener("pause", () => {
-      this.emit("pause")
-    })
-    video.addEventListener("waiting", () => {
-      this.emit("pause")
-    })
-    video.addEventListener("seeked", () => {
-      this.emit("pause")
-      this.emit("jump", { time: video.currentTime })
-    })
-    video.addEventListener("volumechange", () => {
-      localStorage.setItem("videoVolume", video.volume)
-    })
-  },
-  unmounted() {
-    // document.getElementById("watch-video").pause()
-    //https://v.animethemes.moe/BangDreamItsMyGO-ED1.webm
   },
   methods: {
-    load() {
-      this.emit("load", { url: this.url })
+    submit() {
+      if (URL.canParse(this.url)) {
+        const parsedURL = URL.parse(this.url)
+        const id = parsedURL.searchParams.get("v")
+        if (!!id && parsedURL.host === "www.youtube.com") {
+          this.load(id)
+        } else {
+          alert("video could not be found!")
+        }
+      } else {
+        this.emit("search", { query: this.url })
+        this.url = ""
+      }
+    },
+    sync() {
+      this.emit("jump", { time: window.youtube.getCurrentTime() })
+    },
+    stateChange(event) {
+      if (event.data === 1) {
+        this.emit("play")
+      } else if (event.data === 2) {
+        this.emit("pause")
+      }
+    },
+    load(id) {
+      this.emit("load", { id })
       this.url = ""
     },
   },
+  computed: {
+    videoWidth() {
+      if (this.md) {
+        return 640
+      } else {
+        return this.$store.state.gameWidth + 2
+      }
+    },
+    videoHeight() {
+      return this.videoWidth * 9 / 16
+    }
+  },
+  watch: {
+    videoWidth(newVal, _) {
+      window.youtube.setSize(newVal, this.videoHeight)
+    }
+  }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.search-result {
+  max-width: 480px;
+}
+</style>

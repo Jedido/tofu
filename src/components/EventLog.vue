@@ -25,6 +25,7 @@
                 maxlength="5"
                 spellcheck="false"
                 class="outline-none"
+                autocomplete="off"
               />
             </label>
             <button class="border-2 border-emerald-500 rounded hover:border-emerald-400 mt-3 mx-auto" @click.prevent="joinRoom()">Join</button>

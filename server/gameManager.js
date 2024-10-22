@@ -1,3 +1,4 @@
+const dotenv = require('dotenv')
 const { Server } = require("socket.io")
 
 const ExampleService = require("./services/exampleService.js")
@@ -8,6 +9,9 @@ const WatchService = require("./services/watchService.js")
 const JeopardyService = require("./services/jeopardyService.js")
 const SquaredleService = require("./services/squaredleService.js")
 const SandboxService = require("./services/sandboxService.js")
+
+dotenv.config({ path: `.env.local` })
+dotenv.config()
 
 const games = [
   MinesweeperService,
@@ -119,7 +123,9 @@ function createRoom(gameId, socket) {
 }
 function joinRoom(roomId, socket) {
   if (!hasRoom(roomId)) {
-    socket.emit("alert", `Could not find room ${roomId}`)
+    socket.emit("alert", `Disconnected from room ${roomId}`)
+    socket.emit("set-room", "")
+    socket.emit("set-scene", "select")
     return
   }
   const gameId = gameRooms[roomId].gameId

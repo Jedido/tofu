@@ -66,9 +66,6 @@ export default {
       this.$store.commit("setId", id)
       this.ign = ign
     })
-    if (localStorage.getItem("ign")) {
-      this.socket.emit("set-ign", localStorage.getItem("ign"))
-    }
   },
   methods: {
     async focusIgn() {

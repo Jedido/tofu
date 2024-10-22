@@ -1,5 +1,5 @@
 <template>
-  <main class="p-3 overflow-auto bg-amber-50">
+  <main class="bg-amber-50" :class="{ 'p-3': this.md }">
     <div id="main-content" class="mx-auto">
       <ExampleGame
         v-if="this.$store.state.scene === 'example'"
@@ -42,6 +42,7 @@
 <script>
 import { defineAsyncComponent } from "vue"
 import RoomSelection from "./RoomSelection.vue"
+import breakpoints from "@/mixins/breakpoints";
 
 export default {
   name: "Scene",
@@ -67,6 +68,7 @@ export default {
     SquaredleGame: defineAsyncComponent(() => import("./squaredle/SquaredleGame.vue")),
     SandboxGame: defineAsyncComponent(() => import("./sandbox/SandboxGame.vue")),
   },
+  mixins: [breakpoints],
   data() {
     return {
       gameWidth: 0,
