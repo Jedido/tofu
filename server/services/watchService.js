@@ -7,31 +7,51 @@ class WatchService extends GameService {
 
     // requests
     this.actions = {
-      "watch-load": this.loadVideo.bind(this),
-      "watch-play": this.playVideo.bind(this),
+      "watch-queue": this.queueVideo.bind(this),
+      "watch-start": this.startVideo.bind(this),
+      "watch-sync": this.syncVideo.bind(this),
       "watch-pause": this.pauseVideo.bind(this),
-      "watch-jump": this.jumpVideo.bind(this),
-      "watch-search": this.searchVideo.bind(this)
+      "watch-search": this.searchVideo.bind(this),
+      "watch-remove": this.removeVideo.bind(this),
+      "watch-get-state": this.getState.bind(this)
     }
     // responses
-    this.loadEvent = "watch-request-load"
-    this.playEvent = "watch-request-play"
+    this.queueEvent = "watch-request-queue"
+    this.startEvent = "watch-request-start"
+    this.syncEvent = "watch-request-sync"
     this.pauseEvent = "watch-request-pause"
-    this.jumpEvent = "watch-request-jump"
+    this.removeEvent = "watch-request-remove"
     this.searchResultsEvent = "watch-search-results"
+    this.stateEvent = "watch-state"
+
+    this.playlist = []
+    this.currentVideo = ""
+    this.time = 0
+    this.startTime = 0
+    this.paused = false
   }
 
-  loadVideo({ id }, socket) {
-    try {
-      fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch%3Fv=${id}&format=json`)
-        .then(res => res.json())
-        .then(json => {
-          this.broadcastFn("log", `${socket.ign} added video: ${json.title}`)
-          this.broadcastFn(this.loadEvent, { id })
-        })
-    } catch (e) {
-      console.log(`${socket.ign} failed to execute: ${e}`)
-      console.log(e.stack)
+  getState(_, socket) {
+    const time = this.time + (this.paused ? 0 : Date.now() - this.startTime / 100)
+    socket.emit(this.stateEvent, {
+      videoId: this.currentVideo,
+      playlist: this.playlist,
+      paused: this.paused,
+      time
+    })
+  }
+
+  queueVideo({ video }, socket) {
+    if (this.playlist.find(v => v.videoId === video.videoId)) {
+      socket.emit("alert", "This video is already queued!")
+      return
+    }
+    this.playlist.push(video)
+    this.broadcastFn("log", `${socket.ign} queued a video: ${video.title}`)
+    this.broadcastFn(this.queueEvent, { video })
+    if (!this.currentVideo) {
+      this.currentVideo = video.videoId
+      this.broadcastFn(this.startEvent, { videoId: video.videoId })
     }
   }
 
@@ -41,11 +61,9 @@ class WatchService extends GameService {
       .then(res => res.json())
       .then(json => {
         const results = json.items.map(video => {
-          console.log(video.snippet)
           return {
-            id: video.id.videoId,
+            videoId: video.id.videoId,
             title: video.snippet.title,
-            thumbnail: video.snippet.thumbnails.medium.url, // default, high
             channel: video.snippet.channelTitle
           }
         })
@@ -57,16 +75,28 @@ class WatchService extends GameService {
     }
   }
 
-  playVideo() {
-    this.broadcastFn(this.playEvent)
+  startVideo({ videoId }) {
+    this.currentVideo = videoId
+    this.broadcastFn(this.startEvent, { videoId })
+  }
+
+  syncVideo({ time, pause }) {
+    if (!this.startTime && !pause) {
+      this.startTime = Date.now()
+    }
+    this.time = time
+    this.broadcastFn(this.syncEvent, { time, pause })
   }
 
   pauseVideo() {
+    this.time += (Date.now() - this.startTime) / 1000
+    this.startTime = 0
     this.broadcastFn(this.pauseEvent)
   }
 
-  jumpVideo({ time }) {
-    this.broadcastFn(this.jumpEvent, { time })
+  removeVideo({ index }) {
+    this.playlist.splice(index, 1)
+    this.broadcastFn(this.removeEvent, { index })
   }
 }
 WatchService.prototype.id = "watch"

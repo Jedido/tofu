@@ -123,7 +123,6 @@ function createRoom(gameId, socket) {
 }
 function joinRoom(roomId, socket) {
   if (!hasRoom(roomId)) {
-    socket.emit("alert", `Disconnected from room ${roomId}`)
     socket.emit("set-room", "")
     socket.emit("set-scene", "select")
     return

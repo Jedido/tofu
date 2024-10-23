@@ -194,7 +194,7 @@
 </template>
   
 <script>
-import { debounce } from "lodash";
+import { debounce } from "lodash"
 import socket from "../../mixins/socket.js"
 import JeopardyQuestion from "./JeopardyQuestion.vue"
 import JeopardyButton from "./JeopardyButton.vue"

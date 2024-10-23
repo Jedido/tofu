@@ -12,6 +12,10 @@
         w-fit
       "
     >
+      <div v-if="!this.youtube" :style="{
+        width: `${videoWidth}px`,
+        height: `${videoHeight}px`
+      }"></div>
       <div id="youtube"></div>
       <form class="grid grid-cols-6 w-full border-2 border-amber-200 border-box" @submit.prevent="submit()">
         <input
@@ -21,33 +25,54 @@
           class="outline-none bg-amber-50 px-4 py-2 col-span-4"
           autocomplete="off"
           placeholder="Enter a youtube URL or query..."
+          :disabled="!isReady"
         />
         <button
-          class="focus:outline-none bg-amber-200 hover:bg-amber-300 text-lg"
+          class="focus:outline-none bg-amber-200 hover:bg-amber-300 text-lg disabled:bg-gray-300"
+          :disabled="!isReady"
         >
           Submit
         </button>
         <button
-          class="focus:outline-none bg-amber-200 hover:bg-amber-300 text-lg"
+          class="focus:outline-none bg-amber-200 hover:bg-amber-300 text-lg disabled:bg-gray-300"
           @click.prevent="sync()"
+          :disabled="!isReady"
         >
           Sync
         </button>
       </form>
     </div>
-    <div v-show="searchResults.length > 0" class="flex flex-col gap-2 mx-auto">
-      <h3 class="text-center text-xl mt-4">Results</h3>
-      <div 
-        v-for="result in searchResults" 
-        class="search-result grid grid-cols-2 gap-2 cursor-pointer bg-white mx-auto"
-        @click="() => load(result.id)"
-      >
-        <img class="row-span-2" :src="result.thumbnail" />
-        <div class="flex flex-col gap-2 pr-2 pt-2">
-          <p class="overflow-y-auto max-h-20">{{ result.title }}</p>
-          <p class="text-xs ml-auto">by <strong>{{ result.channel }}</strong></p>
-        </div>
+    <div class="flex flex-col gap-2 mx-auto">
+      <div class="text-xl mt-4 flex justify-center gap-8">
+        <h3 class="cursor-pointer" :class="{ 'underline': !showResults }" @click="showResults = false">Playlist</h3>
+        <h3 class="cursor-pointer" :class="{ 'underline': showResults }" @click="showResults = true">Search</h3>
       </div>
+      <div
+        v-if="!showResults"
+        v-for="(video, index) in playlist"
+        class="relative w-fit mx-auto"
+      >
+        <VideoCard
+          v-bind="video"
+          @click="() => start(video)"
+        />
+        <button class="
+          delete-button
+          absolute
+          h-6 w-6 rounded
+          border-error border-2 border-box
+          text-error hover:bg-error hover:text-white"
+          @click="() => remove(index)"
+        >
+          ✖
+        </button>
+      </div>
+      <VideoCard
+        v-else
+        v-for="result in searchResults"
+        v-bind="result" 
+        @click="() => queue(result)"
+      />
     </div>
   </div>
 </template>
@@ -55,16 +80,25 @@
 <script>
 import socket from "@/mixins/socket.js"
 import breakpoints from "@/mixins/breakpoints.js"
+import VideoCard from "./VideoCard.vue"
 
 export default {
   name: "WatchGame",
   mixins: [socket, breakpoints],
+  components: {
+    VideoCard
+  },
   data() {
     return {
       youtube: null,
       url: "",
-      ready: false,
-      searchResults: []
+      isReady: false,
+      showResults: false,
+      currentlyPlaying: "",
+      searchResults: [],
+      playlist: [],
+      paused: true,
+      time: 0
     }
   },
   mounted() {
@@ -77,12 +111,54 @@ export default {
       tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      window.onYouTubeIframeAPIReady = this.setupYoutube
     } else {
-      document.getElementById('youtube').replaceWith(window.youtube.g)
+      this.setupYoutube()
     }
-
-    window.onYouTubeIframeAPIReady = () => {
-      window.youtube = new YT.Player('youtube', {
+    this.on("request-queue", ({ video }) => {
+      this.playlist.push(video)
+    })
+    this.on("request-start", ({ videoId }) => {
+      this.currentlyPlaying = videoId
+      this.youtube.cueVideoById(videoId)
+    })
+    this.on("request-sync", ({ time, pause }) => {
+      this.youtube.seekTo(time)
+      this.paused = pause
+      if (pause) {
+        this.youtube.pauseVideo()
+      } else if (this.youtube.getPlayerState() !== 1) {
+        this.youtube.playVideo()
+      }
+    })
+    this.on("request-pause", () => {
+      this.youtube.pauseVideo()
+    })
+    this.on("search-results", ({ results }) => {
+      this.searchResults = results
+    })
+    this.on("request-remove", ({ index }) => {
+      this.playlist.splice(index, 1)
+    })
+    this.on("state", ({ videoId, playlist, time, paused }) => {
+      this.playlist = playlist
+      this.currentlyPlaying = videoId
+      if (videoId) {
+        if (time > 0) {
+          this.youtube.loadVideoById(videoId, time)
+        }
+        if (paused) {
+          this.youtube.pauseVideo()
+        }
+      }
+    })
+  },
+  unmounted() {
+    this.youtube.destroy()
+  },
+  methods: {
+    setupYoutube() {
+      this.youtube = new YT.Player('youtube', {
         width: this.videoWidth,
         height: this.videoHeight,
         videoId: '',
@@ -90,56 +166,61 @@ export default {
           "playsinline": 1
         },
         events: {
-          onReady: () => this.ready = true,
+          onReady: this.ready,
           onStateChange: this.stateChange
-        }
+        },
       })
-    }
-    this.on("request-load", ({ id }) => {
-      window.youtube.cueVideoById(id)
-    })
-    this.on("request-jump", ({ time }) => {
-      window.youtube.seekTo(time)
-    })
-    this.on("request-play", () => {
-      window.youtube.playVideo()
-    })
-    this.on("request-pause", () => {
-      window.youtube.pauseVideo()
-    })
-    this.on("search-results", ({ results }) => {
-      this.searchResults = results
-    })
-  },
-  methods: {
+    },
     submit() {
+      if (!this.url) {
+        return
+      }
       if (URL.canParse(this.url)) {
         const parsedURL = URL.parse(this.url)
         const id = parsedURL.searchParams.get("v")
-        if (!!id && parsedURL.host === "www.youtube.com") {
-          this.load(id)
-        } else {
-          alert("video could not be found!")
-        }
+        fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch%3Fv=${id}&format=json`)
+          .then(res => res.json())
+          .then(json => {
+            this.queue({
+              title: json.title,
+              channel: json.author_name,
+              videoId: id
+            })
+          })
+        this.url = ""
+        this.showResults = false
       } else {
         this.emit("search", { query: this.url })
+        this.showResults = true
+        this.searchResults = []
         this.url = ""
       }
     },
     sync() {
-      this.emit("jump", { time: window.youtube.getCurrentTime() })
+      this.emit("sync", { time: this.youtube.getCurrentTime(), pause: this.youtube.getPlayerState() === 2 })
     },
     stateChange(event) {
-      if (event.data === 1) {
-        this.emit("play")
+      if (event.data === 1 && this.paused) {
+        this.paused = false
+        this.emit("sync", { time: this.youtube.getCurrentTime() })
       } else if (event.data === 2) {
+        this.paused = true
         this.emit("pause")
       }
     },
-    load(id) {
-      this.emit("load", { id })
-      this.url = ""
+    queue(video) {
+      this.emit("queue", { video })
     },
+    start(video) {
+      this.emit("start", { videoId: video.videoId })
+    },
+    ready() {
+      this.isReady = true
+      this.emit("get-state")
+    },
+    remove(index) {
+      this.emit("remove", { index })
+    }
   },
   computed: {
     videoWidth() {
@@ -155,14 +236,21 @@ export default {
   },
   watch: {
     videoWidth(newVal, _) {
-      window.youtube.setSize(newVal, this.videoHeight)
+      if (this.youtube) {
+        this.youtube.setSize(newVal, this.videoHeight)
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-.search-result {
-  max-width: 480px;
+.delete-button {
+  top: 50%;
+  right: -48px;
+  transform: translate(-50%, -50%);
+  line-height: 100%;
+  transition: background-color linear 0.2s;
+  transition: color linear 0.2s;
 }
 </style>
