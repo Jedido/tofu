@@ -78,6 +78,7 @@ class WatchService extends GameService {
   startVideo({ videoId }) {
     this.currentVideo = videoId
     this.broadcastFn(this.startEvent, { videoId })
+    this.paused = true
   }
 
   syncVideo({ time, pause }) {
@@ -85,12 +86,14 @@ class WatchService extends GameService {
       this.startTime = Date.now()
     }
     this.time = time
+    this.paused = pause
     this.broadcastFn(this.syncEvent, { time, pause })
   }
 
   pauseVideo() {
     this.time += (Date.now() - this.startTime) / 1000
     this.startTime = 0
+    this.paused = true
     this.broadcastFn(this.pauseEvent)
   }
 

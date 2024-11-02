@@ -143,6 +143,7 @@ export default {
     this.on("state", ({ videoId, playlist, time, paused }) => {
       this.playlist = playlist
       this.currentlyPlaying = videoId
+      this.paused = paused
       if (videoId) {
         if (time > 0) {
           this.youtube.loadVideoById(videoId, time)
@@ -209,6 +210,7 @@ export default {
       }
     },
     queue(video) {
+      this.showResults = false
       this.emit("queue", { video })
     },
     start(video) {
