@@ -8,6 +8,7 @@ const GachaService = require("./services/gachaService.js")
 const WatchService = require("./services/watchService.js")
 const JeopardyService = require("./services/jeopardyService.js")
 const SquaredleService = require("./services/squaredleService.js")
+const TeamService = require("./services/team/teamService.ts")
 const SandboxService = require("./services/sandboxService.js")
 
 dotenv.config({ path: `.env.local` })
@@ -21,6 +22,7 @@ const games = [
   WatchService,
   JeopardyService,
   SquaredleService,
+  TeamService,
   SandboxService,
 ].reduce((acc, cur) => {
   acc[cur.prototype.id] = cur
@@ -174,10 +176,7 @@ function players(roomId) {
   const res = []
   io.sockets.adapter.rooms.get(roomId).forEach((id) => {
     const socket = io.sockets.adapter.nsp.sockets.get(id)
-    res.push({
-      id,
-      ign: socket.ign,
-    })
+    res.push(socket)
   })
   return res
 }

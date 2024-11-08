@@ -25,7 +25,7 @@ class AnagramService extends GameService {
     super(roomId)
     // players: id to { ign, score, round, startTime, time, submissions, strikes }
     this.initPlayers = () => {
-      return this.players().reduce((acc, cur) => {
+      return this.getPlayers().reduce((acc, cur) => {
         acc[cur.id] = {
           ign: cur.ign,
           score: 0,

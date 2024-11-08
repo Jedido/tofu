@@ -121,6 +121,7 @@ export default {
     this.on("request-start", ({ videoId }) => {
       this.currentlyPlaying = videoId
       this.youtube.cueVideoById(videoId)
+      this.paused = true
     })
     this.on("request-sync", ({ time, pause }) => {
       this.youtube.seekTo(time)

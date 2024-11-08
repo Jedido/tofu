@@ -34,6 +34,10 @@
       <SandboxGame
         v-else-if="this.$store.state.scene === 'sandbox'"
       />
+      <TeamGame
+        v-else-if="this.$store.state.scene === 'team'"
+        :socket="socket"
+      />
       <RoomSelection v-else v-on:launch-game="launchGame" />
     </div>
   </main>
@@ -67,6 +71,7 @@ export default {
     ),
     SquaredleGame: defineAsyncComponent(() => import("./squaredle/SquaredleGame.vue")),
     SandboxGame: defineAsyncComponent(() => import("./sandbox/SandboxGame.vue")),
+    TeamGame: defineAsyncComponent(() => import("./team/TeamGame.vue")),
   },
   mixins: [breakpoints],
   data() {

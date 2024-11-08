@@ -6,6 +6,7 @@ module.exports = {
   theme: {
     colors: {
       amber: colors.amber,
+      cyan: colors.cyan,
       error: "#F87171",
       emerald: colors.emerald,
       gray: colors.gray,
