@@ -1,69 +1,41 @@
 <template>
-  <div
-    class="bg-amber-50"
-    :class="{ 'logs-hidden': hideLogs }"
-    :style="{
-      width: `${md ? `${$store.state.sidebarWidth}px` : '100%'}`,
-    }"
-  >
-    <div id="logs-container">
-      <div id="logs-content" class="flex flex-col border-2 relative overflow-hidden">
-        <div
-          class="show-logs-button absolute top-1.5 right-3 bg-emerald-400 text-amber-50 rounded py-1 cursor-pointer w-12 text-center"
-          @click="hideLogs = !hideLogs"
-        >
-          {{ hideLogs ? 'show' : 'hide' }}
+  <Modal>
+    <div id="logs-container" class="w-64">
+      <p class="text-sm py-1">
+        Room ID: {{ $store.state.room || "None" }}
+      </p>
+      <div id="logs-content" class="flex flex-col border-2 relative overflow-y-scroll">
+        <div class="overflow-auto h-64 flex flex-col-reverse justify-start p-2">
+          <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
         </div>
-        <template v-if="!$store.state.room">
-          <form class="mb-2">
-            <label>
-              <p class="text-lg select-none">Join with a Room Code</p>
-              <input
-                id="room-input"
-                v-model="room"
-                type="text"
-                maxlength="5"
-                spellcheck="false"
-                class="outline-none"
-                autocomplete="off"
-              />
-            </label>
-            <button class="border-2 border-emerald-500 rounded hover:border-emerald-400 mt-3 mx-auto" @click.prevent="joinRoom()">Join</button>
-          </form>
-        </template>
-        <template v-else>
-          <p class="px-2">
-            Room: {{ $store.state.room }}
-            <button class="border-2 border-amber-500 rounded hover:border-amber-400 mt-3 mx-auto" @click="leaveRoom()">Leave Room</button>
-          </p>
-          <div class="overflow-auto h-48 flex flex-col-reverse justify-start p-2">
-            <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
-          </div>
-          <form class="flex w-full border-gray-200 border-t-2" @submit.prevent="sendMessage()">
-            <input
-              v-model="message"
-              maxlength="200"
-              type="text"
-              id="input"
-              class="outline-none bg-gray-50 px-2 py-2 col-span-5 grow"
-              autocomplete="off"
-              placeholder="Send a message..."
-            />
-            <img
-              src="@/assets/images/send.svg"
-              class="cursor-pointer bg-gray-50"
-              @click="this.sendMessage()"
-            />
-          </form>
-        </template>
+        <form class="flex w-full border-gray-200 border-t-2" @submit.prevent="sendMessage()">
+          <input
+            v-model="message"
+            maxlength="200"
+            type="text"
+            id="input"
+            class="outline-none bg-gray-50 px-2 py-2 col-span-5 grow"
+            autocomplete="off"
+            placeholder="Send a message..."
+          />
+          <img
+            class="cursor-pointer bg-gray-50"
+            @click="this.sendMessage()"
+          />
+        </form>
       </div>
     </div>
-  </div>
+  </Modal>
 </template>
 
 <script>
+import Modal from './Modal.vue';
+
 export default {
   name: "EventLog",
+  components: {
+    Modal
+  },
   props: {
     socket: Object,
   },
@@ -71,7 +43,6 @@ export default {
     return {
       logs: [],
       md: window.innerWidth >= 768,
-      room: "",
       hideLogs: false,
       message: ""
     }
@@ -88,12 +59,6 @@ export default {
       this.logs.unshift(`${ign}: ${msg}`)
       this.logs = this.logs.slice(0, 50)
     })
-    this.socket.on("set-room", (room) => {
-      this.logs = []
-      this.$store.commit("setRoom", room)
-    })
-    window.addEventListener("resize", this.resize)
-    this.resize()
   },
   unmounted() {
     this.socket.off("all-logs")
@@ -101,18 +66,6 @@ export default {
     this.logs = []
   },
   methods: {
-    resize() {
-      this.md = window.innerWidth >= 768
-    },
-    leaveRoom() {
-      this.socket.emit("leave-room")
-      this.$store.commit("leaveRoom")
-    },
-    joinRoom() {
-      this.logs = []
-      this.socket.emit("join-room", this.room)
-      this.room = ""
-    },
     sendMessage() {
       if (this.message) {
         this.socket.emit("send-message", this.message)
@@ -141,50 +94,7 @@ export default {
 #logs-content p {
   margin-bottom: 4px;
 }
-h3 {
-  text-align: center;
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
 form {
   text-align: center;
-}
-#room-input {
-  border: none;
-  width: 7.5ch;
-  padding: 0px;
-  margin-left: 0.5ch;
-  background: repeating-linear-gradient(
-      90deg,
-      dimgrey 0,
-      dimgrey 1ch,
-      transparent 0,
-      transparent 1.5ch
-    )
-    0 100%/100% 2px no-repeat;
-  color: #2c3e50;
-  font: 5ch consolas, monospace;
-  letter-spacing: 0.5ch;
-}
-button {
-  display: block;
-  padding: 8px 20px;
-}
-.logs-hidden {
-  height: 40px;
-  overflow: hidden;
-}
-
-@media (min-width: 768px) {
-  .logs-hidden {
-    bottom: auto;
-    height: auto;
-  }
-  .show-logs-button {
-    display: none;
-  }
-  .h-48 {
-    height: calc(100vh - 244px);
-  }
 }
 </style>

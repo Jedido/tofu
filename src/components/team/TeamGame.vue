@@ -69,7 +69,6 @@
 <script>
 import socket from "@/mixins/socket.js"
 import PanelType from "./PanelType.vue"
-import 'bootstrap-icons/font/bootstrap-icons.css'
 
 const handWidth = 300;
 

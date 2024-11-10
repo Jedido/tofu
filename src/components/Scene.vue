@@ -1,5 +1,5 @@
 <template>
-  <main class="bg-amber-50" :class="{ 'p-3': this.md }">
+  <main class="bg-amber-50 py-3" :class="{ 'px-3': this.md }">
     <div id="main-content" class="mx-auto">
       <ExampleGame
         v-if="this.$store.state.scene === 'example'"
@@ -38,7 +38,11 @@
         v-else-if="this.$store.state.scene === 'team'"
         :socket="socket"
       />
-      <RoomSelection v-else v-on:launch-game="launchGame" />
+      <RoomSelection
+        v-else
+        :socket="socket"
+        @launch-game="launchGame" 
+      />
     </div>
   </main>
 </template>
