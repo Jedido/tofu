@@ -1,5 +1,5 @@
 <template>
-  <div class="content h-screen relative grid">
+  <div id="content" class="h-screen relative grid">
     <Header id="header" :socket="socket" />
     <Scene id="scene" :socket="socket" />
   </div>
@@ -48,14 +48,14 @@ export default {
       this.socket.emit("create-room", game, this.$store.state.ign)
     },
     resizeGame() {
-      this.gameWidth = document.querySelector(".content").clientWidth
+      this.$store.commit("setGameWidth", document.getElementById("content").clientWidth)
     }
   },
 }
 </script>
 
 <style>
-.content {
+#content {
   grid-template-rows: auto 1fr;
 }
 

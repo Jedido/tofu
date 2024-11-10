@@ -54,7 +54,7 @@
       >
         <VideoCard
           v-bind="video"
-          @click="() => start(video)"
+          @click="start(video)"
         />
         <button class="
           delete-button
@@ -62,7 +62,7 @@
           h-6 w-6 rounded
           border-error border-2 border-box
           text-error hover:bg-error hover:text-white"
-          @click="() => remove(index)"
+          @click="remove(index)"
         >
           ✖
         </button>
@@ -71,7 +71,7 @@
         v-else
         v-for="result in searchResults"
         v-bind="result" 
-        @click="() => queue(result)"
+        @click="queue(result)"
       />
     </div>
   </div>

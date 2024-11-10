@@ -4,7 +4,7 @@
       <p class="text-sm py-1">
         Room ID: {{ $store.state.room || "None" }}
       </p>
-      <div id="logs-content" class="flex flex-col border-2 relative overflow-y-scroll">
+      <div id="logs-content" class="flex flex-col border-2 relative">
         <div class="overflow-auto h-64 flex flex-col-reverse justify-start p-2">
           <p v-for="(logLine, index) in logs" :key="index">{{ logLine }}</p>
         </div>

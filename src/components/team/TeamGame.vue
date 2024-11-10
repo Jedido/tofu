@@ -29,23 +29,28 @@
       </div>
     </div>
     <div v-else class="relative">
-      <div class="bg-gray-500 w-80 mx-auto p-2 rounded-lg border border-4 border-gray-900">
-        <div class="mx-auto w-48 text-center p-2 bg-gray-900 text-error font-mono text-6xl border border-4 border-gray-700">
-          {{ timeDisplay }}
+      <div class="bg-gray-500 w-80 mx-auto rounded-lg border-gray-900 pt-2 mt-1">
+        <div class="grid grid-cols-3 bomb-panels">
+          <BombPanel :wires="wires.slice(0, 3)" />
+          <div class="mx-auto w-fit px-2 text-center py-1 bg-gray-900 text-error font-mono text-4xl border border-4 border-gray-400 shadow shadow-inner">
+            {{ timeDisplay }}
+            <div class="mx-auto mt-2 bg-gray-900 flex w-fit justify-center gap-2 rounded text-sm">
+              <i v-for="_ in strikes" class="bi-x-circle-fill text-error"></i>
+              <i v-for="_ in 5 - strikes" class="bi-check-circle-fill text-emerald-400"></i>
+            </div>
+          </div>
+          <BombPanel :wires="wires.slice(3)" flip />
         </div>
-        <div class="mx-auto mt-2 bg-gray-900 flex px-3 py-1 w-fit justify-center gap-3 rounded text-xl">
-          <i v-for="_ in strikes" class="bi-x-circle-fill text-error"></i>
-          <i v-for="_ in 5 - strikes" class="bi-check-circle-fill text-emerald-400"></i>
-        </div>
-        <div class="w-72 px-3 bg-gray-700 py-1 mt-2 relative left-0 right-0 mx-auto rounded-xl">
-          <div class="bg-gray-900 py-1 rounded-lg"></div>
+        <div class="w-full pl-7 pr-3 bg-gray-700 py-2 mt-2 relative left-0 right-0 mx-auto rounded-xl flex">
+          <div class="grow bg-gray-900 py-1 rounded-lg shadow-inner"></div>
+          <i class="bi-dot leading-none -my-1"></i>
         </div>
       </div>
       <div
         id="panel-collection"
         class="flex flex-nowrap justify-center gap-2 relative overflow-y-none mb-56"
-        @touchend="touchStack"
-        @pointermove="(e) => this.hovering = this.getTouchingPanel(e.clientX, e.clientY)"
+        @touchend.prevent="touchStack"
+        @pointermove.prevent="(e) => this.hovering = this.getTouchingPanel(e.clientX, e.clientY)"
         @pointerleave="this.hovering = -1"
       >
         <PanelType
@@ -58,8 +63,8 @@
           :style="[i !== selectedStack ? cardMargin : '', `order: ${order[i]}`]"
           @click="(e) => selectStack(e, i)"
           @submit="(solution) => submitSolution(solution, i)"
-          @dismiss="() => dismiss(stack)"
-          @reset="() => reset(stack)"
+          @dismiss="dismiss(stack)"
+          @reset="reset(stack)"
         />
       </div>
     </div>
@@ -69,6 +74,7 @@
 <script>
 import socket from "@/mixins/socket.js"
 import PanelType from "./PanelType.vue"
+import BombPanel from "./BombPanel.vue";
 
 const handWidth = 256;
 
@@ -76,7 +82,8 @@ export default {
   name: "TeamGame",
   mixins: [socket],
   components: {
-    PanelType
+    PanelType,
+    BombPanel
   },
   data() {
     let i = 0;
@@ -97,10 +104,29 @@ export default {
       pendingResults: [],
       stacks: [[puzzle(), mock(), mock(), mock()], [], [mock()], [], [], []],
       order: [0, 1, 2, 3, 4, 5],
-      timeTotal: 15,
+      timeTotal: 1000,
       timeStart: Date.now(),
       timeLeft: 0,
-      timer: null
+      timer: null,
+      wires: [{
+        color: 'red',
+        y: 2
+      }, {
+        color: 'lightblue',
+        y: 1
+      }, {
+        color: 'yellow',
+        y: 0,
+      }, {
+        color: 'green',
+        y: 1
+      }, {
+        color: 'white',
+        y: 2
+      }, {
+        color: 'orange',
+        y: 0
+      }]
     }
   },
   mounted() {
@@ -240,15 +266,18 @@ export default {
 </script>
 
 <style scoped>
+.bomb-panels {
+  grid-template-columns: 1fr auto 1fr;
+}
 .panel {
   transition: top 0.2s ease-out;
   transform: scale(0.5);
-  top: 320px;
+  top: 300px;
   left: none;
   overflow-y: hidden;
 }
 .panel-hover {
-  top: 300px;
+  top: 280px;
   cursor: pointer;
   z-index: 30;
 }
@@ -259,7 +288,7 @@ export default {
   left: 50%;
   transform: scale(1) translateX(-50%);
   z-index: 40;
-  padding-top: 30px;
-  margin-top: 8px;
+  padding-top: 20px;
+  margin-top: 16px;
 }
 </style>

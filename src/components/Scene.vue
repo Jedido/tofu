@@ -91,8 +91,6 @@ export default {
     this.socket.on("set-scene", (scene) => {
       this.$store.commit("setScene", scene)
     })
-    this.$store.commit("setSidebarWidth", 300)
-    this.$store.commit("setGameWidth", document.querySelector("#scene").clientWidth)
   },
   methods: {
     launchGame(game) {

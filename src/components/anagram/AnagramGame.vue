@@ -1,16 +1,19 @@
 <template>
-  <div class="flex flex-col items-center text-gray-700 min-w-max">
+  <div class="flex flex-col items-center text-gray-700">
     <h2 class="text-3xl mb-4 mt-2">Anagram</h2>
     <div
       :class="[
         {
           hidden: status != 'menu',
         },
-        'px-8 py-4 bg-white',
+        'px-8 py-4 bg-white w-full',
       ]"
     >
       <p class="font-semibold text-lg">Settings</p>
-      <form class="grid grid-cols-6 gap-2 min-w-full select-none">
+      <form
+        class="grid gap-2 select-none"
+        :class="[this.md ? 'grid-cols-6' : 'grid-cols-3']"
+      >
         <p class="col-span-2 ml-auto">Game Mode</p>
         <select v-model="settings.gameMode" class="border bg-amber-50">
           <option value="coop">co-op</option>
@@ -88,7 +91,7 @@
           }}</label
         >
 
-        <p class="col-span-6 mt-3">Win Condition</p>
+        <p class="mt-3" :class="[this.md ? 'col-span-6' : 'col-span-3']">Win Condition</p>
         <input
           v-model="settings.scoreLimit"
           type="range"
@@ -122,8 +125,8 @@
             hover:bg-emerald-500
             active:bg-emerald-800
             rounded
-            col-span-6
           "
+           :class="[this.md ? 'col-span-6' : 'col-span-3']"
           @click.prevent="startGame()"
         >
           Start
@@ -197,7 +200,8 @@
 </template>
 
 <script>
-import socket from "../../mixins/socket.js"
+import socket from "@/mixins/socket.js"
+import breakpoints from "@/mixins/breakpoints.js"
 import TimerBar from "./TimerBar.vue"
 import PlayerCard from "./PlayerCard.vue"
 import EndCard from "./EndCard.vue"
@@ -209,7 +213,7 @@ export default {
     PlayerCard,
     EndCard,
   },
-  mixins: [socket],
+  mixins: [socket, breakpoints],
   data() {
     return {
       status: "menu",

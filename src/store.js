@@ -8,7 +8,6 @@ export const store = createStore({
       id: "",
       ign: "",
       gameWidth: 0,
-      sidebarWidth: 300,
       scale: 1
     }
   },
@@ -27,9 +26,6 @@ export const store = createStore({
     },
     setGameWidth(state, width) {
       state.gameWidth = width
-    },
-    setSidebarWidth(state, width) {
-      state.sidebarWidth = width
     },
     changeScale(state, delta) {
       if (state.scale + delta > 0) {

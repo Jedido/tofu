@@ -24,8 +24,8 @@
     >
       <MinesweeperCell
         v-for="(cell, index) in board"
-        v-on:reveal-space="() => revealSpace(index)"
-        v-on:flag-space="() => flagSpace(index)"
+        v-on:reveal-space="revealSpace(index)"
+        v-on:flag-space="flagSpace(index)"
         class="space border border-gray-500 text-center"
         :key="index"
         :value="cell"
