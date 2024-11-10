@@ -1,6 +1,6 @@
 <template>
   <Modal>
-    <div class="w-64 flex flex-col">
+    <div class="w-64 flex flex-col gap-2">
       <h1 class="text-xl mb-2">Settings</h1>
       <form class="grid grid-cols-4 gap-2 header-form text-md" @submit.prevent="setIgn()">
         <span class="text-right">Name</span>
@@ -17,11 +17,11 @@
         </div>
         <div class="pl-1">
           <div v-if="!editIgn" class="flex align-center icon">
-            <i class="bi-pencil-fill text-cyan-500 cursor-pointer" @click="focusIgn"></i>
+            <i class="bi-pencil-fill text-cyan-500 cursor-pointer" @click.prevent="focusIgn"></i>
           </div>
           <div v-else class="flex gap-3 text-lg icon align-center">
-            <i class="bi-check-circle text-emerald-500 cursor-pointer" @click="setIgn"></i>
-            <i class="bi-x-circle text-error cursor-pointer" @click="resetIgn"></i>
+            <i class="bi-check-circle text-emerald-500 cursor-pointer" @click.prevent="setIgn"></i>
+            <i class="bi-x-circle text-error cursor-pointer" @click.prevent="resetIgn"></i>
           </div>
         </div>
         <p class="row-start-2 text-right">ID</p>
@@ -41,11 +41,16 @@
           >{{ this.$store.state.id }}</span
         >
       </form>
-      <div v-if="$store.state.room" class="mt-3">
+      <div class="flex gap-3 col-span-2">
+        <span>Scale: {{ $store.state.scale.toFixed(1) }}x</span>
+        <i class="bi-zoom-out cursor-pointer text-cyan-500" @pointerdown.prevent="changeScale(-0.1)"></i>
+        <i class="bi-zoom-in cursor-pointer text-cyan-500"  @pointerdown.prevent="changeScale(0.1)"></i>
+      </div>
+      <div v-if="$store.state.room">
         <span>
           Room: {{ $store.state.room }}
         </span>
-        <span class="cursor-pointer text-xs text-error ml-1" @click="leaveRoom">(Leave)</span>
+        <span class="cursor-pointer text-xs text-error ml-1" @click.prevent="leaveRoom">(Leave)</span>
       </div>
     </div>
   </Modal>
@@ -103,6 +108,9 @@ export default {
       this.$store.commit("leaveRoom")
       this.$emit("dismiss")
     },
+    changeScale(amount) {
+      this.$store.commit("changeScale", amount)
+    }
   },
 }
 </script>

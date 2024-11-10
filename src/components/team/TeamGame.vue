@@ -43,7 +43,7 @@
       </div>
       <div
         id="panel-collection"
-        class="flex flex-nowrap justify-center gap-2 relative overflow-y-none"
+        class="flex flex-nowrap justify-center gap-2 relative overflow-y-none mb-56"
         @touchend="touchStack"
         @pointermove="(e) => this.hovering = this.getTouchingPanel(e.clientX, e.clientY)"
         @pointerleave="this.hovering = -1"
@@ -70,7 +70,7 @@
 import socket from "@/mixins/socket.js"
 import PanelType from "./PanelType.vue"
 
-const handWidth = 300;
+const handWidth = 256;
 
 export default {
   name: "TeamGame",
@@ -241,7 +241,7 @@ export default {
 
 <style scoped>
 .panel {
-  transition: top 0.2s linear;
+  transition: top 0.2s ease-out;
   transform: scale(0.5);
   top: 320px;
   left: none;

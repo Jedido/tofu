@@ -9,6 +9,7 @@ export const store = createStore({
       ign: "",
       gameWidth: 0,
       sidebarWidth: 300,
+      scale: 1
     }
   },
   mutations: {
@@ -29,6 +30,11 @@ export const store = createStore({
     },
     setSidebarWidth(state, width) {
       state.sidebarWidth = width
+    },
+    changeScale(state, delta) {
+      if (state.scale + delta > 0) {
+        state.scale = Math.round((state.scale + delta) * 10) / 10
+      }
     },
     leaveRoom(state) {
       state.room = ""

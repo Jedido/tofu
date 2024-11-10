@@ -1,6 +1,10 @@
 <template>
-  <main class="bg-amber-50 py-3" :class="{ 'px-3': this.md }">
-    <div id="main-content" class="mx-auto">
+  <main class="bg-amber-50" :class="{ 'px-3': this.md }">
+    <div 
+      id="main-content" 
+      class="mx-auto" 
+      :style="[`scale: ${$store.state.scale}; transform: translateY(${translate}%)`]"
+    >
       <ExampleGame
         v-if="this.$store.state.scene === 'example'"
         :socket="socket"
@@ -97,6 +101,11 @@ export default {
       this.socket.emit("create-room", game, this.$store.state.ign)
     },
   },
+  computed: {
+    translate() {
+      return (this.$store.state.scale - 1) / this.$store.state.scale * 50;
+    }
+  }
 }
 </script>
 

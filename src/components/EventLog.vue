@@ -18,9 +18,9 @@
             autocomplete="off"
             placeholder="Send a message..."
           />
-          <img
-            class="cursor-pointer bg-gray-50"
-            @click="this.sendMessage()"
+          <i
+            class="cursor-pointer bi-send text-2xl pr-1 text-gray-400"
+            @pointerdown="this.sendMessage()"
           />
         </form>
       </div>

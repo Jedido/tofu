@@ -35,7 +35,6 @@ export default {
     })
   },
   mounted() {
-    console.log(this.socket)
     window.addEventListener("resize", this.resizeGame)
     this.resizeGame()
     this.socket.on("alert", (message) => {
