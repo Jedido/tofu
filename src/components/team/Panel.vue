@@ -69,7 +69,7 @@ export default {
   },
   methods: {
     start(e, y) {
-      if (!this.active || this.panelType === 'd') {
+      if (!this.active || this.sending || this.panelType === 'd') {
         return false
       }
       e.preventDefault()
@@ -132,7 +132,7 @@ export default {
         return
       }
       this.sending = true
-      this.$refs.panel.style.top = "-400px";
+      this.$refs.panel.style.top = "-420px";
       this.$refs.send.style.height = "384px";
       if (this.panelType === 'p') {
         this.$emit('send-solution')

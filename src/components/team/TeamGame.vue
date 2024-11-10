@@ -30,7 +30,10 @@
     </div>
     <div v-else class="relative">
       <div class="bg-gray-500 w-80 mx-auto p-2 rounded-lg border border-4 border-gray-900">
-        <div class="mx-auto bg-gray-900 flex px-3 py-1 w-fit justify-center gap-5 rounded text-3xl">
+        <div class="mx-auto w-48 text-center p-2 bg-gray-900 text-error font-mono text-6xl border border-4 border-gray-700">
+          {{ timeDisplay }}
+        </div>
+        <div class="mx-auto mt-2 bg-gray-900 flex px-3 py-1 w-fit justify-center gap-3 rounded text-xl">
           <i v-for="_ in strikes" class="bi-x-circle-fill text-error"></i>
           <i v-for="_ in 5 - strikes" class="bi-check-circle-fill text-emerald-400"></i>
         </div>
@@ -52,7 +55,7 @@
           :active="i === selectedStack"
           class="panel relative z-20 shadow-2xl"
           :class="{ 'selected-panel': i === selectedStack, 'panel-hover': i === hovering }"
-          :style="[i !== selectedStack ? cardMargin : '']"
+          :style="[i !== selectedStack ? cardMargin : '', `order: ${order[i]}`]"
           @click="(e) => selectStack(e, i)"
           @submit="(solution) => submitSolution(solution, i)"
           @dismiss="() => dismiss(stack)"
@@ -93,13 +96,22 @@ export default {
       strikes: 0,
       revealed: [],
       pendingResults: [],
-      stacks: [[puzzle(), mock(), mock(), mock()], [], [mock()], [], [], []]
+      stacks: [[puzzle(), mock(), mock(), mock()], [], [mock()], [], [], []],
+      order: [0, 1, 2, 3, 4, 5],
+      timeTotal: 15,
+      timeStart: Date.now(),
+      timeLeft: 0,
+      timer: null
     }
   },
   mounted() {
     this.on("stacks", (stacks) => {
       this.state = "game"
       this.stacks = stacks
+      this.order = []
+      for (let i = 0; i < stacks.length; i++) {
+        this.order.push(i)
+      }
     })
     this.on("strike", ({ id }) => {
       strikes++
@@ -110,6 +122,10 @@ export default {
     this.on("result", (result) => {
       this.pendingResults.push(result)
     })
+    if (this.timer) {
+      clearInterval(this.timer)
+    }
+    this.timer = setInterval(this.refreshTimer, 40)
   },
   methods: {
     getTouchingPanel(x, y) {
@@ -138,12 +154,15 @@ export default {
     selectStack(e, i) {
       if (this.selectedStack !== i) {
         e.preventDefault()
-        let position = i
-        if (i > this.selectedStack) {
+        let position = this.order[i]
+        const oldPosition = this.order[this.selectedStack]
+        if (i > oldPosition) {
           position--
         }
         const panel = document.getElementById(`panel${i}`)
         panel.style.left = `calc(50% + ${handWidth * (position / (this.stacks.length - 1) - 0.5)}px)`
+        this.order[this.selectedStack] = this.order[i]
+        this.order[i] = oldPosition
         this.selectedStack = i
         setTimeout(() => {
           panel.style.left = null
@@ -151,7 +170,7 @@ export default {
       }
     },
     submitSolution(solution, i) {
-      const currentPanel = this.stacks[i][0];
+      const currentPanel = this.stacks[i][0]
       this.emit('submit', {
         id: currentPanel.id,
         type: currentPanel.puzzle,
@@ -191,6 +210,14 @@ export default {
     },
     reset(stack) {
       stack[0].status = 'pending'
+    },
+    refreshTimer() {
+      const elapsed = Date.now() - this.timeStart
+      this.timeLeft = this.timeTotal - elapsed / 1000
+      if (this.timeLeft < 0 || this.state !== 'game') {
+        this.timeLeft = 0
+        clearInterval(this.timer)
+      }
     }
   },
   computed: {
@@ -200,6 +227,14 @@ export default {
       const cardSize = 256
       const space = (spacePerCard - cardSize) / 2
       return `margin: 0 ${space}px`
+    },
+    timeDisplay() {
+      if (this.timeLeft > 60) {
+        const minutes = String(parseInt(this.timeLeft / 60)).padStart(2, '0')
+        const seconds = String(parseInt(this.timeLeft % 60)).padStart(2, '0')
+        return `${minutes}:${seconds}`
+      }
+      return String(this.timeLeft.toFixed(2)).padStart(5, '0')
     }
   }
 }
@@ -209,7 +244,7 @@ export default {
 .panel {
   transition: top 0.2s linear;
   transform: scale(0.5);
-  top: 350px;
+  top: 320px;
   left: none;
   overflow-y: hidden;
 }
