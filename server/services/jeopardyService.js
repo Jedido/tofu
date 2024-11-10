@@ -196,6 +196,8 @@ class JeopardyService extends GameService {
   clearBuzzer(_, socket) {
     if (this.host.id === socket.id) {
       this.activePlayer = ""
+      this.questionState = 1
+      this.broadcastBuzzer(this.setQuestionState, this.questionState)
       this.broadcastFn(this.buzzer, this.activePlayer)
     }
   }

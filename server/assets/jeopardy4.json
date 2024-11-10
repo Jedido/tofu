@@ -1,235 +1,262 @@
 {
-    "num_rounds": 2,
-    "rounds": [
-        [
-            {
-                "name": "OK THEN",
-                "questions": [
-                    {
-                        "points": 100,
-                        "type": "text",
-                        "question": "What is the last word of this sentence?",
-                        "answer": "sentence"
-                    },
-                    {
-                        "points": 200,
-                        "type": "text",
-                        "question": "How many months in the year have 28 days?",
-                        "answer": "12, all of them"
-                    },
-                    {
-                        "points": 300,
-                        "type": "text",
-                        "question": "What is something you never eat for breakfast?",
-                        "answer": "Lunch, Dinner"
-                    },
-                    {
-                        "points": 400,
-                        "type": "text",
-                        "question": "Johnny's mother had three children. The first child was named April The second child was named May. What was the third child's name.",
-                        "answer": "No"
-                    },
-                    {
-                        "points": 500,
-                        "type": "text",
-                        "question": "What tastes better than it smells?",
-                        "answer": "Tongue"
-                    }
-                ]
-            },
-            {
-                "name": "SPELL BEE",
-                "questions": [
-                    {
-                        "points": 100,
-                        "type": "text",
-                        "question": "text here",
-                        "answer": "Word"
-                    },
-                    {
-                        "points": 200,
-                        "type": "text",
-                        "question": "🐔",
-                        "answer": "Chicken, Rooster"
-                    },
-                    {
-                        "points": 300,
-                        "type": "text",
-                        "question": "The song by Fall Out Boy, \"Thanks for the Memories\"",
-                        "answer": "Thnks fr th Mmrs"
-                    },
-                    {
-                        "points": 400,
-                        "type": "text",
-                        "question": "Do what this category asked you to do.",
-                        "answer": "BEE"
-                    },
-                    {
-                        "points": 500,
-                        "type": "zoom",
-                        "question": {
-                          "image": "https://i.natgeofe.com/n/4f5aaece-3300-41a4-b2a8-ed2708a0a27c/domestic-dog_thumb_square.jpg",
-                          "x": 0.5,
-                          "y": 0.5,
-                          "scale": 0.01,
-                          "speed": 10
-                        },
-                        "answer": "DOG"
-                    }
-                ]
-            },
-            {
-                "name": "AUTO BATTLER",
-                "questions": [
-                    {
-                        "points": 100,
-                        "type": "text",
-                        "question": "Auto battler that started the trend",
-                        "answer": "Dota's Auto Chess"
-                    },
-                    {
-                        "points": 200,
-                        "type": "text",
-                        "question": "Riot Games' Auto Battler",
-                        "answer": "Team Fight Tactics"
-                    },
-                    {
-                        "points": 300,
-                        "type": "text",
-                        "question": "An auto battler that is derived from a popular online turn-based card game.",
-                        "answer": "Hearthstone Battlegrounds"
-                    },
-                    {
-                        "points": 400,
-                        "type": "text",
-                        "question": "An auto battler on Steam that features inventory management.",
-                        "answer": "Backpack Battles"
-                    },
-                    {
-                        "points": 500,
-                        "type": "tier",
-                        "question": [
-                            {
-                                "type": "text",
-                                "question": "Dog"
-                            },
-                            {
-                                "type": "text",
-                                "question": "Team Wood Games"
-                            },
-                            {
-                                "type": "text",
-                                "question": "Pig"
-                            },
-                            {
-                                "type": "text",
-                                "question": "🐢"
-                            }
-                        ],
-                        "answer": "Super Auto Pets"
-                    }
-                ]
-            },
-            {
-                "name": "COLOR THEORY",
-                "questions": [
-                    {
-                        "points": 100,
-                        "type": "text",
-                        "question": "The lowest frequency of light visible to humans",
-                        "answer": "Red"
-                    },
-                    {
-                        "points": 200,
-                        "type": "text",
-                        "question": "Before Queen Victoria, red was the most popular dress color for this occasion",
-                        "answer": "Wedding"
-                    },
-                    {
-                        "points": 300,
-                        "type": "text",
-                        "question": "Due to its rarity, this color was known as the color of royalty well into the 1800s",
-                        "answer": "Purple"
-                    },
-                    {
-                        "points": 400,
-                        "type": "text",
-                        "question": "This virtue is what the color red in the US flag represents",
-                        "answer": "Courage"
-                    },
-                    {
-                        "points": 500,
-                        "type": "text",
-                        "question": "Studies have shown that certain hues of this color can actually reduce aggression",
-                        "answer": "Pink"
-                    }
-                ]
-            },
-            {
-                "name": "GAME SCREENSHOTS",
-                "questions": [
-                    {
-                        "points": 100,
-                        "type": "blur",
-                        "question": "Fear of heights",
-                        "answer": "Acrophobia"
-                    },
-                    {
-                        "points": 200,
-                        "type": "blur",
-                        "question": "Fear of men",
-                        "answer": "Androphobia"
-                    },
-                    {
-                        "points": 300,
-                        "type": "blur",
-                        "question": "Fear of children",
-                        "answer": "Pedophobia"
-                    },
-                    {
-                        "points": 400,
-                        "type": "blur",
-                        "question": "Fear of dentists",
-                        "answer": "Dentophobia"
-                    },
-                    {
-                        "points": 500,
-                        "type": "blur",
-                        "question": "Fear of the dark",
-                        "answer": "Noctiphobia"
-                    }
-                ]
-            }
-        ],
-        [
-            {
-                "name": "SEATTLE",
-                "questions": [
-                    {
-                        "points": "Final Question!",
-                        "type": "tier",
-                        "question": [
-                            {
-                                "type": "text",
-                                "question": "A: Motto - The City of Goodwill"
-                            },
-                            {
-                                "type": "text",
-                                "question": "B: Song - Seattle the Peerless City"
-                            },
-                            {
-                                "type": "text",
-                                "question": "C: Bird - American Goldfinch"
-                            },
-                            {
-                                "type": "text",
-                                "question": "D: None of the Above"
-                            }
-                        ],
-                        "answer": "C"
-                    }
-                ]
-            }
+  "num_rounds": 2,
+  "rounds": [
+    [
+      {
+        "name": "Brain Teasers",
+        "questions": [
+          {
+            "points": 100,
+            "type": "text",
+            "question": "What is the last word of this sentence?",
+            "answer": "sentence"
+          },
+          {
+            "points": 200,
+            "type": "text",
+            "question": "How many months in the year have 28 days?",
+            "answer": "12, all of them"
+          },
+          {
+            "points": 300,
+            "type": "text",
+            "question": "What is something you never eat for breakfast?",
+            "answer": "Lunch, Dinner"
+          },
+          {
+            "points": 400,
+            "type": "text",
+            "question": "Johnny's mother had three children. The first child was named April The second child was named May. What was the third child's name.",
+            "answer": "No"
+          },
+          {
+            "points": 500,
+            "type": "text",
+            "question": "What tastes better than it smells?",
+            "answer": "Tongue"
+          }
         ]
+      },
+      {
+        "name": "NAME THAT POKEMON",
+        "questions": [
+          {
+            "points": 100,
+            "type": "zoom",
+            "question": {
+              "image": "https://img.game8.co/3995562/df4942ff2ae721eeebcd9a18aed6086d.png/show",
+              "x": 0.5,
+              "y": 0.5,
+              "scale": 0.1,
+              "speed": 10
+            },
+            "answer": "PIKACHU"
+          },
+          {
+            "points": 200,
+            "type": "zoom",
+            "question": {
+              "image": "https://img.game8.co/3998329/0e9fc1153da201124cf34cf3b2e19e85.png/show",
+              "x": 0.44,
+              "y": 0.35,
+              "scale": 0.01,
+              "speed": 10
+            },
+            "answer": "BULBASAUR"
+          },
+          {
+            "points": 300,
+            "type": "zoom",
+            "question": {
+              "image": "https://img.game8.co/4006309/6bf549fc24608f9a0b9ceab9e5a415a0.png/show",
+              "blur": 50,
+              "speed": 10
+            },
+            "answer": "MACHAMP"
+          },
+          {
+            "points": 400,
+            "type": "zoom",
+            "question": {
+              "image": "https://img.game8.co/4003543/5770fc7a4878760c0d2b322579f5db07.png/original",
+              "x": 0.6,
+              "y": 0.15,
+              "scale": 0.04,
+              "speed": 10
+            },
+            "answer": "SLOWPOKE"
+          },
+          {
+            "points": 500,
+            "type": "blur",
+            "question": {
+              "image": "https://img.game8.co/4003510/43149edce21c416e7bfc25466f4a50d8.png/original",
+              "blur": 50,
+              "speed": 15
+            },
+            "answer": "GYARADOS"
+          }
+        ]
+      },
+      {
+        "name": "NAME A SONG...",
+        "questions": [
+          {
+            "points": 100,
+            "type": "text",
+            "question": "...with a 1 word title",
+            "answer": "CORRECT"
+          },
+          {
+            "points": 200,
+            "type": "text",
+            "question": "...spelled in ALL CAPS",
+            "answer": "CORRECT"
+          },
+          {
+            "points": 300,
+            "type": "text",
+            "question": "...that features a weather",
+            "answer": "CORRECT"
+          },
+          {
+            "points": 400,
+            "type": "text",
+            "question": "...that includes a color",
+            "answer": "CORRECT"
+          },
+          {
+            "points": 500,
+            "type": "text",
+            "question": "...that has no vowels in the title",
+            "answer": "CORRECT"
+          }
+        ]
+      },
+      {
+        "name": "LANDMARKS",
+        "questions": [
+          {
+            "points": 100,
+            "type": "text",
+            "question": "This famous tower, located in Paris, was originally a temporary exhibit for the 1889 World's Fair.",
+            "answer": "Eiffel Tower"
+          },
+          {
+            "points": 200,
+            "type": "text",
+            "question": "This ancient structure, built in Rome, was once used for gladiatorial contests.",
+            "answer": "The Colosseum"
+          },
+          {
+            "points": 300,
+            "type": "text",
+            "question": "A massive stone structure located in Egypt, known for its mysterious smile.",
+            "answer": "Sphinx"
+          },
+          {
+            "points": 400,
+            "type": "text",
+            "question": "This landmark is a giant statue of Jesus, located in Brazil.",
+            "answer": "Christ the Redeemer"
+          },
+          {
+            "points": 500,
+            "type": "text",
+            "question": "This prehistoric stone circle in the UK is believed to have been used for religious or ceremonial purposes.",
+            "answer": "Stonehenge"
+          }
+        ]
+      },
+      {
+        "name": "GAME SCREENSHOTS",
+        "questions": [
+          {
+            "points": 100,
+            "type": "blur",
+            "question": {
+              "image": "https://variety.com/wp-content/uploads/2018/07/league-of-legends-2015-05-15-18-05-46-91.png?w=1000&h=563&crop=1",
+              "blur": 50,
+              "speed": 10
+            },
+            "answer": "League of Legends"
+          },
+          {
+            "points": 200,
+            "type": "blur",
+            "question": {
+              "image": "https://media.wired.com/photos/6019d538fdde4b84d106d200/4:3/w_1108,h_831,c_limit/games_amongus_betrayal.jpg",
+              "blur": 50,
+              "speed": 10
+            },
+            "answer": "Among Us"
+          },
+          {
+            "points": 300,
+            "type": "blur",
+            "question": {
+              "image": "https://media.wired.com/photos/5e8bb6bb8dd572000828b735/4:3/w_2044,h_1533,c_limit/Culture_Switch_ACNH_ND0220_screen_17.jpg",
+              "blur": 50,
+              "speed": 10
+            },
+            "answer": "Animal Crossing"
+          },
+          {
+            "points": 400,
+            "type": "zoom",
+            "question": {
+              "image": "https://minireview.io/common/uploads/review/b4b48c9cac84c219b3d04182ef1de280.jpg",
+              "x": 0.30,
+              "y": 0.35,
+              "scale": 0.04,
+              "speed": 20
+            },
+            "answer": "Maplestory"
+          },
+          {
+            "points": 500,
+            "type": "blur",
+            "question": {
+              "image": "https://townsquare.media/site/50/files/2020/04/Capture.png?w=630&h=406&q=75",
+              "x": 0,
+              "y": 1,
+              "scale": 0.1,
+              "speed": 10
+            },
+            "answer": "Club Penguin"
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "name": "FOOD",
+        "questions": [
+          {
+            "points": "Final Question!",
+            "type": "tier",
+            "question": [
+              {
+                "type": "text",
+                "question": "A: Almonds are not nuts"
+              },
+              {
+                "type": "text",
+                "question": "B: Bananas are berries"
+              },
+              {
+                "type": "text",
+                "question": "C: Coconuts are not fruit"
+              },
+              {
+                "type": "text",
+                "question": "D: Dragonfruits grow on cacti"
+              }
+            ],
+            "answer": "C"
+          }
+        ]
+      }
     ]
+  ]
 }

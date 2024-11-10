@@ -1,6 +1,6 @@
 <template>
-  <div class="h-full border-4 border-emerald-400 rounded overflow-hidden">
-    <img class="max-h-full" :style="imageStyle" :src="image" @contextmenu.prevent @dragstart.prevent />
+  <div class="h-80 w-80 border-4 border-emerald-400 rounded overflow-hidden">
+    <img class="m-auto max-h-full max-w-full" :style="imageStyle" :src="image" @contextmenu.prevent @dragstart.prevent />
   </div>
 </template>
 
@@ -21,9 +21,7 @@ export default {
   },
   computed: {
     imageStyle() {
-      const styles = {
-        transform: "scale(1.1)"
-      }
+      const styles = {}
       if (this.state === "active") {
         styles.transition = `all ${this.time}s ease-out`
       } else if (this.state === "start") {
@@ -36,3 +34,14 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+@media (max-width: 768px) {
+  .h-80 {
+    height: 16rem;
+  }
+  .w-80 {
+    width: 16rem;
+  }
+}
+</style>

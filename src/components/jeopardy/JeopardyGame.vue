@@ -124,7 +124,7 @@
             type="text" 
             class="
               mx-auto
-              py-4
+              py-2
               px-4
               text-lg
               w-1/2
@@ -250,7 +250,7 @@ export default {
     this.on("buzzer", (player) => {
       this.buzzer = player
       if (!this.buzzer && this.question.type === "zoom" || this.question.type === "blur") {
-        this.level--
+        this.level = 1
       }
     })
     this.on("toggle-submission", (show) => {

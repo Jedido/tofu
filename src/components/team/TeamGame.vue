@@ -87,13 +87,13 @@ export default {
           "state": { "name": "R-14","board": [[1,1,1,1],[1, 1, 1,1 ],[1,1,1,1],[1,1, 1, 1]]}}
     }
     return {
-      state: "menu",
+      state: "game",
       selectedStack: 0,
       hovering: -1,
       strikes: 0,
       revealed: [],
       pendingResults: [],
-      stacks: [[puzzle(), mock(), mock(), mock()], []]
+      stacks: [[puzzle(), mock(), mock(), mock()], [], [mock()], [], [], []]
     }
   },
   mounted() {
