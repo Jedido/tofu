@@ -1,14 +1,9 @@
 import { DangerPuzzleSolution, Panel, PanelEnum, PanelInfo, PuzzleEnum, PuzzleSolution, Submission } from "./types"
 import { DangerPuzzle } from "./dangerPuzzle"
+import { TSocket } from "../../utils/tsocket"
 
 const GameService = require("../gameService.js")
 const { shuffle } = require("../../utils/util.js")
-
-// mock socket for compiling
-interface Socket {
-  ign: string
-  emit: Function
-}
 
 class TeamService extends GameService {
   readonly actions = {
@@ -26,7 +21,7 @@ class TeamService extends GameService {
     level: number
     status: object
     players: {
-      socket: Socket
+      socket: TSocket
       stacks: Panel[][]
     }[]
   }
@@ -45,7 +40,7 @@ class TeamService extends GameService {
     this.solved = new Set<number>()
   }
 
-  startGame(_: object, socket: Socket) {
+  startGame(_: object, socket: TSocket) {
     if (this.getPlayers().length < 2) {
       socket.emit("alert", "You need at least 2 people to start a game!")
       // return
@@ -59,7 +54,7 @@ class TeamService extends GameService {
       players: []
     }
     const numStacks: number = Math.ceil(this.gameState.level / 3)
-    this.gameState.players = this.getPlayers().map((socket: Socket) => {
+    this.gameState.players = this.getPlayers().map((socket: TSocket) => {
       return {
         socket,
         stacks: Array.from({ length: numStacks }, () => [])
@@ -125,7 +120,7 @@ class TeamService extends GameService {
     return new DangerPuzzle(id).panels()
   }
 
-  submitSolution({ type, id, data }: Submission, socket: Socket) {
+  submitSolution({ type, id, data }: Submission, socket: TSocket) {
     if (this.trySolution(id, type, data)) {
       if (!this.solved.has(id)) {
         this.broadcastFn(this.solveEvent, { id })

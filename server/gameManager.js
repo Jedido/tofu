@@ -11,8 +11,12 @@ const SquaredleService = require("./services/squaredleService.js")
 const TeamService = require("./services/team/teamService.ts")
 const SandboxService = require("./services/sandboxService.js")
 
+const { TSocket } = require("./utils/tsocket.ts")
+
 dotenv.config({ path: `.env.local` })
 dotenv.config()
+
+const users = new Map()
 
 const games = [
   MinesweeperService,
@@ -35,68 +39,77 @@ let username = 0
 function initGameManager(server) {
   io = new Server(server)
   io.on("connection", (socket) => {
-    socket.ign = `user ${username++}`
+    const user = new TSocket(socket, `user ${username++}`)
+    users.set(socket.id, user)
     socket.on("create-room", (gameId) => {
-      createRoom(gameId, socket)
+      createRoom(gameId, user)
     })
     socket.on("join-room", (roomId) => {
-      joinRoom(roomId.toUpperCase(), socket)
+      joinRoom(roomId.toUpperCase(), user)
     })
     socket.on("leave-room", () => {
-      leaveRoom(socket.roomId, socket)
+      leaveRoom(user.roomId, user)
     })
     socket.on("set-ign", (ign) => {
-      console.log(`${socket.id} (${socket.ign}) has changed their name to ${ign}`)
-      const oldIgn = socket.ign
-      socket.ign = ign
-      socket.emit("set-user", socket.ign, socket.id)
-      broadcast(socket.roomId, "log", `${oldIgn} has changed their name to ${ign}`)
+      console.log(`${user.id} (${user.ign}) has changed their name to ${ign}`)
+      const oldIgn = user.ign
+      user.ign = ign
+      socket.emit("set-user", user.ign, user.id)
+      broadcast(user.socket.roomId, "log", `${oldIgn} has changed their name to ${ign}`)
+    })
+    socket.on("restore-user", ({ ign, id }) => {
+      user.ign = ign
+      user.id = id
+      socket.emit("set-user", user.ign, user.id)
+      console.log(`${user.id} (${user.ign}) session restored.`)
     })
     socket.on("send-message", (msg) => {
-      if (!hasRoom(socket.roomId)) {
-        console.log(`Unknown room ${socket.roomId}`)
+      if (!hasRoom(user.roomId)) {
+        console.log(`Unknown room ${user.roomId}`)
         return
       } else {
-        broadcast(socket.roomId, "log-message", { ign: socket.ign, msg })
+        broadcast(user.roomId, "log-message", { ign: user.ign, msg })
       }
     })
     socket.on("action", (type, data) => {
       try {
-        if (!hasRoom(socket.roomId)) {
-          console.log(`Unknown room ${socket.roomId}`)
+        if (!hasRoom(user.roomId)) {
+          console.log(`Unknown room ${user.roomId}`)
           return
         }
-        const actionFn = gameRooms[socket.roomId].game.actions[type]
+        const actionFn = gameRooms[user.roomId].game.actions[type]
         if (!actionFn) {
           console.log(
-            `${socket.ign} triggered unknown event: ${type} (${JSON.stringify(
+            `${user.ign} triggered unknown event: ${type} (${JSON.stringify(
               data
             )})`
           )
         } else {
           // logging
           console.log(
-            `${socket.id} (${socket.ign}) triggered ${type} on ${
-              gameRooms[socket.roomId].gameId
-            } (${socket.roomId}): ${JSON.stringify(data)}`
+            `${user.id} (${user.ign}) triggered ${type} on ${
+              gameRooms[user.roomId].gameId
+            } (${user.roomId}): ${JSON.stringify(data).substring(0, 100)}`
           )
-          actionFn(data, socket)
+          actionFn(data, user)
         }
       } catch (e) {
-        console.log(`${socket.ign} failed to execute: ${e}`)
+        console.log(`${user.ign} failed to execute: ${e}`)
         console.log(e.stack)
       }
     })
     socket.on("disconnect", function () {
-      const roomId = socket.roomId
-      console.log(`Lost connection to ${socket.id} (${socket.ign})`)
-      if (roomId && !io.sockets.adapter.rooms.get(roomId)) {
-        removeGame(roomId)
-      }
-      leaveRoom(roomId, socket)
+      const roomId = user.roomId
+      console.log(`Lost connection to ${user.id} (${user.ign})`)
+      setTimeout(() => {
+        if (roomId && !io.sockets.adapter.rooms.get(roomId)) {
+          removeGame(roomId)
+        }
+        leaveRoom(roomId, socket)
+      }, 30000)
     })
-    socket.emit("set-user", socket.ign, socket.id)
-    console.log(`${socket.id} has connected`)
+    socket.emit("set-user", user.ign, user.id)
+    console.log(`${user.id} has connected`)
   })
 }
 
@@ -130,7 +143,6 @@ function joinRoom(roomId, socket) {
     return
   }
   const gameId = gameRooms[roomId].gameId
-  socket.roomId = roomId
   socket.emit("set-room", roomId)
   socket.emit("set-scene", gameId)
   socket.join(roomId)
@@ -141,7 +153,7 @@ function leaveRoom(roomId, socket) {
   if (!hasRoom(roomId)) {
     return
   }
-  socket.leave(roomId)
+  socket.leave()
   broadcast(roomId, "log", `${socket.ign} has left the room.`)
   if (!io.sockets.adapter.rooms.get(roomId)) {
     removeGame(roomId)
@@ -161,7 +173,7 @@ function removeGame(roomId) {
   }
   console.log(`deleting room ${roomId} since all players have left`)
   delete gameRooms[roomId]
-  // TODO deactivate game somehow
+  // TODO deactivate game somehow - shutdown function?
 }
 function broadcast(roomId, type, ...params) {
   if (!hasRoom(roomId)) {
@@ -175,7 +187,7 @@ function players(roomId) {
   }
   const res = []
   io.sockets.adapter.rooms.get(roomId).forEach((id) => {
-    const socket = io.sockets.adapter.nsp.sockets.get(id)
+    const socket = users.get(id)
     res.push(socket)
   })
   return res

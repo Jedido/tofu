@@ -15,16 +15,16 @@ process.argv.forEach(function (val) {
   }
 })
 
-const path = __dirname + "/../dist/"
+const path = require('path').join(__dirname, "/../dist/index.html")
 
 // Site Request Handling
-app.use(express.static(path))
+app.use(express.static(__dirname + "/../dist/"))
 app.use(bodyParser.json())
 app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 app.use(loggingMiddleware)
-app.get("/", function (_, res) {
-  res.sendFile(`${path}index.html`)
+app.get("/:room", function (_, res) {
+  res.sendFile(path);
 })
 
 // Game Socket Handling

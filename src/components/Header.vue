@@ -28,15 +28,9 @@ export default {
       showLogs: false,
     }
   },
-  mounted() {
-    this.socket.on("set-user", (ign, id) => {
-      this.$store.commit("setIgn", ign)
-      this.$store.commit("setId", id)
-      this.ign = ign
-    })
-  },
   methods: {
     leaveRoom() {
+      history.pushState({}, null, '/')
       this.socket.emit("leave-room")
       this.$store.commit("leaveRoom")
     }

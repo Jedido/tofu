@@ -60,11 +60,6 @@ export default {
       this.logs = this.logs.slice(0, 50)
     })
   },
-  unmounted() {
-    this.socket.off("all-logs")
-    this.socket.off("log")
-    this.logs = []
-  },
   methods: {
     sendMessage() {
       if (this.message) {
