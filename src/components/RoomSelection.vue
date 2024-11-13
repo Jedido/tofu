@@ -54,6 +54,7 @@ export default {
     this.socket.on("set-room", (room) => {
       this.logs = []
       this.$store.commit("setRoom", room)
+      history.pushState({}, null, `/${room}`)
     })
   },
   methods: {

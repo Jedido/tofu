@@ -35,26 +35,22 @@
         <template v-if="active">
           <button 
             class="absolute left-1 top-0 bottom-0 w-8 h-16 my-auto text-center" 
-            @click.prevent="tryMove(-1, 0)" 
-            @touchstart.prevent="tryMove(-1, 0)"
+            @pointerdown.stop="tryMove(-1, 0)"
           >
             <i class="bi-arrow-left-circle-fill text-gray-400 text-3xl"></i>
           </button>
           <button class="absolute right-1 top-0 bottom-0 w-8 h-16 my-auto rounded text-center"
-            @click.prevent="tryMove(1, 0)"
-            @touchstart.prevent="tryMove(1, 0)"
+            @pointerdown.stop="tryMove(1, 0)"
           >
             <i class="bi-arrow-right-circle-fill text-gray-400 text-3xl"></i>
           </button>
           <button class="absolute -top-9 left-0 right-0 h-8 w-16 mx-auto rounded text-center"
-            @click.prevent="tryMove(0, -1)"
-            @touchstart.prevent="tryMove(0, -1)"
+            @pointerdown.stop="tryMove(0, -1)"
           >
             <i class="bi-arrow-up-circle-fill text-gray-400 text-3xl"></i>
           </button>
           <button class="absolute -bottom-8 left-0 right-0 h-8 w-16 mx-auto rounded text-center"
-            @click.prevent="tryMove(0, 1)"
-            @touchstart.prevent="tryMove(0, 1)"
+            @pointerdown.stop="tryMove(0, 1)"
           >
             <i class="bi-arrow-down-circle-fill text-gray-400 text-3xl"></i>
           </button>

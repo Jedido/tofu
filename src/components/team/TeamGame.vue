@@ -29,21 +29,25 @@
       </div>
     </div>
     <div v-else class="relative">
-      <div class="bg-gray-500 w-80 mx-auto rounded-lg border-gray-900 pt-2 mt-1">
+      <div class="bg-gray-500 w-80 mx-auto rounded-xl border-gray-900 pt-2 mt-1 relative shadow-lg">
+        <div class="absolute -left-1 -right-1 -z-10 flex flex-col">
+          <DynamiteStick />
+          <DynamiteStick />
+        </div>
         <div class="grid grid-cols-3 bomb-panels">
-          <BombPanel :wires="wires.slice(0, 3)" />
-          <div class="mx-auto w-fit px-2 text-center py-1 bg-gray-900 text-error font-mono text-4xl border border-4 border-gray-400 shadow shadow-inner">
+          <BombPanel :wires="wires.slice(0, 3)" @cut="cutWire" />
+          <div class="mx-auto w-fit px-2 text-center py-1 bg-gray-900 text-amber-300 font-mono text-4xl border border-4 border-gray-400 shadow shadow-inner">
             {{ timeDisplay }}
             <div class="mx-auto mt-2 bg-gray-900 flex w-fit justify-center gap-2 rounded text-sm">
-              <i v-for="_ in strikes" class="bi-x-circle-fill text-error"></i>
-              <i v-for="_ in 5 - strikes" class="bi-check-circle-fill text-emerald-400"></i>
+              <i v-for="_ in cuts" class="bi-check-circle-fill text-emerald-400"></i>
+              <i v-for="_ in 5 - cuts" class="bi-check-circle-fill text-gray-700"></i>
             </div>
           </div>
-          <BombPanel :wires="wires.slice(3)" flip />
+          <BombPanel :wires="wires.slice(3)" @cut="(i) => cutWire(i + 3)" flip />
         </div>
         <div class="w-full pl-7 pr-3 bg-gray-700 py-2 mt-2 relative left-0 right-0 mx-auto rounded-xl flex">
-          <div class="grow bg-gray-900 py-1 rounded-lg shadow-inner"></div>
-          <i class="bi-dot leading-none -my-1"></i>
+          <div class="grow bg-gray-900 h-1 rounded-lg shadow-inner"></div>
+          <i class="bi-dot leading-none -my-2"></i>
         </div>
       </div>
       <div
@@ -59,12 +63,13 @@
           :current-panel="currentPanel(i)"
           :active="i === selectedStack"
           class="panel relative z-20 shadow-2xl"
-          :class="{ 'selected-panel': i === selectedStack, 'panel-hover': i === hovering }"
-          :style="[i !== selectedStack ? cardMargin : '', `order: ${order[i]}`]"
-          @click="(e) => selectStack(e, i)"
+          :class="{ 'selected-panel': i === selectedStack }"
+          :style="[i !== selectedStack ? cardMargin : 'top: -12px;', `order: ${order[i]}`]"
+          :hover="i === hovering"
           @submit="(solution) => submitSolution(solution, i)"
           @dismiss="dismiss(stack)"
           @reset="reset(stack)"
+          @select="selectStack(i)"
         />
       </div>
     </div>
@@ -75,6 +80,7 @@
 import socket from "@/mixins/socket.js"
 import PanelType from "./PanelType.vue"
 import BombPanel from "./BombPanel.vue";
+import DynamiteStick from "./DynamiteStick.vue";
 
 const handWidth = 256;
 
@@ -83,7 +89,8 @@ export default {
   mixins: [socket],
   components: {
     PanelType,
-    BombPanel
+    BombPanel,
+    DynamiteStick
   },
   data() {
     let i = 0;
@@ -93,13 +100,13 @@ export default {
     }
     const puzzle = () => {
       return { "id": i++, "puzzle": "d", "panel": "p",
-          "state": { "name": "R-14","board": [[1,1,1,1],[1, 1, 1,1 ],[1,1,1,1],[1,1, 1, 1]]}}
+          "state": { "name": "R-14","board": [[0,0,0,0],[1, 1, 0,0 ],[1,0,0,0],[0,0, 0, 0]]}}
     }
     return {
       state: "game",
       selectedStack: 0,
       hovering: -1,
-      strikes: 0,
+      cuts: 0,
       revealed: [],
       pendingResults: [],
       stacks: [[puzzle(), mock(), mock(), mock()], [], [mock()], [], [], []],
@@ -110,7 +117,8 @@ export default {
       timer: null,
       wires: [{
         color: 'red',
-        y: 2
+        y: 2,
+        stripe: 'blue'
       }, {
         color: 'lightblue',
         y: 1
@@ -119,7 +127,8 @@ export default {
         y: 0,
       }, {
         color: 'green',
-        y: 1
+        y: 1,
+        stripe: 'white'
       }, {
         color: 'white',
         y: 2
@@ -139,7 +148,6 @@ export default {
       }
     })
     this.on("strike", ({ id }) => {
-      strikes++
     })
     this.on("solve", ({ id }) => {
       this.revealed.push(id)
@@ -151,6 +159,9 @@ export default {
       clearInterval(this.timer)
     }
     this.timer = setInterval(this.refreshTimer, 40)
+  },
+  unmounted() {
+    clearInterval(this.timer)
   },
   methods: {
     getTouchingPanel(x, y) {
@@ -174,24 +185,20 @@ export default {
       if (touched === -1) {
         return
       }
-      this.selectStack(e, touched)
     },
-    selectStack(e, i) {
+    selectStack(i) {
       if (this.selectedStack !== i) {
-        e.preventDefault()
         let position = this.order[i]
         const oldPosition = this.order[this.selectedStack]
+        document.getElementById(`panel${this.selectedStack}`).style.left = '0px'
         if (i > oldPosition) {
           position--
         }
         const panel = document.getElementById(`panel${i}`)
-        panel.style.left = `calc(50% + ${handWidth * (position / (this.stacks.length - 1) - 0.5)}px)`
         this.order[this.selectedStack] = this.order[i]
         this.order[i] = oldPosition
         this.selectedStack = i
-        setTimeout(() => {
-          panel.style.left = null
-        }, 1)
+        panel.style.left = 'calc(50% - 128px)'
       }
     },
     submitSolution(solution, i) {
@@ -201,7 +208,7 @@ export default {
         type: currentPanel.puzzle,
         data: solution
       })
-      setTimeout(() => this.awaitResponse(i), 3000)
+      setTimeout(() => this.awaitResponse(i), 5000)
     },
     currentPanel(i) {
       const stack = this.stacks[i];
@@ -211,7 +218,11 @@ export default {
         return {}
       }
     },
-    awaitResponse(i) {
+    awaitResponse(i, retries = 3) {
+      if (retries === 0) {
+        alert("Something went wrong! Leaving the room...")
+        return
+      }
       const stack = this.stacks[i]
       if (stack.length === 0) {
         return
@@ -223,8 +234,8 @@ export default {
         panel.status = result
       } else {
         setTimeout(() => {
-          console.log('Server is taking a long time to respond!')
-          this.awaitResponse(i)
+          console.log('Warning: server is taking a long time to respond!')
+          this.awaitResponse(i, retries - 1)
         }, 1000)
       }
     },
@@ -243,6 +254,11 @@ export default {
         this.timeLeft = 0
         clearInterval(this.timer)
       }
+    },
+    cutWire(e) {
+      this.emit('cut', { i: e })
+      this.cuts++
+      console.log(e)
     }
   },
   computed: {
@@ -269,26 +285,11 @@ export default {
 .bomb-panels {
   grid-template-columns: 1fr auto 1fr;
 }
-.panel {
-  transition: top 0.2s ease-out;
-  transform: scale(0.5);
-  top: 300px;
-  left: none;
-  overflow-y: hidden;
-}
-.panel-hover {
-  top: 280px;
-  cursor: pointer;
-  z-index: 30;
-}
 .selected-panel {
-  transition: transform 0.2s linear, top 0.3s linear, left 0.19s linear, margin 0.2s linear;
+  transition: top 0.2s ease-out, scale 0.1s linear;
   position: absolute;
-  top: -30px;
-  left: 50%;
-  transform: scale(1) translateX(-50%);
+  scale: 1;
   z-index: 40;
   padding-top: 20px;
-  margin-top: 16px;
 }
 </style>
