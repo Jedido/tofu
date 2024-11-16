@@ -1,11 +1,13 @@
 export type Id = number
 
 export enum PuzzleEnum {
-  Danger = "d"
+  Danger = "d",
+  Wire = "w"
 }
 
 export enum PanelEnum {
   Puzzle = "p",
+  Wire="w",
   Key1 = "k1",
   Key2 = "k2"
 }
@@ -15,6 +17,13 @@ export type Panel = {
   puzzle: PuzzleEnum
   panel: PanelEnum
   state: PanelInfo
+}
+
+export type Wire = {
+  index: number,
+  color: string,
+  stripe: string,
+  y: number
 }
 
 export type PanelInfo = {}
@@ -29,4 +38,7 @@ export interface PuzzleSolution {}
 export interface DangerPuzzleSolution extends PuzzleSolution {
   x: number
   y: number
+}
+export interface WirePuzzleSolution extends PuzzleSolution {
+  next: number
 }

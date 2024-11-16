@@ -40,7 +40,7 @@
             {{ timeDisplay }}
             <div class="mx-auto mt-2 bg-gray-900 flex w-fit justify-center gap-2 rounded text-sm">
               <i v-for="_ in cuts" class="bi-check-circle-fill text-emerald-400"></i>
-              <i v-for="_ in 5 - cuts" class="bi-check-circle-fill text-gray-700"></i>
+              <i v-for="_ in quota - cuts" class="bi-check-circle-fill text-gray-700"></i>
             </div>
           </div>
           <BombPanel :wires="wires.slice(3)" @cut="(i) => cutWire(i + 3)" flip />
@@ -103,14 +103,15 @@ export default {
           "state": { "name": "R-14","board": [[0,0,0,0],[1, 1, 0,0 ],[1,0,0,0],[0,0, 0, 0]]}}
     }
     return {
-      state: "game",
+      state: "menu",
       selectedStack: 0,
       hovering: -1,
       cuts: 0,
       revealed: [],
       pendingResults: [],
-      stacks: [[puzzle(), mock(), mock(), mock()], [], [mock()], [], [], []],
+      stacks: [[puzzle(), mock(), mock(), mock()], [{ "id": 99, "puzzle": "w", "panel": "w", "state": { "wire": { "color": "red", "stripe": "white", "index": 0 }, "order": 2, "quota": 4}}], [mock()], [], [], []],
       order: [0, 1, 2, 3, 4, 5],
+      quota: 4,
       timeTotal: 1000,
       timeStart: Date.now(),
       timeLeft: 0,
@@ -139,15 +140,37 @@ export default {
     }
   },
   mounted() {
-    this.on("stacks", (stacks) => {
-      this.state = "game"
+    this.on("state", ({ state, stacks, wires, quota, time }) => {
+      this.state = state
       this.stacks = stacks
+      this.wires = wires
+      console.log(wires)
+      this.quota = quota
+      this.timeTotal = time
+      this.timeStart = Date.now()
       this.order = []
       for (let i = 0; i < stacks.length; i++) {
         this.order.push(i)
       }
+      if (this.timer) {
+        clearInterval(this.timer)
+      }
+      this.timer = setInterval(this.refreshTimer, 40)
     })
-    this.on("strike", ({ id }) => {
+    this.on("cut-success", ({ next, success }) => {
+      this.wires[next].cut = true
+      if (success) {
+        this.cuts++
+      }
+    })
+    this.on("win", () => {
+      alert("You Won!")
+      // make win sequence
+    })
+    this.on("lose", () => {
+      this.cuts = 0
+      alert("You Lost!")
+      // make loss sequence
     })
     this.on("solve", ({ id }) => {
       this.revealed.push(id)
@@ -155,10 +178,6 @@ export default {
     this.on("result", (result) => {
       this.pendingResults.push(result)
     })
-    if (this.timer) {
-      clearInterval(this.timer)
-    }
-    this.timer = setInterval(this.refreshTimer, 40)
   },
   unmounted() {
     clearInterval(this.timer)
@@ -208,7 +227,7 @@ export default {
         type: currentPanel.puzzle,
         data: solution
       })
-      setTimeout(() => this.awaitResponse(i), 5000)
+      setTimeout(() => this.awaitResponse(i, 3), 100)
     },
     currentPanel(i) {
       const stack = this.stacks[i];
@@ -218,7 +237,7 @@ export default {
         return {}
       }
     },
-    awaitResponse(i, retries = 3) {
+    awaitResponse(i, retries) {
       if (retries === 0) {
         alert("Something went wrong! Leaving the room...")
         return
@@ -256,9 +275,7 @@ export default {
       }
     },
     cutWire(e) {
-      this.emit('cut', { i: e })
-      this.cuts++
-      console.log(e)
+      this.emit('cut', { next: e })
     }
   },
   computed: {

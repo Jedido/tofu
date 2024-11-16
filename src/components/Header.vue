@@ -1,6 +1,6 @@
 <template>
   <header class="px-3 py-1 bg-emerald-700 text-emerald-50 flex gap-3 select-none">
-    <div class="grow text-lg"><span class="cursor-pointer" @click="leaveRoom">Tofu</span></div>
+    <div class="grow text-lg"><span class="cursor-pointer" @click="leaveRoom">Tofu</span><span v-show="$store.state.room" class="ml-2 text-sm text-emerald-200">#{{ $store.state.room }}</span></div>
     <i class="bi-chat-dots cursor-pointer text-lg" @click="showLogs = true"></i>
     <i class="bi-gear cursor-pointer text-lg" @click="showSettings = true"></i>
     <Settings v-show="showSettings" :socket="socket" @dismiss="showSettings = false"/>

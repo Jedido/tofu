@@ -12,7 +12,13 @@
     <div
       ref="panel" 
       class="submit-wrapper relative z-10 px-2 rounded flex flex-col justify-between w-64 h-96" 
-      :class="[panelType === 'p' ? `bg-cyan-800` : (panelType === 'd' ? 'bg-gray-500' : 'bg-gray-800')]"
+      :class="{
+        'bg-cyan-800': panelType === 'p',
+        'bg-gray-500': panelType === 'd',
+        'bg-gray-800': panelType === 'k1' || panelType === 'k2',
+        'bg-emerald-700': panelType === 'w',
+        'send': !dragging
+      }"
       @pointerdown.stop="start"
       @contextmenu.stop="submit"
     >
@@ -24,7 +30,12 @@
       </div>
       <div 
         class="rounded h-24 relative mx-1 my-2"
-        :class="[panelType === 'p' ? `bg-cyan-700` : (panelType === 'd' ? 'bg-gray-400' : 'bg-gray-700')]"
+        :class="{
+          'bg-cyan-700': panelType === 'p',
+          'bg-gray-400': panelType === 'd',
+          'bg-gray-700': panelType === 'k1' || panelType === 'k2',
+          'bg-emerald-600': panelType === 'w'
+        }"
       >
         <div class="text-sm px-2 py-1 text-gray-50 leading-tight">
           <slot name="description"></slot>
@@ -161,11 +172,7 @@ export default {
       this.sending = true
       this.$refs.panel.style.top = "-420px";
       this.$refs.send.style.height = "384px";
-      if (this.panelType === 'p') {
-        this.$emit('send-solution')
-      } else {
-        this.$emit('submit')
-      }
+      this.$emit('submit')
     },
     dismiss() {
       if (this.status === 'success') {
@@ -184,7 +191,7 @@ export default {
 <style scoped>
 .panel {
   scale: 0.5;
-  transition: transform 0.1s ease, top 0.3s ease-out, scale 0.3s;
+  transition: transform 0.1s ease, scale 0.3s;
   overflow-y: hidden;
   box-shadow: 0;
 }
@@ -193,7 +200,7 @@ export default {
   transform: translateY(-10px);
 }
 .drag {
-  transition: transform 0.1s ease, top 0.05s linear, left 0.05s linear, scale 0.1s, box-shadow 0.7s linear, border-radius 1s;
+  transition: scale 0.1s, box-shadow 0.7s linear;
   z-index: 999;
   transform: none;
 }
@@ -209,12 +216,11 @@ export default {
   border-radius: 4px;
   animation: 1s glow alternate infinite;
 }
-.submit-wrapper {
-  transition: top 0.1s; 
-  touch-action: none;
+.send {
+  transition: top 0.5s ease-out; 
 }
-.send-icon {
-  transition: bottom 0.1s;
+.submit-wrapper {
+  touch-action: none;
 }
 .large-icon {
   font-size: 4rem;

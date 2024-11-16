@@ -13,9 +13,6 @@ interface DangerKeyPI extends PanelInfo {
 export class DangerPuzzle extends Puzzle {
   readonly shapes: Array<number[][]> = [[
     [1, 1],
-    [1, 1],
-  ], [
-    [1, 1],
     [1, 0]
   ], [
     [1, 1],
@@ -27,8 +24,9 @@ export class DangerPuzzle extends Puzzle {
     [0, 1],
     [1, 1]
   ], [
-    [1, 1]
+    [1, 1, 1]
   ], [
+    [1],
     [1],
     [1]
   ]]
@@ -56,10 +54,16 @@ export class DangerPuzzle extends Puzzle {
     }
     this.puzzleBoard = makeBoard()
     this.dangerBoard = makeBoard()
+    let numExtras = Math.floor(Math.random() * 6) + 3
+    let openSpaces = 13
     for (let i = 0; i < width; i++) {
       for (let j = 0; j < height; j++) {
         if (this.dangerBoard.board[j][i] === 0) {
-          this.dangerBoard.board[j][i] = Math.floor(Math.random() * 2)
+          if (numExtras / openSpaces > Math.random()) {
+            this.dangerBoard.board[j][i] = 1
+            numExtras--
+          }
+          openSpaces--
         }
       }
     }

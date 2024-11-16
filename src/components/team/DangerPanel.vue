@@ -1,5 +1,5 @@
 <template>
-  <Panel v-if="panel === 'k1'" :active="active" :panel-type="panel">
+  <Panel v-if="panel === 'k1'" :active="active" :panel-type="panel" @submit="$emit('submit')">
     <template v-slot:title>
       Zone {{ state.name }} Danger Map
     </template>
@@ -19,10 +19,10 @@
     </template>
   </Panel>
   <Panel
-    v-else-if="panel === 'p'" 
-    :active="active" 
+    v-else-if="panel === 'p'"
+    :active="active"
     :panel-type="panel"
-    @send-solution="sendSolution"
+    @submit="sendSolution"
   >
     <template v-slot:title >
       Zone {{ state.name }}
@@ -81,6 +81,9 @@ export default {
   },
   components: {
     Panel
+  },
+  emits: {
+    'submit': false
   },
   data() {
     return {

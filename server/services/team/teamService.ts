@@ -1,6 +1,7 @@
-import { DangerPuzzleSolution, Panel, PanelEnum, PanelInfo, PuzzleEnum, PuzzleSolution, Submission } from "./types"
+import { DangerPuzzleSolution, Panel, PanelEnum, PanelInfo, PuzzleEnum, PuzzleSolution, Submission, WirePuzzleSolution } from "./types"
 import { DangerPuzzle } from "./dangerPuzzle"
 import { TSocket } from "../../utils/tsocket"
+import { WirePuzzle } from "./wirePuzzle"
 
 const GameService = require("../gameService.js")
 const { shuffle } = require("../../utils/util.js")
@@ -8,16 +9,18 @@ const { shuffle } = require("../../utils/util.js")
 class TeamService extends GameService {
   readonly actions = {
     "team-start": this.startGame.bind(this),
-    "team-submit": this.submitSolution.bind(this)
+    "team-submit": this.submitSolution.bind(this),
+    "team-cut": this.cutWire.bind(this)
   }
   readonly countdownEvent: string = "team-countdown"
-  readonly stacksEvent: string = "team-stacks"
+  readonly stateEvent: string = "team-state"
   readonly resultEvent: string = "team-result"
   readonly solveEvent: string = "team-solve"
-  readonly strikeEvent: string = "team-strike"
+  readonly cutEvent: string = "team-cut-success"
+  readonly loseEvent: string = "team-lose"
+  readonly winEvent: string = "team-win"
 
   gameState: {
-    strikes: number
     level: number
     status: object
     players: {
@@ -31,7 +34,6 @@ class TeamService extends GameService {
   constructor(roomId: string) {
     super(roomId)
     this.gameState = {
-      strikes: 0,
       level: 0,
       status: {},
       players: []
@@ -43,12 +45,11 @@ class TeamService extends GameService {
   startGame(_: object, socket: TSocket) {
     if (this.getPlayers().length < 2) {
       socket.emit("alert", "You need at least 2 people to start a game!")
-      // return
+      return
     }
 
     this.solved = new Set<number>()
     this.gameState = {
-      strikes: 3,
       level: 1,
       status: {},
       players: []
@@ -64,12 +65,7 @@ class TeamService extends GameService {
     // create puzzles
     this.puzzles = new Map<number, Map<PanelEnum, PanelInfo>>
     const numPuzzles: number = Math.ceil(this.gameState.players.length * Math.sqrt(this.gameState.level) * 3)
-    const panelsByPuzzle: Panel[][] = []
-    let id = 10 + Math.ceil(Math.random() * 10)
-    for (let i = 0; i < numPuzzles; i++) {
-      panelsByPuzzle.push(this.generatePuzzle(id))
-      id += Math.ceil(Math.random() * 4)
-    }
+    const panelsByPuzzle: Panel[][] = this.generatePuzzles(numPuzzles)
     shuffle(panelsByPuzzle)
 
     // register puzzles
@@ -91,7 +87,13 @@ class TeamService extends GameService {
 
     // assign stacks to players
     for (let i = 0; i < this.gameState.players.length; i++) {
-      this.gameState.players[i].socket.emit(this.stacksEvent, stacks.splice(0, numStacks))
+      this.gameState.players[i].socket.emit(this.stateEvent, {
+        state: "game",
+        stacks: stacks.splice(0, numStacks),
+        wires: WirePuzzle.wires,
+        quota: WirePuzzle.quota,
+        time: 600
+      })
     }
   }
 
@@ -104,7 +106,7 @@ class TeamService extends GameService {
     }
     let totalWeights = 0
     const stacksBySize: Map<number, Panel[]> = new Map(validStacks.map(stack => {
-      totalWeights += 1 / (stack.length + 0.01)
+      totalWeights += 1 / (stack.length * stack.length + 0.01)
       return [totalWeights, stack]
     }))
     const r = Math.random() * totalWeights
@@ -116,11 +118,41 @@ class TeamService extends GameService {
     }
   }
 
-  generatePuzzle(id: number) {
+  generatePuzzles(numPuzzles: number): Panel[][] {
+    const panelsByPuzzle: Panel[][] = []
+    let id = 10 + Math.ceil(Math.random() * 10)
+    const numWires = Math.floor(Math.random() * 3) + 3
+    WirePuzzle.init(numWires)
+    const maxWireValue = numWires * (numWires + 1) / 2
+    const wireValues = Array.from({ length: numWires }, () => Math.random() * maxWireValue)
+    const added = new Set<number>()
+    let cumulative = 0
+    for (let i = 0; i < numPuzzles; i++) {
+      panelsByPuzzle.push(this.generatePuzzle(id))
+      id += Math.ceil(Math.random() * 5)
+      cumulative += i
+      for (let j = 0; j < wireValues.length; j++) {
+        if (wireValues[j] < cumulative && !added.has(j)) {
+          added.add(j)
+          panelsByPuzzle.push(WirePuzzle.getPanel(j, id))
+          id += Math.ceil(Math.random() * 5)
+        }
+      }
+    }
+    for (let j = 0; j < wireValues.length; j++) {
+      if (!added.has(j)) {
+        panelsByPuzzle.push(WirePuzzle.getPanel(j, id))
+        id += Math.ceil(Math.random() * 5)
+      }
+    }
+    return panelsByPuzzle
+  }
+
+  generatePuzzle(id: number): Panel[] {
     return new DangerPuzzle(id).panels()
   }
 
-  submitSolution({ type, id, data }: Submission, socket: TSocket) {
+  submitSolution({ type, id, data }: Submission, socket: TSocket): void {
     if (this.trySolution(id, type, data)) {
       if (!this.solved.has(id)) {
         this.broadcastFn(this.solveEvent, { id })
@@ -128,11 +160,10 @@ class TeamService extends GameService {
       }
       socket.emit(this.resultEvent, { id, result: 'success' })
     } else {
-      this.gameState.strikes -= 1
       setTimeout(() => {
         this.broadcastFn(this.strikeEvent, { id })
         this.broadcastFn("log", `${socket.ign} made an error!`)
-      }, 3000)
+      }, 5000)
       socket.emit(this.resultEvent, { id, result: 'failure' })
     }
   }
@@ -144,6 +175,7 @@ class TeamService extends GameService {
     try {
       switch (type) {
         case PuzzleEnum.Danger: return DangerPuzzle.solve(data as DangerPuzzleSolution, this.puzzles.get(id)!)
+        case PuzzleEnum.Wire: return true
       }
     } catch (e: unknown) {
       if (typeof e === "string") {
@@ -153,9 +185,19 @@ class TeamService extends GameService {
       }
       return false
     }
-    return false
   }
   
+  cutWire(solution: WirePuzzleSolution, _: TSocket): void {
+    if (WirePuzzle.cut(solution)) {
+      this.broadcastFn(this.cutEvent, { next: solution.next, success: true })
+      if (WirePuzzle.order.length === 0) {
+        this.broadcastFn(this.winEvent)
+      } 
+    } else {
+      this.broadcastFn(this.cutEvent, { next: solution.next, success: false })
+      this.broadcastFn(this.loseEvent)
+    }
+  }
 }
 TeamService.prototype.id = "team"
 
