@@ -201,7 +201,7 @@ export default {
 }
 .drag {
   transition: scale 0.1s, box-shadow 0.7s linear;
-  z-index: 999;
+  z-index: 39;
   transform: none;
 }
 @keyframes glow {

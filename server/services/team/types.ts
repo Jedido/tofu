@@ -31,7 +31,8 @@ export type PanelInfo = {}
 export interface Submission {
   type: PuzzleEnum,
   id: Id,
-  data: PuzzleSolution
+  data: PuzzleSolution,
+  stack: number
 }
 
 export interface PuzzleSolution {}

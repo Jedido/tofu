@@ -172,6 +172,10 @@ function removeGame(roomId) {
     return
   }
   console.log(`deleting room ${roomId} since all players have left`)
+  const onShutdown = gameRooms[roomId].game.actions["shutdown"]
+  if (onShutdown) {
+    onShutdown()
+  }
   delete gameRooms[roomId]
   // TODO deactivate game somehow - shutdown function?
 }

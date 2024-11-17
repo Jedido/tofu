@@ -2,9 +2,7 @@
   <div id="team" class="select-none">
     <div
       v-if="state === 'menu'"
-      :class="[
-        'px-8 py-4 bg-white',
-      ]"
+      class="px-8 py-4 bg-white"
     >
       <h2 class="text-2xl text-center">Team</h2>
       <p class="font-semibold text-lg">Instructions</p>
@@ -22,13 +20,14 @@
             rounded
             col-span-6
           "
-          @click.prevent="startGame()"
+          @click.prevent="emit('start')"
         >
           Start
         </button>
       </div>
     </div>
-    <div v-else class="relative">
+    <div v-else-if="state === 'game'" class="relative">
+      <div v-show="blackout" class="blackout fixed bg-gray-900 w-screen z-40 pointer-events-none"></div>
       <div class="bg-gray-500 w-80 mx-auto rounded-xl border-gray-900 pt-2 mt-1 relative shadow-lg">
         <div class="absolute -left-1 -right-1 -z-10 flex flex-col">
           <DynamiteStick />
@@ -36,8 +35,15 @@
         </div>
         <div class="grid grid-cols-3 bomb-panels">
           <BombPanel :wires="wires.slice(0, 3)" @cut="cutWire" />
-          <div class="mx-auto w-fit px-2 text-center py-1 bg-gray-900 text-amber-300 font-mono text-4xl border border-4 border-gray-400 shadow shadow-inner">
-            {{ timeDisplay }}
+          <div class="mx-auto w-fit px-2 text-center py-1 bg-gray-900 font-mono text-4xl border border-4 border-gray-400 shadow shadow-inner">
+            <span 
+              class="relative z-50"
+              :class="{
+                'text-emerald-300': !bombActive,
+                'text-amber-300': bombActive && timeLeft >= 60,
+                'text-error': bombActive && timeLeft < 60
+              }"
+            >{{ timeDisplay }}</span>
             <div class="mx-auto mt-2 bg-gray-900 flex w-fit justify-center gap-2 rounded text-sm">
               <i v-for="_ in cuts" class="bi-check-circle-fill text-emerald-400"></i>
               <i v-for="_ in quota - cuts" class="bi-check-circle-fill text-gray-700"></i>
@@ -73,6 +79,50 @@
         />
       </div>
     </div>
+    <div v-else-if="state === 'win'">
+      <div class="px-8 py-4 bg-white">
+        <div>Level {{ level }} complete! Time remaining: {{ timeDisplay }}</div>
+        <button
+          class="
+            mt-4
+            py-4
+            w-full
+            focus:outline-none
+            text-amber-50
+            bg-emerald-600
+            hover:bg-emerald-500
+            active:bg-emerald-800
+            rounded
+            col-span-6
+          "
+          @click.prevent="emit('next')"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+    <div v-else-if="state === 'lose'">
+      <div class="px-8 py-4 bg-white">
+        <div>You lost on level {{ level }}! Cause of explosion: {{ causeOfDeath }}</div>
+        <button
+          class="
+            mt-4
+            py-4
+            w-full
+            focus:outline-none
+            text-amber-50
+            bg-emerald-600
+            hover:bg-emerald-500
+            active:bg-emerald-800
+            rounded
+            col-span-6
+          "
+          @click.prevent="state = 'menu'"
+        >
+          Back to Main Menu
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -105,17 +155,21 @@ export default {
     return {
       state: "menu",
       selectedStack: 0,
+      level: 1,
       hovering: -1,
       cuts: 0,
       revealed: [],
       pendingResults: [],
-      stacks: [[puzzle(), mock(), mock(), mock()], [{ "id": 99, "puzzle": "w", "panel": "w", "state": { "wire": { "color": "red", "stripe": "white", "index": 0 }, "order": 2, "quota": 4}}], [mock()], [], [], []],
+      stacks: [[puzzle(), mock(), mock(), mock()], [{ "id": 99, "puzzle": "w", "panel": "w", "state": { "wire": { "color": "chartreuse", "stripe": "", "index": 0 }, "order": 2, "quota": 4}}], [mock()], []],
       order: [0, 1, 2, 3, 4, 5],
+      blackout: true,
       quota: 4,
+      causeOfDeath: "cut the wrong wire",
       timeTotal: 1000,
       timeStart: Date.now(),
       timeLeft: 0,
       timer: null,
+      bombActive: false,
       wires: [{
         color: 'red',
         y: 2,
@@ -140,22 +194,26 @@ export default {
     }
   },
   mounted() {
-    this.on("state", ({ state, stacks, wires, quota, time }) => {
-      this.state = state
+    this.on("start", ({ stacks, wires, quota, level, time, timeStart }) => {
+      this.blackout = true
+      setTimeout(() => {
+        this.blackout = false
+        this.bombActive = true
+      }, 3000)
+      this.state = "game"
+      this.cuts = 0
       this.stacks = stacks
       this.wires = wires
-      console.log(wires)
       this.quota = quota
       this.timeTotal = time
-      this.timeStart = Date.now()
+      this.timeStart = timeStart
+      this.level = level
       this.order = []
+      clearInterval(this.timer)
+      this.timer = setInterval(this.refreshTimer, 40)
       for (let i = 0; i < stacks.length; i++) {
         this.order.push(i)
       }
-      if (this.timer) {
-        clearInterval(this.timer)
-      }
-      this.timer = setInterval(this.refreshTimer, 40)
     })
     this.on("cut-success", ({ next, success }) => {
       this.wires[next].cut = true
@@ -164,20 +222,24 @@ export default {
       }
     })
     this.on("win", () => {
-      alert("You Won!")
-      // make win sequence
+      clearInterval(this.timer)
+      // play audio
+      this.bombActive = false
+      setTimeout(() => {
+        this.state = "win"
+      }, 5000)
     })
-    this.on("lose", () => {
+    this.on("lose", ({ cause }) => {
       this.cuts = 0
-      alert("You Lost!")
-      // make loss sequence
+      this.causeOfDeath = cause
+      clearInterval(this.timer)
+      this.bombActive = false
+      this.state = "lose"
     })
     this.on("solve", ({ id }) => {
       this.revealed.push(id)
     })
-    this.on("result", (result) => {
-      this.pendingResults.push(result)
-    })
+    this.on("result", this.handleResult)
   },
   unmounted() {
     clearInterval(this.timer)
@@ -195,9 +257,6 @@ export default {
         }
       }
       return -1
-    },
-    startGame() {
-      this.emit("start")
     },
     touchStack(e) {
       const touched = this.getTouchingPanel(e.changedTouches[0].clientX, e.changedTouches[0].clientY)
@@ -223,11 +282,11 @@ export default {
     submitSolution(solution, i) {
       const currentPanel = this.stacks[i][0]
       this.emit('submit', {
+        stack: i,
         id: currentPanel.id,
         type: currentPanel.puzzle,
         data: solution
       })
-      setTimeout(() => this.awaitResponse(i, 3), 100)
     },
     currentPanel(i) {
       const stack = this.stacks[i];
@@ -237,25 +296,12 @@ export default {
         return {}
       }
     },
-    awaitResponse(i, retries) {
-      if (retries === 0) {
-        alert("Something went wrong! Leaving the room...")
-        return
-      }
-      const stack = this.stacks[i]
-      if (stack.length === 0) {
-        return
-      }
-      const panel = stack[0]
-      const resultIndex = this.pendingResults.findIndex(res => panel.id === res.id)
-      if (resultIndex >= 0) {
-        const { result } = this.pendingResults.splice(resultIndex, 1)[0]
+    handleResult({ stack, id, result }) {
+      const panel = this.stacks[stack][0]
+      if (panel.id === id) {
         panel.status = result
       } else {
-        setTimeout(() => {
-          console.log('Warning: server is taking a long time to respond!')
-          this.awaitResponse(i, retries - 1)
-        }, 1000)
+        console.log("Double submission detected! ignoring...")
       }
     },
     dismiss(stack) {
@@ -306,7 +352,34 @@ export default {
   transition: top 0.2s ease-out, scale 0.1s linear;
   position: absolute;
   scale: 1;
-  z-index: 40;
+  z-index: 30;
   padding-top: 20px;
+}
+@keyframes blackout {
+  0% {
+    opacity: 98%;
+  }
+  45% {
+    opacity: 98%;
+  }
+  50% {
+    opacity: 0%;
+  }
+  55% {
+    opacity: 98%;
+  }
+  85% {
+    opacity: 98%;
+  }
+  100% {
+    opacity: 0%;
+  }
+}
+.blackout { 
+  height: calc(100vh - 4px);
+  opacity: 99%;
+  left: 50%;
+  transform: translate(-50%, -36px);
+  animation: 1s blackout 2s forwards;
 }
 </style>

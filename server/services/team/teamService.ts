@@ -5,15 +5,17 @@ import { WirePuzzle } from "./wirePuzzle"
 
 const GameService = require("../gameService.js")
 const { shuffle } = require("../../utils/util.js")
+const RESULT_DELAY = 3000
 
 class TeamService extends GameService {
   readonly actions = {
     "team-start": this.startGame.bind(this),
     "team-submit": this.submitSolution.bind(this),
-    "team-cut": this.cutWire.bind(this)
+    "team-cut": this.cutWire.bind(this),
+    "team-next": this.prepareNextLevel.bind(this)
   }
   readonly countdownEvent: string = "team-countdown"
-  readonly stateEvent: string = "team-state"
+  readonly startEvent: string = "team-start"
   readonly resultEvent: string = "team-result"
   readonly solveEvent: string = "team-solve"
   readonly cutEvent: string = "team-cut-success"
@@ -25,11 +27,11 @@ class TeamService extends GameService {
     status: object
     players: {
       socket: TSocket
-      stacks: Panel[][]
     }[]
   }
   puzzles: Map<number, Map<PanelEnum, PanelInfo>>
   solved: Set<number>
+  timer?: NodeJS.Timeout
 
   constructor(roomId: string) {
     super(roomId)
@@ -48,19 +50,23 @@ class TeamService extends GameService {
       return
     }
 
-    this.solved = new Set<number>()
     this.gameState = {
-      level: 1,
+      level: 0,
       status: {},
       players: []
     }
-    const numStacks: number = Math.ceil(this.gameState.level / 3)
     this.gameState.players = this.getPlayers().map((socket: TSocket) => {
       return {
-        socket,
-        stacks: Array.from({ length: numStacks }, () => [])
+        socket
       }
     })
+    this.prepareNextLevel()
+  }
+
+  prepareNextLevel() {
+    this.gameState.level++
+    this.solved = new Set<number>()
+    const numStacks: number = Math.ceil(this.gameState.level / 3)
 
     // create puzzles
     this.puzzles = new Map<number, Map<PanelEnum, PanelInfo>>
@@ -86,13 +92,20 @@ class TeamService extends GameService {
     })
 
     // assign stacks to players
+    this.timeStart = Date.now()
+    const timePerPuzzle = 10 * Math.pow(0.95, this.gameState.level)
+    const time = numPuzzles * timePerPuzzle * 3
+    this.timer = setTimeout(() => {
+      this.broadcastFn(this.loseEvent, { cause: `you ran out of time` })
+    }, time * 1000)
     for (let i = 0; i < this.gameState.players.length; i++) {
-      this.gameState.players[i].socket.emit(this.stateEvent, {
-        state: "game",
+      this.gameState.players[i].socket.emit(this.startEvent, {
         stacks: stacks.splice(0, numStacks),
         wires: WirePuzzle.wires,
         quota: WirePuzzle.quota,
-        time: 600
+        time,
+        timeStart: this.timeStart,
+        level: this.gameState.level
       })
     }
   }
@@ -152,25 +165,21 @@ class TeamService extends GameService {
     return new DangerPuzzle(id).panels()
   }
 
-  submitSolution({ type, id, data }: Submission, socket: TSocket): void {
-    if (this.trySolution(id, type, data)) {
-      if (!this.solved.has(id)) {
-        this.broadcastFn(this.solveEvent, { id })
-        this.solved.add(id)
-      }
-      socket.emit(this.resultEvent, { id, result: 'success' })
-    } else {
-      setTimeout(() => {
-        this.broadcastFn(this.strikeEvent, { id })
-        this.broadcastFn("log", `${socket.ign} made an error!`)
-      }, 5000)
-      socket.emit(this.resultEvent, { id, result: 'failure' })
+  submitSolution({ type, id, data, stack }: Submission, socket: TSocket): void {
+    let result = { stack, id, result: 'failure' }
+    setTimeout(() => {
+      result.result = this.solved.has(id) ? 'success' : 'failure'
+      socket.emit(this.resultEvent, result)
+    }, RESULT_DELAY)
+    if (!this.solved.has(id) && this.trySolution(id, type, data)) {
+      this.broadcastFn(this.solveEvent, { id })
+      this.solved.add(id)
     }
   }
 
   trySolution(id: number, type: PuzzleEnum, data: PuzzleSolution): boolean {
-    if (data === undefined && this.solved.has(id)) {
-      return true
+    if (data === undefined) {
+      return type === PuzzleEnum.Wire
     }
     try {
       switch (type) {
@@ -187,15 +196,17 @@ class TeamService extends GameService {
     }
   }
   
-  cutWire(solution: WirePuzzleSolution, _: TSocket): void {
+  cutWire(solution: WirePuzzleSolution, socket: TSocket): void {
     if (WirePuzzle.cut(solution)) {
       this.broadcastFn(this.cutEvent, { next: solution.next, success: true })
       if (WirePuzzle.order.length === 0) {
         this.broadcastFn(this.winEvent)
+        clearTimeout(this.timer)
       } 
     } else {
       this.broadcastFn(this.cutEvent, { next: solution.next, success: false })
-      this.broadcastFn(this.loseEvent)
+      this.broadcastFn(this.loseEvent, { cause: `${socket.ign} cut the wrong wire` })
+      clearTimeout(this.timer)
     }
   }
 }

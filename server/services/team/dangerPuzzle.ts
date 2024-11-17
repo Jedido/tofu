@@ -54,7 +54,7 @@ export class DangerPuzzle extends Puzzle {
     }
     this.puzzleBoard = makeBoard()
     this.dangerBoard = makeBoard()
-    let numExtras = Math.floor(Math.random() * 6) + 3
+    let numExtras = Math.floor(Math.random() * 4) + 3
     let openSpaces = 13
     for (let i = 0; i < width; i++) {
       for (let j = 0; j < height; j++) {

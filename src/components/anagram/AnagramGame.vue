@@ -202,7 +202,7 @@
 <script>
 import socket from "@/mixins/socket.js"
 import breakpoints from "@/mixins/breakpoints.js"
-import TimerBar from "./TimerBar.vue"
+import TimerBar from "@/components/TimerBar.vue"
 import PlayerCard from "./PlayerCard.vue"
 import EndCard from "./EndCard.vue"
 

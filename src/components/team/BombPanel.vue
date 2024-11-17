@@ -1,10 +1,10 @@
 <template>
   <div class="bg-gray-900 mx-2 pt-2 relative" :class="flip ? '-scale-x-100' : ''">
-    <div class="absolute w-6 bg-gray-500 z-40 -top-1 -bottom-1"></div>
+    <div class="absolute w-6 bg-gray-500 z-10 -top-1 -bottom-1"></div>
     <div class="h-full w-full bg-gray-800 relative">
       <template v-for="(wire, i) in wires">
         <div
-          class="absolute z-50 bg-gray-900 w-4 h-4 flex items-center rounded-sm cursor-pointer"
+          class="absolute z-10 bg-gray-900 w-4 h-4 flex items-center rounded-sm cursor-pointer"
           :style="[`top: ${i * 28 - 2}px;`]"
           @click.stop="cutWire(i)"
         >
@@ -19,7 +19,7 @@
         </div>
       </template>
     </div>
-    <div class="absolute w-2 bg-gray-500 z-50 -top-1 -bottom-1 -right-1"></div>
+    <div class="absolute w-2 bg-gray-500 z-10 -top-1 -bottom-1 -right-1"></div>
   </div>
 </template>
 
