@@ -1,20 +1,19 @@
 <template>
-  <DangerPanel
-    v-if="currentPanel.puzzle === 'd'"
-    v-bind="panelInfo"
-    :key="`d-${currentPanel.id}`"
+  <component
+    :is="panelType"
+    v-bind="{
+      panel: this.currentPanel.panel,
+      state: this.currentPanel.state,
+      status: this.currentPanel.status
+    }"
+    :key="`${currentPanel.puzzle}-${currentPanel.id}`"
   />
-  <WirePanel
-    v-else-if="currentPanel.puzzle === 'w'"
-    v-bind="panelInfo"
-    :key="`w-${currentPanel.id}`"
-  />
-  <EmptyPanel v-else />
 </template>
 
 <script>
 import DangerPanel from './DangerPanel.vue';
 import EmptyPanel from './EmptyPanel.vue';
+import RequestPanel from './RequestPanel.vue';
 import WirePanel from './WirePanel.vue';
 
 export default {
@@ -22,17 +21,19 @@ export default {
   components: {
     DangerPanel,
     WirePanel,
+    RequestPanel,
     EmptyPanel
   },
   props: {
     currentPanel: Object
   },
   computed: {
-    panelInfo() {
-      return {
-          panel: this.currentPanel.panel,
-          state: this.currentPanel.state,
-          status: this.currentPanel.status
+    panelType() {
+      switch (this.currentPanel.puzzle) {
+        case 'd': return DangerPanel
+        case 'w': return WirePanel
+        case 'r': return RequestPanel
+        default: return EmptyPanel
       }
     }
   }

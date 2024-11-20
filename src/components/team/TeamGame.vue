@@ -143,15 +143,6 @@ export default {
     DynamiteStick
   },
   data() {
-    let i = 0;
-    const mock = () => {
-      return { "id": i++, "puzzle": "d", "panel": "k1",
-          "state": { "name": "R-14","board": [[1,1,1,1],[1, 1, 1,1 ],[1,0,1,1],[0,0, 1, 1]]}}
-    }
-    const puzzle = () => {
-      return { "id": i++, "puzzle": "d", "panel": "p",
-          "state": { "name": "R-14","board": [[0,0,0,0],[1, 1, 0,0 ],[1,0,0,0],[0,0, 0, 0]]}}
-    }
     return {
       state: "menu",
       selectedStack: 0,
@@ -160,37 +151,43 @@ export default {
       cuts: 0,
       revealed: [],
       pendingResults: [],
-      stacks: [[puzzle(), mock(), mock(), mock()], [{ "id": 99, "puzzle": "w", "panel": "w", "state": { "wire": { "color": "chartreuse", "stripe": "", "index": 0 }, "order": 2, "quota": 4}}], [mock()], []],
-      order: [0, 1, 2, 3, 4, 5],
-      blackout: true,
+      stacks: [[{
+        id: 1,
+        puzzle: "r",
+        panel: "p",
+        state: {
+          name: "Rawynris"
+        }
+      }],[{
+        id: 1,
+        puzzle: "r",
+        panel: "k1",
+        state: {
+          requestors: [{
+            name: "Nalenyna",
+            sequence: [1, 3, 1, 3]
+          }, {
+            name: "Filenven",
+            sequence: [3, 3, 2, 0]
+          }, {
+            name: "Luleniel",
+            sequence: [2, 3, 1, 0]
+          }, {
+            name: "Rawynris",
+            sequence: [0, 1, 2, 3]
+          }]
+        }
+      }]],
+      order: [0],
+      blackout: false,
       quota: 4,
-      causeOfDeath: "cut the wrong wire",
+      causeOfDeath: "",
       timeTotal: 1000,
       timeStart: Date.now(),
       timeLeft: 0,
       timer: null,
       bombActive: false,
-      wires: [{
-        color: 'red',
-        y: 2,
-        stripe: 'blue'
-      }, {
-        color: 'lightblue',
-        y: 1
-      }, {
-        color: 'yellow',
-        y: 0,
-      }, {
-        color: 'green',
-        y: 1,
-        stripe: 'white'
-      }, {
-        color: 'white',
-        y: 2
-      }, {
-        color: 'orange',
-        y: 0
-      }]
+      wires: []
     }
   },
   mounted() {

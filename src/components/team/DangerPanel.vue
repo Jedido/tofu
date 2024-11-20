@@ -28,7 +28,7 @@
       Zone {{ state.name }}
     </template>
     <template v-slot:description >
-      Zone {{ state.name }} controller card. Use to move the payload to a safe location.
+      Zone {{ state.name }} controller card. Use the arrows to move the payload to a safe location.
     </template>
     <template v-slot:content>
       <div class="relative top-1/2 -translate-y-2/4">

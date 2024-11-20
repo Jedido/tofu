@@ -1,7 +1,8 @@
-import { DangerPuzzleSolution, Panel, PanelEnum, PanelInfo, PuzzleEnum, PuzzleSolution, Submission, WirePuzzleSolution } from "./types"
+import { DangerPuzzleSolution, Panel, PanelEnum, PanelInfo, PuzzleEnum, PuzzleSolution, RequestPuzzleSolution, Submission, WirePuzzleSolution } from "./types"
 import { DangerPuzzle } from "./dangerPuzzle"
 import { TSocket } from "../../utils/tsocket"
 import { WirePuzzle } from "./wirePuzzle"
+import { RequestPuzzle } from "./requestPuzzle"
 
 const GameService = require("../gameService.js")
 const { shuffle } = require("../../utils/util.js")
@@ -64,8 +65,10 @@ class TeamService extends GameService {
   }
 
   prepareNextLevel() {
-    this.gameState.level++
     this.solved = new Set<number>()
+    RequestPuzzle.reset()
+
+    this.gameState.level++
     const numStacks: number = Math.ceil(this.gameState.level / 3)
 
     // create puzzles
@@ -93,7 +96,7 @@ class TeamService extends GameService {
 
     // assign stacks to players
     this.timeStart = Date.now()
-    const timePerPuzzle = 10 * Math.pow(0.95, this.gameState.level)
+    const timePerPuzzle = 16 * Math.pow(0.95, this.gameState.level)
     const time = numPuzzles * timePerPuzzle * 3
     this.timer = setTimeout(() => {
       this.broadcastFn(this.loseEvent, { cause: `you ran out of time` })
@@ -162,18 +165,26 @@ class TeamService extends GameService {
   }
 
   generatePuzzle(id: number): Panel[] {
+    if (Math.random() < 0.5) {
+      return new RequestPuzzle(id).panels()
+    }
     return new DangerPuzzle(id).panels()
   }
 
   submitSolution({ type, id, data, stack }: Submission, socket: TSocket): void {
     let result = { stack, id, result: 'failure' }
-    setTimeout(() => {
-      result.result = this.solved.has(id) ? 'success' : 'failure'
+    if (!this.solved.has(id)) {
+      setTimeout(() => {
+        result.result = this.solved.has(id) ? 'success' : 'failure'
+        socket.emit(this.resultEvent, result)
+      }, RESULT_DELAY)
+      if (this.trySolution(id, type, data)) {
+        this.broadcastFn(this.solveEvent, { id })
+        this.solved.add(id)
+      }
+    } else {
+      result.result = 'success'
       socket.emit(this.resultEvent, result)
-    }, RESULT_DELAY)
-    if (!this.solved.has(id) && this.trySolution(id, type, data)) {
-      this.broadcastFn(this.solveEvent, { id })
-      this.solved.add(id)
     }
   }
 
@@ -184,6 +195,7 @@ class TeamService extends GameService {
     try {
       switch (type) {
         case PuzzleEnum.Danger: return DangerPuzzle.solve(data as DangerPuzzleSolution, this.puzzles.get(id)!)
+        case PuzzleEnum.Request: return RequestPuzzle.solve(data as RequestPuzzleSolution, this.puzzles.get(id)!)
         case PuzzleEnum.Wire: return true
       }
     } catch (e: unknown) {

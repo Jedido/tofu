@@ -2,7 +2,8 @@ export type Id = number
 
 export enum PuzzleEnum {
   Danger = "d",
-  Wire = "w"
+  Wire = "w",
+  Request = 'r'
 }
 
 export enum PanelEnum {
@@ -42,4 +43,7 @@ export interface DangerPuzzleSolution extends PuzzleSolution {
 }
 export interface WirePuzzleSolution extends PuzzleSolution {
   next: number
+}
+export interface RequestPuzzleSolution extends PuzzleSolution {
+  sequence: number[]
 }

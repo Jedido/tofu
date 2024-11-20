@@ -25,7 +25,7 @@
       <div class="text-lg h-8 text-center py-1 relative">
         <slot name="title"></slot>
       </div>
-      <div class="bg-white h-60 w-60 relative rounded-lg mx-auto text-gray-800">
+      <div class="bg-white h-60 w-60 relative rounded-lg mx-auto text-gray-800 overflow-hidden">
         <slot name="content"></slot>
       </div>
       <div 
