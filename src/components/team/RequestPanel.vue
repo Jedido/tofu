@@ -9,7 +9,10 @@
     <template v-slot:content>
       <div class="text-center mt-8 rounded w-full">
         <div class="overflow-hidden bg-gray-100 text-gray-580 mx-auto px-2 py-1 rounded border-t-2 border-b-2 border-gray-800 border-dotted">
-        <div class="slideshow relative flex gap-3" :style="[this.paused || !this.active ? 'animation-play-state: paused' : '']">
+        <div 
+          class="slideshow relative flex gap-3" 
+          :style="[`animation-delay: ${animationOffset}s`, this.paused || !this.active ? 'animation-play-state: paused' : '']"
+        >
           <div v-for="requestor in requestors">
             <div class="py-3">
               <div class="text-4xl font-mono uppercase requestor text-center">
@@ -50,10 +53,10 @@
       Confirm Passcode
     </template>
     <template v-slot:description>
-      Please submit the passcode for {{ state.name }}.
+      Please submit the passcode sequence for {{ state.name }}.
     </template>
     <template v-slot:content>
-      <div class="text-center mt-12 text-lg">
+      <div class="text-center mt-10 text-3xl">
         {{ state.name }}
       </div>
       <div class="flex justify-around mt-4">
@@ -104,7 +107,8 @@ export default {
       colors: ['red', 'yellow', 'green', 'blue'],
       sequence: [],
       paused: true,
-      timer: null
+      timer: null,
+      animationOffset: -Math.random() * 6
     }
   },
   methods: {

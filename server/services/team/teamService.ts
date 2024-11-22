@@ -1,11 +1,13 @@
-import { DangerPuzzleSolution, Panel, PanelEnum, PanelInfo, PuzzleEnum, PuzzleSolution, RequestPuzzleSolution, Submission, WirePuzzleSolution } from "./types"
+import { DangerPuzzleSolution, Panel, PanelEnum, PanelInfo, PatternPuzzleSolution, PuzzleEnum, PuzzleSolution, RequestPuzzleSolution, Submission, WirePuzzleSolution } from "./types"
 import { DangerPuzzle } from "./dangerPuzzle"
 import { TSocket } from "../../utils/tsocket"
 import { WirePuzzle } from "./wirePuzzle"
 import { RequestPuzzle } from "./requestPuzzle"
+import { PatternPuzzle } from "./patternPuzzle"
+import { Puzzle } from "./puzzle"
 
 const GameService = require("../gameService.js")
-const { shuffle } = require("../../utils/util.js")
+const { randomItem, shuffle } = require("../../utils/util.js")
 const RESULT_DELAY = 3000
 
 class TeamService extends GameService {
@@ -67,9 +69,10 @@ class TeamService extends GameService {
   prepareNextLevel() {
     this.solved = new Set<number>()
     RequestPuzzle.reset()
+    PatternPuzzle.reset()
 
     this.gameState.level++
-    const numStacks: number = Math.ceil(this.gameState.level / 3)
+    const numStacks: number = Math.ceil(this.gameState.level / 3) + 1
 
     // create puzzles
     this.puzzles = new Map<number, Map<PanelEnum, PanelInfo>>
@@ -96,7 +99,7 @@ class TeamService extends GameService {
 
     // assign stacks to players
     this.timeStart = Date.now()
-    const timePerPuzzle = 16 * Math.pow(0.95, this.gameState.level)
+    const timePerPuzzle = 16 * Math.pow(0.96, this.gameState.level)
     const time = numPuzzles * timePerPuzzle * 3
     this.timer = setTimeout(() => {
       this.broadcastFn(this.loseEvent, { cause: `you ran out of time` })
@@ -165,10 +168,10 @@ class TeamService extends GameService {
   }
 
   generatePuzzle(id: number): Panel[] {
-    if (Math.random() < 0.5) {
-      return new RequestPuzzle(id).panels()
-    }
-    return new DangerPuzzle(id).panels()
+    const PuzzleType = randomItem([
+      RequestPuzzle, DangerPuzzle, PatternPuzzle
+    ])
+    return new PuzzleType(id).panels()
   }
 
   submitSolution({ type, id, data, stack }: Submission, socket: TSocket): void {
@@ -193,9 +196,11 @@ class TeamService extends GameService {
       return type === PuzzleEnum.Wire
     }
     try {
+      const panelInfo = this.puzzles.get(id)!
       switch (type) {
-        case PuzzleEnum.Danger: return DangerPuzzle.solve(data as DangerPuzzleSolution, this.puzzles.get(id)!)
-        case PuzzleEnum.Request: return RequestPuzzle.solve(data as RequestPuzzleSolution, this.puzzles.get(id)!)
+        case PuzzleEnum.Danger: return DangerPuzzle.solve(data as DangerPuzzleSolution, panelInfo)
+        case PuzzleEnum.Request: return RequestPuzzle.solve(data as RequestPuzzleSolution, panelInfo)
+        case PuzzleEnum.Pattern: return PatternPuzzle.solve(data as PatternPuzzleSolution, panelInfo)
         case PuzzleEnum.Wire: return true
       }
     } catch (e: unknown) {

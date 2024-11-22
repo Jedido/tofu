@@ -22,7 +22,7 @@
       @pointerdown.stop="start"
       @contextmenu.stop="submit"
     >
-      <div class="text-lg h-8 text-center py-1 relative">
+      <div class="text-lg h-8 text-center py-1 relative capitalize">
         <slot name="title"></slot>
       </div>
       <div class="bg-white h-60 w-60 relative rounded-lg mx-auto text-gray-800 overflow-hidden">

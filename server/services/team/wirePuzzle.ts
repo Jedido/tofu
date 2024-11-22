@@ -1,9 +1,8 @@
 import { Panel, PanelEnum, PuzzleEnum, Wire, WirePuzzleSolution } from "./types"
 
-const { shuffle, randomItem } = require("../../utils/util.js")
+const { colors, shuffle, randomItem } = require("../../utils/util.js")
 
 export class WirePuzzle {
-  static readonly colors = ["crimson", "maroon", "coral", "aquamarine", "lime", "navy", "teal", "fuchsia", "orchid", "bisque", "salmon", "tomato", "gold", "aqua", "olive", "aqua", "lavender", "chocolate", "ivory"]
   static wires: Wire[]
   static order: number[]
   static quota: number
@@ -28,8 +27,8 @@ export class WirePuzzle {
       let color = ""
       let stripe = ""
       while (combos.has(color + stripe)) {
-        color = randomItem(this.colors)
-        stripe = Math.random() > 0.5 ? randomItem(this.colors) : ""
+        color = randomItem(colors)
+        stripe = Math.random() > 0.5 ? randomItem(colors) : ""
         if (color === stripe) {
           stripe = ""
         }

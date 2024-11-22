@@ -17,7 +17,21 @@ function randomItem(array) {
   return array[Math.floor(Math.random() * array.length)]
 }
 
+const colors = [
+  "crimson", "maroon", "coral", "aquamarine", "lime", 
+  "navy", "teal", "fuchsia", "orchid", "bisque", 
+  "salmon", "tomato", "gold", "aqua", "olive", 
+  "aqua", "lavender", "chocolate", "ivory", "azure"
+]
+
+const symbols = [
+  "triangle", "circle", "star", "moon", "diamond",
+  "fire", "cloud", "heart", "hexagon"
+]
+
 module.exports = {
   shuffle,
-  randomItem
+  randomItem,
+  symbols,
+  colors
 }

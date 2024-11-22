@@ -13,6 +13,7 @@
 <script>
 import DangerPanel from './DangerPanel.vue';
 import EmptyPanel from './EmptyPanel.vue';
+import PatternPanel from './PatternPanel.vue';
 import RequestPanel from './RequestPanel.vue';
 import WirePanel from './WirePanel.vue';
 
@@ -22,7 +23,8 @@ export default {
     DangerPanel,
     WirePanel,
     RequestPanel,
-    EmptyPanel
+    EmptyPanel,
+    PatternPanel
   },
   props: {
     currentPanel: Object
@@ -33,6 +35,7 @@ export default {
         case 'd': return DangerPanel
         case 'w': return WirePanel
         case 'r': return RequestPanel
+        case 'p': return PatternPanel
         default: return EmptyPanel
       }
     }

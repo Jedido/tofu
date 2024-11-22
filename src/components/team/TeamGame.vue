@@ -7,7 +7,7 @@
       <h2 class="text-2xl text-center">Team</h2>
       <p class="font-semibold text-lg">Instructions</p>
       <div class="grid grid-cols-6 gap-2 w-full select-none">
-        <p class="col-span-4 ml-auto">You will face danger. Help each other get through the danger.</p>
+        <p class="col-span-6 ml-auto">You will face danger. Help each other get through the danger.</p>
         <button
           class="
             mt-4
@@ -153,6 +153,32 @@ export default {
       pendingResults: [],
       stacks: [[{
         id: 1,
+        puzzle: "p",
+        panel: "p",
+        state: {
+          color: "tomato",
+          symbol: "diamond",
+          board: [
+            [false, false, false],
+            [true, true, true],
+            [false, true, true]
+          ]
+        }
+      }],[{
+        id: 1,
+        puzzle: "p",
+        panel: "k1",
+        state: {
+          color: "tomato",
+          symbol: "diamond",
+          board: [
+            [false, false, true],
+            [true, false, false],
+            [false, true, false]
+          ]
+        }
+      }],[{
+        id: 1,
         puzzle: "r",
         panel: "p",
         state: {
@@ -176,6 +202,32 @@ export default {
             name: "Rawynris",
             sequence: [0, 1, 2, 3]
           }]
+        }
+      }],[{
+        id: 2,
+        puzzle: "d",
+        panel: "p",
+        state: {
+          name: "R-1",
+          board: [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 1, 1],
+            [0, 0, 0, 1]
+          ]
+        }
+      }],[{
+        id: 2,
+        puzzle: "d",
+        panel: "k1",
+        state: {
+          name: "R-1",
+          board: [
+            [0, 0, 0, 0],
+            [0, 1, 1, 1],
+            [1, 1, 0, 0],
+            [0, 0, 1, 0]
+          ]
         }
       }]],
       order: [0],
