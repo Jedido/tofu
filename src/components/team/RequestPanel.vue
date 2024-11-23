@@ -1,10 +1,10 @@
 <template>
   <Panel v-if="panel === 'k1'" :active="active" :panel-type="panel" @submit="$emit('submit')">
     <template v-slot:title>
-      Password
+      Passcodes
     </template>
     <template v-slot:description>
-      Passcodes from 4 different individuals. Use the button to control stop and resume the feed.
+      Passcodes from 4 different individuals. Use the button to control the feed.
     </template>
     <template v-slot:content>
       <div class="text-center mt-8 rounded w-full">

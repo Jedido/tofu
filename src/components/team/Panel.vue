@@ -20,7 +20,7 @@
         'send': !dragging
       }"
       @pointerdown.stop="start"
-      @contextmenu.stop="submit"
+      @contextmenu.prevent=""
     >
       <div class="text-lg h-8 text-center py-1 relative capitalize">
         <slot name="title"></slot>

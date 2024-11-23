@@ -2,12 +2,57 @@
   <div id="team" class="select-none">
     <div
       v-if="state === 'menu'"
-      class="px-8 py-4 bg-white"
+      class="px-8 py-4 bg-white mt-2"
     >
-      <h2 class="text-2xl text-center">Team</h2>
-      <p class="font-semibold text-lg">Instructions</p>
+      <h2 class="text-2xl text-center font-semibold mb-2">Instructions</h2>
       <div class="grid grid-cols-6 gap-2 w-full select-none">
-        <p class="col-span-6 ml-auto">You will face danger. Help each other get through the danger.</p>
+        <ul class="col-span-6 flex flex-col gap-2">
+          <li>
+            Defuse the bomb before time runs out. Cutting the wrong wire will result in death!
+          </li>
+          <li>
+            Before you start, ensure that the arrows in the following section fit on the screen. You can adjust the zoom in the settings.
+          </li>
+          <li>
+            All players will receive decks with <span class="text-emerald-700 font-bold">Wire</span> cards, <span class="text-cyan-800 font-bold">Puzzle</span> cards, and <span class="text-gray-800 font-bold">Key</span> cards.
+            <ul class="list-disc ml-4">
+              <li>
+                <span class="text-emerald-700 font-bold">Wire</span> cards contain information on how to defuse the bomb
+              </li>
+              <li>
+                <span class="text-cyan-800 font-bold">Puzzle</span> cards contain a puzzle that must be solved
+              </li>
+              <li>
+                <span class="text-gray-800 font-bold">Key</span> cards contain vital information for solving puzzles
+              </li>
+            </ul>
+          </li>
+          <li>
+            Submit a card by swiping it upwards:
+            <ul class="list-disc ml-4">
+              <li>
+                <span class="text-emerald-700 font-bold">Wire</span> cards can be submitted at any time, but don't forget the info!
+              </li>
+              <li>
+                <span class="text-cyan-800 font-bold">Puzzle</span> cards are submitted successfully when the puzzle is solved
+              </li>
+              <li>
+                <span class="text-gray-800 font-bold">Key</span> cards are submitted successfully after the corresponding puzzle has been solved. 
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <div class="col-span-6 text-2xl text-center font-semibold">Sample Panels</div>
+        <div class="col-span-6 flex justify-center items-center gap-2 min-w-fit relative left-1/2 -translate-x-2/4">
+          <i class="bi-arrow-left p-4 hover:-translate-x-2 transition-transform text-4xl cursor-pointer" @pointerdown="cycle(-1)"></i>
+          <PanelType
+            :current-panel="instructionalPanels[selectedStack][0]"
+            active
+            style="top:0px;scale:1;"
+            class="z-20 shadow-2xl"
+          />
+          <i class="bi-arrow-right p-4 hover:translate-x-2 transition-transform text-4xl cursor-pointer" @pointerdown="cycle(1)"></i>
+        </div>
         <button
           class="
             mt-4
@@ -143,15 +188,19 @@ export default {
     DynamiteStick
   },
   data() {
-    return {
-      state: "menu",
-      selectedStack: 0,
-      level: 1,
-      hovering: -1,
-      cuts: 0,
-      revealed: [],
-      pendingResults: [],
-      stacks: [[{
+    const instructionalPanels = [[{
+      id: 0,
+      puzzle: "w",
+      panel: "w",
+      state: {
+        wire: {
+          color: "azure",
+          stripe: "orchid"
+        },
+        order: 2,
+        quota: 4
+      }
+    }], [{
         id: 1,
         puzzle: "p",
         panel: "p",
@@ -164,7 +213,7 @@ export default {
             [false, true, true]
           ]
         }
-      }],[{
+      }], [{
         id: 1,
         puzzle: "p",
         panel: "k1",
@@ -177,14 +226,14 @@ export default {
             [false, true, false]
           ]
         }
-      }],[{
+      }], [{
         id: 1,
         puzzle: "r",
         panel: "p",
         state: {
           name: "Rawynris"
         }
-      }],[{
+      }], [{
         id: 1,
         puzzle: "r",
         panel: "k1",
@@ -203,7 +252,7 @@ export default {
             sequence: [0, 1, 2, 3]
           }]
         }
-      }],[{
+      }], [{
         id: 2,
         puzzle: "d",
         panel: "p",
@@ -216,7 +265,7 @@ export default {
             [0, 0, 0, 1]
           ]
         }
-      }],[{
+      }], [{
         id: 2,
         puzzle: "d",
         panel: "k1",
@@ -229,8 +278,18 @@ export default {
             [0, 0, 1, 0]
           ]
         }
-      }]],
-      order: [0],
+      }], [{}]]
+    return {
+      state: "menu",
+      selectedStack: 0,
+      level: 1,
+      hovering: -1,
+      cuts: 0,
+      revealed: [],
+      pendingResults: [],
+      instructionalPanels,
+      stacks: instructionalPanels,
+      order: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       blackout: false,
       quota: 4,
       causeOfDeath: "",
@@ -250,6 +309,7 @@ export default {
         this.bombActive = true
       }, 3000)
       this.state = "game"
+      this.selectedStack = 0
       this.cuts = 0
       this.stacks = stacks
       this.wires = wires
@@ -294,6 +354,9 @@ export default {
     clearInterval(this.timer)
   },
   methods: {
+    cycle(i) {
+      this.selectedStack = (i + this.selectedStack + this.instructionalPanels.length) % this.instructionalPanels.length 
+    },
     getTouchingPanel(x, y) {
       const touchedElement = document.elementFromPoint(x, y)
       if (touchedElement) {

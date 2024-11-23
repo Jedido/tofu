@@ -6,7 +6,7 @@
       state: this.currentPanel.state,
       status: this.currentPanel.status
     }"
-    :key="`${currentPanel.puzzle}-${currentPanel.id}`"
+    :key="`${currentPanel.puzzle}-${currentPanel.panel}-${currentPanel.id}`"
   />
 </template>
 
