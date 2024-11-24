@@ -4,7 +4,8 @@ export enum PuzzleEnum {
   Danger = "d",
   Wire = "w",
   Request = 'r',
-  Pattern = 'p'
+  Pattern = 'p',
+  Dice = "m"
 }
 
 export enum PanelEnum {
@@ -50,4 +51,7 @@ export interface RequestPuzzleSolution extends PuzzleSolution {
 }
 export interface PatternPuzzleSolution extends PuzzleSolution {
   board: boolean[][]
+}
+export interface DicePuzzleSolution extends PuzzleSolution {
+  sum: number
 }

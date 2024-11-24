@@ -11,6 +11,7 @@ interface DangerKeyPI extends PanelInfo {
 }
 
 export class DangerPuzzle extends Puzzle {
+  static names: Set<string>
   readonly shapes: Array<number[][]> = [[
     [1, 1],
     [1, 0]
@@ -34,13 +35,21 @@ export class DangerPuzzle extends Puzzle {
   puzzleBoard: DangerPuzzlePI
   dangerBoard: DangerKeyPI
 
+  static reset() {
+    this.names = new Set()
+  }
+
   constructor(id: Id) {
     super(id)
     const targetShape = this.shapes[Math.floor(Math.random() * this.shapes.length)]
     const width = 4
     const height = 4
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    const name = `${letters.charAt(Math.floor(Math.random() * 26))}-${this.id}`
+    let name = ""
+    do {
+      const num = Math.floor(Math.random() * 90) + 10
+      name = `${letters.charAt(Math.floor(Math.random() * 26))}-${num}`
+    } while (DangerPuzzle.names.has(name));
     function makeBoard() {
       const ox = Math.floor(Math.random() * (width - targetShape[0].length + 1))
       const oy = Math.floor(Math.random() * (height - targetShape.length + 1))

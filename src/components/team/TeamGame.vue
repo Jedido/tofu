@@ -42,12 +42,13 @@
             </ul>
           </li>
         </ul>
-        <div class="col-span-6 text-2xl text-center font-semibold">Sample Panels</div>
+        <div class="col-span-6 text-2xl text-center font-semibold mt-2">Examples</div>
         <div class="col-span-6 flex justify-center items-center gap-2 min-w-fit relative left-1/2 -translate-x-2/4">
           <i class="bi-arrow-left p-4 hover:-translate-x-2 transition-transform text-4xl cursor-pointer" @pointerdown="cycle(-1)"></i>
           <PanelType
             :current-panel="instructionalPanels[selectedStack][0]"
             active
+            :socket="socket"
             style="top:0px;scale:1;"
             class="z-20 shadow-2xl"
           />
@@ -117,6 +118,7 @@
           :class="{ 'selected-panel': i === selectedStack }"
           :style="[i !== selectedStack ? cardMargin : 'top: -12px;', `order: ${order[i]}`]"
           :hover="i === hovering"
+          :socket="socket"
           @submit="(solution) => submitSolution(solution, i)"
           @dismiss="dismiss(stack)"
           @reset="reset(stack)"
@@ -194,91 +196,108 @@ export default {
       panel: "w",
       state: {
         wire: {
-          color: "azure",
+          color: "crimson",
           stripe: "orchid"
         },
         order: 2,
         quota: 4
       }
     }], [{
-        id: 1,
-        puzzle: "p",
-        panel: "p",
-        state: {
-          color: "tomato",
-          symbol: "diamond",
-          board: [
-            [false, false, false],
-            [true, true, true],
-            [false, true, true]
-          ]
-        }
-      }], [{
-        id: 1,
-        puzzle: "p",
-        panel: "k1",
-        state: {
-          color: "tomato",
-          symbol: "diamond",
-          board: [
-            [false, false, true],
-            [true, false, false],
-            [false, true, false]
-          ]
-        }
-      }], [{
-        id: 1,
-        puzzle: "r",
-        panel: "p",
-        state: {
-          name: "Rawynris"
-        }
-      }], [{
-        id: 1,
-        puzzle: "r",
-        panel: "k1",
-        state: {
-          requestors: [{
-            name: "Nalenyna",
-            sequence: [1, 3, 1, 3]
-          }, {
-            name: "Filenven",
-            sequence: [3, 3, 2, 0]
-          }, {
-            name: "Luleniel",
-            sequence: [2, 3, 1, 0]
-          }, {
-            name: "Rawynris",
-            sequence: [0, 1, 2, 3]
-          }]
-        }
-      }], [{
-        id: 2,
-        puzzle: "d",
-        panel: "p",
-        state: {
-          name: "R-1",
-          board: [
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 1, 1],
-            [0, 0, 0, 1]
-          ]
-        }
-      }], [{
-        id: 2,
-        puzzle: "d",
-        panel: "k1",
-        state: {
-          name: "R-1",
-          board: [
-            [0, 0, 0, 0],
-            [0, 1, 1, 1],
-            [1, 1, 0, 0],
-            [0, 0, 1, 0]
-          ]
-        }
-      }], [{}]]
+      id: 1,
+      puzzle: "p",
+      panel: "p",
+      state: {
+        color: "tomato",
+        symbol: "diamond",
+        board: [
+          [false, false, false],
+          [true, true, true],
+          [false, true, true]
+        ]
+      }
+    }], [{
+      id: 1,
+      puzzle: "p",
+      panel: "k1",
+      state: {
+        color: "tomato",
+        symbol: "diamond",
+        board: [
+          [false, false, true],
+          [true, false, false],
+          [false, true, false]
+        ]
+      }
+    }], [{
+      id: 1,
+      puzzle: "r",
+      panel: "p",
+      state: {
+        name: "Rawynris"
+      }
+    }], [{
+      id: 1,
+      puzzle: "r",
+      panel: "k1",
+      state: {
+        requestors: [{
+          name: "Nalenyna",
+          sequence: [1, 3, 1, 3]
+        }, {
+          name: "Filenven",
+          sequence: [3, 3, 2, 0]
+        }, {
+          name: "Luleniel",
+          sequence: [2, 3, 1, 0]
+        }, {
+          name: "Rawynris",
+          sequence: [0, 1, 2, 3]
+        }]
+      }
+    }], [{
+      id: 2,
+      puzzle: "d",
+      panel: "p",
+      state: {
+        name: "R-1",
+        board: [
+          [0, 0, 0, 0],
+          [0, 0, 0, 0],
+          [0, 0, 1, 1],
+          [0, 0, 0, 1]
+        ]
+      }
+    }], [{
+      id: 2,
+      puzzle: "d",
+      panel: "k1",
+      state: {
+        name: "R-1",
+        board: [
+          [0, 0, 0, 0],
+          [0, 1, 1, 1],
+          [1, 1, 0, 0],
+          [0, 0, 1, 0]
+        ]
+      }
+    }], [{
+      id: 3,
+      puzzle: "m",
+      panel: "p",
+      state: {
+        dice: 5,
+        color: "chocolate"
+      }
+    }],[{
+      id: 3,
+      puzzle: "m",
+      panel: "k1",
+      state: {
+        sum: 15,
+        dice: 5,
+        color: "chocolate"
+      }
+    }],[{}]]
     return {
       state: "menu",
       selectedStack: 0,

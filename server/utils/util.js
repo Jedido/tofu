@@ -18,10 +18,11 @@ function randomItem(array) {
 }
 
 const colors = [
-  "crimson", "maroon", "coral", "aquamarine", "lime", 
-  "navy", "teal", "fuchsia", "orchid", "bisque", 
-  "salmon", "tomato", "gold", "aqua", "olive", 
-  "aqua", "lavender", "chocolate", "ivory", "azure"
+  "maroon", "salmon", "tomato", "coral", "sienna",
+  "peachpuff", "chocolate", "bisque", "peru", "moccasin",
+  "orange", "goldenrod", "gold", "olive", "chartreuse",
+  "lime", "aquamarine", "turquoise", "teal", "lavender",
+  "navy", "plum", "orchid", "violet", "crimson"
 ]
 
 const symbols = [

@@ -106,5 +106,3 @@ export class RequestPuzzle extends Puzzle {
     return name.charAt(0).toUpperCase() + name.slice(1) // Ensure the first letter is capitalized
   }
 }
-RequestPuzzle.reset()
-console.log(new RequestPuzzle(1).panels()[1].state)

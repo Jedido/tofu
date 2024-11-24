@@ -70,6 +70,7 @@ const DEFAULT_CARD_Y = 308
 export default {
   name: "Panel",
   props: {
+    socket: Object,
     active: Boolean,
     panelType: String,
     hover: {
@@ -191,7 +192,7 @@ export default {
 <style scoped>
 .panel {
   scale: 0.5;
-  transition: transform 0.1s ease, scale 0.3s;
+  transition: transform 0.1s ease, scale 0.1s ease-out, top 0.3s ease-out;
   overflow-y: hidden;
   box-shadow: 0;
 }

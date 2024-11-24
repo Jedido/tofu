@@ -1,10 +1,10 @@
-import { DangerPuzzleSolution, Panel, PanelEnum, PanelInfo, PatternPuzzleSolution, PuzzleEnum, PuzzleSolution, RequestPuzzleSolution, Submission, WirePuzzleSolution } from "./types"
-import { DangerPuzzle } from "./dangerPuzzle"
 import { TSocket } from "../../utils/tsocket"
+import { DangerPuzzleSolution, DicePuzzleSolution, Panel, PanelEnum, PanelInfo, PatternPuzzleSolution, PuzzleEnum, PuzzleSolution, RequestPuzzleSolution, Submission, WirePuzzleSolution } from "./types"
+import { DangerPuzzle } from "./dangerPuzzle"
 import { WirePuzzle } from "./wirePuzzle"
 import { RequestPuzzle } from "./requestPuzzle"
 import { PatternPuzzle } from "./patternPuzzle"
-import { Puzzle } from "./puzzle"
+import { DicePuzzle } from "./dicePuzzle"
 
 const GameService = require("../gameService.js")
 const { randomItem, shuffle } = require("../../utils/util.js")
@@ -68,11 +68,9 @@ class TeamService extends GameService {
 
   prepareNextLevel() {
     this.solved = new Set<number>()
-    RequestPuzzle.reset()
-    PatternPuzzle.reset()
 
     this.gameState.level++
-    const numStacks: number = Math.ceil(this.gameState.level / 3) + 1
+    const numStacks: number = Math.min(Math.ceil(this.gameState.level / 3) + 1, 6)
 
     // create puzzles
     this.puzzles = new Map<number, Map<PanelEnum, PanelInfo>>
@@ -100,7 +98,7 @@ class TeamService extends GameService {
     // assign stacks to players
     this.timeStart = Date.now()
     const timePerPuzzle = 16 * Math.pow(0.96, this.gameState.level)
-    const time = numPuzzles * timePerPuzzle * 3
+    const time = Math.floor(numPuzzles * timePerPuzzle * 3 / 10) * 10
     this.timer = setTimeout(() => {
       this.broadcastFn(this.loseEvent, { cause: `you ran out of time` })
     }, time * 1000)
@@ -139,8 +137,13 @@ class TeamService extends GameService {
 
   generatePuzzles(numPuzzles: number): Panel[][] {
     const panelsByPuzzle: Panel[][] = []
-    let id = 10 + Math.ceil(Math.random() * 10)
-    const numWires = Math.floor(Math.random() * 3) + 3
+    DangerPuzzle.reset()
+    RequestPuzzle.reset()
+    PatternPuzzle.reset()
+    DicePuzzle.reset()
+
+    let id = 1
+    const numWires = Math.min(Math.floor(this.gameState.level / 4 + 3), 5)
     WirePuzzle.init(numWires)
     const maxWireValue = numWires * (numWires + 1) / 2
     const wireValues = Array.from({ length: numWires }, () => Math.random() * maxWireValue)
@@ -169,7 +172,7 @@ class TeamService extends GameService {
 
   generatePuzzle(id: number): Panel[] {
     const PuzzleType = randomItem([
-      RequestPuzzle, DangerPuzzle, PatternPuzzle
+      RequestPuzzle, DangerPuzzle, PatternPuzzle, DicePuzzle
     ])
     return new PuzzleType(id).panels()
   }
@@ -201,6 +204,7 @@ class TeamService extends GameService {
         case PuzzleEnum.Danger: return DangerPuzzle.solve(data as DangerPuzzleSolution, panelInfo)
         case PuzzleEnum.Request: return RequestPuzzle.solve(data as RequestPuzzleSolution, panelInfo)
         case PuzzleEnum.Pattern: return PatternPuzzle.solve(data as PatternPuzzleSolution, panelInfo)
+        case PuzzleEnum.Dice: return DicePuzzle.solve(data as DicePuzzleSolution, panelInfo)
         case PuzzleEnum.Wire: return true
       }
     } catch (e: unknown) {

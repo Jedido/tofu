@@ -2,9 +2,9 @@
   <component
     :is="panelType"
     v-bind="{
-      panel: this.currentPanel.panel,
-      state: this.currentPanel.state,
-      status: this.currentPanel.status
+      panel: currentPanel.panel,
+      state: currentPanel.state,
+      status: currentPanel.status
     }"
     :key="`${currentPanel.puzzle}-${currentPanel.panel}-${currentPanel.id}`"
   />
@@ -16,6 +16,7 @@ import EmptyPanel from './EmptyPanel.vue';
 import PatternPanel from './PatternPanel.vue';
 import RequestPanel from './RequestPanel.vue';
 import WirePanel from './WirePanel.vue';
+import DicePanel from './DicePanel.vue';
 
 export default {
   name: "PanelType",
@@ -24,7 +25,8 @@ export default {
     WirePanel,
     RequestPanel,
     EmptyPanel,
-    PatternPanel
+    PatternPanel,
+    DicePanel
   },
   props: {
     currentPanel: Object
@@ -36,6 +38,7 @@ export default {
         case 'w': return WirePanel
         case 'r': return RequestPanel
         case 'p': return PatternPanel
+        case 'm': return DicePanel
         default: return EmptyPanel
       }
     }
