@@ -4,13 +4,13 @@
       Dot Quota
     </template>
     <template v-slot:description>
-      The dot quota for {{ state.dice }} {{ state.color }} dice. Only count the colored dots.
+      The dot quota for {{ state.count }} {{ state.color }} dice. Only count the colored dots.
     </template>
     <template v-slot:content>
       <div class="pt-4 h-full">
         <div class="flex flex-wrap text-4xl justify-center px-6 gap-1">
-          <div v-for="colored in dots" class="-mx-1 -my-1">
-            <i class="bi-dot" :style="[colored ? `color: ${state.color};`: '']"></i>
+          <div v-for="i in 36" class="-mx-1 -my-1">
+            <i class="bi-dot" :style="[getAsBoolean(i - 1, state.dots) ? `color: ${state.color};`: '']"></i>
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@
         class="flex flex-wrap justify-center items-center h-full text-6xl gap-3 py-4"
         :style="`color: ${state.color};`"
       >
-        <div v-for="(value, i) in dice" class="px-6">
+        <div v-for="(value, i) in state.dice" class="px-6">
           <i :class="[`bi-dice-${value} cursor-pointer`, {
             'pointer-events-none': !active
           }]" @pointerdown.stop="roll(i)"></i>
@@ -46,6 +46,8 @@
 <script>
 import Panel from './Panel.vue';
 
+import bitwise from '@/mixins/bitwise';
+
 export default {
   name: "DicePanel",
   props: {
@@ -56,26 +58,13 @@ export default {
   components: {
     Panel
   },
+  mixins: [bitwise],
   emits: {
     'submit': false
   },
   data() {
-    const dice = Array.from({ length: this.state.dice || 0 }, () => Math.ceil(Math.random() * 6))
-    const dots = Array(36).fill(false)
-    if (this.state.sum) {
-      const total = 36
-      let colored = this.state.sum
-      for (let i = total; i > 0; i--) {
-        if (Math.random() < colored / i) {
-          colored--
-          dots[i - 1] = true
-        }
-      }
-    }
     return {
-      dice,
-      dots,
-      rerolling: Array(dice.length).fill(false),
+      rerolling: Array(this.state.dice?.length || 0).fill(false)
     }
   },
   methods: {
@@ -89,12 +78,12 @@ export default {
       if (!this.rerolling[i]) {
         return
       }
-      this.dice[i] = Math.ceil(Math.random() * 6)
+      this.state.dice[i] = Math.ceil(Math.random() * 6)
       setTimeout(() => this.reroll(i, times - 1), 50)
     },
     sendSolution() {
       this.$emit('submit', {
-        sum: this.dice.reduce((a, b) => a + b, 0)
+        sum: this.state.dice.reduce((a, b) => a + b, 0)
       })
     }
   }

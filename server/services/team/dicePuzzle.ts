@@ -1,16 +1,18 @@
 import { Puzzle } from "./puzzle"
 import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, DicePuzzleSolution } from "./types"
+import { BitArray } from "../../utils/bitarray"
 
-const { colors, symbols, randomItem } = require("../../utils/util.js")
+const { colors, randomItem } = require("../../utils/util.js")
 
 interface DicePuzzlePI extends PanelInfo {
-  dice: number,
+  dice: number[]
   color: string
 }
 interface DiceKeyPI extends PanelInfo {
-  sum: number,
-  dice: number,
+  count: number
   color: string
+  dots: Uint32Array
+  sum: number
 }
 
 export class DicePuzzle extends Puzzle {
@@ -27,22 +29,34 @@ export class DicePuzzle extends Puzzle {
 
     let color = ""
     let sum = 0
-    let dice = 0
+    let count = 0
     let combo = ""
     do {
       color = randomItem(colors)
-      dice = Math.ceil(Math.random() * 6)
-      sum = Math.ceil(Math.random() * 6 * dice)
-      combo = `${color}-${dice}`
+      count = Math.ceil(Math.random() * 6)
+      sum = Math.floor(Math.random() * (count * 5 + 1)) + count
+      combo = `${color}-${count}`
     } while (DicePuzzle.combos.has(combo));
     DicePuzzle.combos.add(combo)
+    const dots = new BitArray(36)
+    const total = 36
+    let colored = sum
+    for (let i = total; i > 0; i--) {
+      if (Math.random() < colored / i) {
+        colored--
+        dots.set(i - 1, true)
+      }
+    }
+
+    const dice = Array.from({ length: count }, () => Math.ceil(Math.random() * 6))
     this.puzzle = {
       color,
       dice
     }
     this.key = {
       color,
-      dice,
+      count,
+      dots: dots.data,
       sum
     }
   }

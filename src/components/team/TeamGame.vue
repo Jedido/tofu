@@ -285,7 +285,7 @@ export default {
       puzzle: "m",
       panel: "p",
       state: {
-        dice: 5,
+        dice: [1, 2, 3],
         color: "chocolate"
       }
     }],[{
@@ -293,8 +293,8 @@ export default {
       puzzle: "m",
       panel: "k1",
       state: {
-        sum: 15,
-        dice: 5,
+        dots: new Uint32Array([48000327, 52]),
+        count: 5,
         color: "chocolate"
       }
     }],[{}]]
