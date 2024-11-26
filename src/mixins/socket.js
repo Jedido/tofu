@@ -11,7 +11,6 @@ export default {
     this.listeners.forEach((e) => {
       this.socket.off(e)
     })
-    clearInterval(this.counter)
   },
   methods: {
     emit(type, data) {

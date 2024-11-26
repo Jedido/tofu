@@ -17,16 +17,18 @@ import PatternPanel from './PatternPanel.vue';
 import RequestPanel from './RequestPanel.vue';
 import WirePanel from './WirePanel.vue';
 import DicePanel from './DicePanel.vue';
+import WantedPanel from './WantedPanel.vue';
 
 export default {
   name: "PanelType",
   components: {
     DangerPanel,
-    WirePanel,
-    RequestPanel,
+    DicePanel,
     EmptyPanel,
     PatternPanel,
-    DicePanel
+    RequestPanel,
+    WantedPanel,
+    WirePanel,
   },
   props: {
     currentPanel: Object
@@ -35,10 +37,11 @@ export default {
     panelType() {
       switch (this.currentPanel.puzzle) {
         case 'd': return DangerPanel
-        case 'w': return WirePanel
-        case 'r': return RequestPanel
-        case 'p': return PatternPanel
+        case 'f': return WantedPanel
         case 'm': return DicePanel
+        case 'p': return PatternPanel
+        case 'r': return RequestPanel
+        case 'w': return WirePanel
         default: return EmptyPanel
       }
     }

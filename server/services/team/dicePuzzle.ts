@@ -75,10 +75,6 @@ export class DicePuzzle extends Puzzle {
     }]
   }
 
-  static makeBoard(): boolean[][] {
-    return Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => Math.random() > 0.5))
-  }
-
   static solve({ sum }: DicePuzzleSolution, puzzleParts: Map<PanelEnum, PanelInfo>): boolean {
     const key = puzzleParts.get(PanelEnum.Key1)! as DiceKeyPI
     return key.sum === sum

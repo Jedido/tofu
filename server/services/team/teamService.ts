@@ -1,10 +1,11 @@
 import { TSocket } from "../../utils/tsocket"
-import { DangerPuzzleSolution, DicePuzzleSolution, Panel, PanelEnum, PanelInfo, PatternPuzzleSolution, PuzzleEnum, PuzzleSolution, RequestPuzzleSolution, Submission, WirePuzzleSolution } from "./types"
+import { DangerPuzzleSolution, DicePuzzleSolution, Panel, PanelEnum, PanelInfo, PatternPuzzleSolution, PuzzleEnum, PuzzleSolution, RequestPuzzleSolution, Submission, WantedPuzzleSolution, WirePuzzleSolution } from "./types"
 import { DangerPuzzle } from "./dangerPuzzle"
 import { WirePuzzle } from "./wirePuzzle"
 import { RequestPuzzle } from "./requestPuzzle"
 import { PatternPuzzle } from "./patternPuzzle"
 import { DicePuzzle } from "./dicePuzzle"
+import { WantedPuzzle } from "./wantedPuzzle"
 
 const GameService = require("../gameService.js")
 const { randomItem, shuffle } = require("../../utils/util.js")
@@ -141,6 +142,7 @@ class TeamService extends GameService {
     RequestPuzzle.reset()
     PatternPuzzle.reset()
     DicePuzzle.reset()
+    WantedPuzzle.reset()
 
     let id = 1
     const numWires = Math.min(Math.floor(this.gameState.level / 4 + 3), 5)
@@ -172,7 +174,7 @@ class TeamService extends GameService {
 
   generatePuzzle(id: number): Panel[] {
     const PuzzleType = randomItem([
-      RequestPuzzle, DangerPuzzle, PatternPuzzle, DicePuzzle
+      WantedPuzzle
     ])
     return new PuzzleType(id).panels()
   }
@@ -205,6 +207,7 @@ class TeamService extends GameService {
         case PuzzleEnum.Request: return RequestPuzzle.solve(data as RequestPuzzleSolution, panelInfo)
         case PuzzleEnum.Pattern: return PatternPuzzle.solve(data as PatternPuzzleSolution, panelInfo)
         case PuzzleEnum.Dice: return DicePuzzle.solve(data as DicePuzzleSolution, panelInfo)
+        case PuzzleEnum.Wanted: return WantedPuzzle.solve(data as WantedPuzzleSolution, panelInfo)
         case PuzzleEnum.Wire: return true
       }
     } catch (e: unknown) {

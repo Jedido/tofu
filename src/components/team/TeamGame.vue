@@ -297,6 +297,23 @@ export default {
         count: 5,
         color: "chocolate"
       }
+    }],[{
+      id: 4,
+      puzzle: "f",
+      panel: "p",
+      state: {
+        name: "L-20",
+        faces: ["angry", "frown", "heart-eyes", "laughing", "smile", "sunglasses", "wink", "surprise", "dizzy"],
+      }
+    }],[{
+      id: 4,
+      puzzle: "f",
+      panel: "k1",
+      state: {
+        name: "L-20",
+        type: "face",
+        data: ["angry", "laughing"]
+      }
     }],[{}]]
     return {
       state: "menu",
@@ -308,7 +325,7 @@ export default {
       pendingResults: [],
       instructionalPanels,
       stacks: instructionalPanels,
-      order: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      order: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       blackout: false,
       quota: 4,
       causeOfDeath: "",
@@ -375,6 +392,7 @@ export default {
   methods: {
     cycle(i) {
       this.selectedStack = (i + this.selectedStack + this.instructionalPanels.length) % this.instructionalPanels.length 
+      console.log(this.selectedStack)
     },
     getTouchingPanel(x, y) {
       const touchedElement = document.elementFromPoint(x, y)

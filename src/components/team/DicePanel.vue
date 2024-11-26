@@ -91,10 +91,4 @@ export default {
 </script>
 
 <style scoped>
-.cell {
-  transition: background-color 0.1s ease-out;
-}
-.cell i {
-  line-height: 48px;
-}
 </style>
