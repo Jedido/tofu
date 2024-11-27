@@ -190,131 +190,136 @@ export default {
     DynamiteStick
   },
   data() {
-    const instructionalPanels = [[{
-      id: 0,
-      puzzle: "w",
-      panel: "w",
-      state: {
-        wire: {
-          color: "crimson",
-          stripe: "orchid"
-        },
-        order: 2,
-        quota: 4
-      }
-    }], [{
-      id: 1,
-      puzzle: "p",
-      panel: "p",
-      state: {
-        color: "tomato",
-        symbol: "diamond",
-        board: [
-          [false, false, false],
-          [true, true, true],
-          [false, true, true]
-        ]
-      }
-    }], [{
-      id: 1,
-      puzzle: "p",
-      panel: "k1",
-      state: {
-        color: "tomato",
-        symbol: "diamond",
-        board: [
-          [false, false, true],
-          [true, false, false],
-          [false, true, false]
-        ]
-      }
-    }], [{
-      id: 1,
-      puzzle: "r",
-      panel: "p",
-      state: {
-        name: "Rawynris"
-      }
-    }], [{
-      id: 1,
-      puzzle: "r",
-      panel: "k1",
-      state: {
-        requestors: [{
-          name: "Nalenyna",
-          sequence: [1, 3, 1, 3]
-        }, {
-          name: "Filenven",
-          sequence: [3, 3, 2, 0]
-        }, {
-          name: "Luleniel",
-          sequence: [2, 3, 1, 0]
-        }, {
-          name: "Rawynris",
-          sequence: [0, 1, 2, 3]
-        }]
-      }
-    }], [{
-      id: 2,
-      puzzle: "d",
-      panel: "p",
-      state: {
-        name: "R-1",
-        board: [
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 1, 1],
-          [0, 0, 0, 1]
-        ]
-      }
-    }], [{
-      id: 2,
-      puzzle: "d",
-      panel: "k1",
-      state: {
-        name: "R-1",
-        board: [
-          [0, 0, 0, 0],
-          [0, 1, 1, 1],
-          [1, 1, 0, 0],
-          [0, 0, 1, 0]
-        ]
-      }
-    }], [{
-      id: 3,
-      puzzle: "m",
-      panel: "p",
-      state: {
-        dice: [1, 2, 3],
-        color: "chocolate"
-      }
-    }],[{
-      id: 3,
-      puzzle: "m",
-      panel: "k1",
-      state: {
-        dots: new Uint32Array([48000327, 52]),
-        count: 5,
-        color: "chocolate"
-      }
-    }],[{
-      id: 4,
-      puzzle: "f",
-      panel: "p",
-      state: {
-        name: "L-20",
-        faces: ["angry", "frown", "heart-eyes", "laughing", "smile", "sunglasses", "wink", "surprise", "dizzy"],
-      }
-    }],[{
-      id: 4,
-      puzzle: "f",
-      panel: "k1",
-      state: {
-        name: "L-20",
-        type: "face",
-        data: ["angry", "laughing"]
-      }
-    }],[{}]]
+    const instructionalPanels = [
+      [{
+        id: 0,
+        puzzle: "w",
+        panel: "w",
+        state: {
+          wire: {
+            color: "crimson",
+            stripe: "orchid"
+          },
+          order: 2,
+          quota: 4
+        }
+      }], [{
+        id: 1,
+        puzzle: "p",
+        panel: "p",
+        state: {
+          color: "tomato",
+          symbol: "diamond",
+          board: [
+            [false, false, false],
+            [true, true, true],
+            [false, true, true]
+          ]
+        }
+      }], [{
+        id: 1,
+        puzzle: "p",
+        panel: "k1",
+        state: {
+          color: "tomato",
+          symbol: "diamond",
+          board: [
+            [false, false, true],
+            [true, false, false],
+            [false, true, false]
+          ]
+        }
+      }], [{
+        id: 1,
+        puzzle: "r",
+        panel: "p",
+        state: {
+          name: "Rawynris"
+        }
+      }], [{
+        id: 1,
+        puzzle: "r",
+        panel: "k1",
+        state: {
+          requestors: [{
+            name: "Nalenyna",
+            sequence: [1, 3, 1, 3]
+          }, {
+            name: "Filenven",
+            sequence: [3, 3, 2, 0]
+          }, {
+            name: "Luleniel",
+            sequence: [2, 3, 1, 0]
+          }, {
+            name: "Rawynris",
+            sequence: [0, 1, 2, 3]
+          }]
+        }
+      }], [{
+        id: 2,
+        puzzle: "d",
+        panel: "p",
+        state: {
+          name: "R-1",
+          board: [
+            [false, false, false, false],
+            [false, false, false, false],
+            [false, false, true, true],
+            [false, false, true, false]
+          ]
+        }
+      }], [{
+        id: 2,
+        puzzle: "d",
+        panel: "k1",
+        state: {
+          name: "R-1",
+          board: [
+            [false, false, true, true],
+            [false, false, true, false],
+            [false, true, false, false],
+            [false, true, true, false]
+          ],
+          rows: [2, 4, 2, 2],
+          cols: [2, 3, 3, 1]
+        }
+      }], [{
+        id: 3,
+        puzzle: "m",
+        panel: "p",
+        state: {
+          dice: [1, 2, 3],
+          color: "chocolate"
+        }
+      }], [{
+        id: 3,
+        puzzle: "m",
+        panel: "k1",
+        state: {
+          dots: new Uint32Array([48000327, 52]),
+          count: 5,
+          color: "chocolate"
+        }
+      }], [{
+        id: 4,
+        puzzle: "f",
+        panel: "p",
+        state: {
+          name: "L-20",
+          faces: ["angry", "frown", "heart-eyes", "laughing-fill", "smile", "sunglasses", "wink", "surprise-fill", "dizzy"],
+        }
+      }], [{
+        id: 4,
+        puzzle: "f",
+        panel: "k1",
+        state: {
+          name: "L-20",
+          type: "face",
+          data: ["angry", "laughing-fill"]
+        }
+      }], [{
+      }]
+    ]
     return {
       state: "menu",
       selectedStack: 0,

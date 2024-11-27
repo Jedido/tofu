@@ -1,32 +1,38 @@
 <template>
   <Panel v-if="panel === 'k1'" :active="active" :panel-type="panel" @submit="$emit('submit')">
     <template v-slot:title>
-      Zone {{ state.name }} Danger Map
+      {{ state.name }} Storage
     </template>
     <template v-slot:description>
-      A map indicating dangerous cells in Zone {{ state.name }}. Touch a cell to briefly reveal its contents.
+      Storage shelf with missing items in Zone {{ state.name }}. The numbers indicate how many items should be in each row or column.
     </template>
     <template v-slot:content>
-      <div class="relative top-1/2 -translate-y-2/4">
-        <div
-          v-for="(row, i) in board" 
-          class="flex justify-center mx-auto text-center text-gray-300 text-3xl"
-          @touchstart.prevent="startHover"
-          @touchmove.prevent="startHover"
-          @touchend.prevent="endHover"
-        >
-          <span 
-            v-for="(num, j) in row"
-            class="cell h-10 w-10 bg-gray-300 border border-gray-400 rounded hover:text-error hover:bg-gray-50"
-            :data-id="i * 4 + j"
-            :class="{
-              'hover_effect text-error bg-gray-50': touching == i * 4 + j,
-              'pointer-events-none': !active
-            }"
-            @pointerdown.stop=""
+      <div class="mt-4">
+        <div class="flex text-xl justify-center">
+          <div v-for="num in state.cols" class="w-10 text-center">
+            {{ num }}
+          </div>
+        </div>
+        <div class="border-4 border-gray-500 mx-10">
+          <div
+            v-for="(row, i) in board" 
+            class="flex justify-center"
           >
-            <i v-if="num === 0" class="bi-radioactive"></i>
-          </span>
+            <div class="i text-xl mr-2 absolute left-5">
+              {{ state.rows[i] }}
+            </div>
+            <div class="flex justify-center text-center text-amber-600 text-3xl relative">
+              <span 
+                v-for="(item, j) in row"
+                class="cell h-10 min-w-10"
+                :data-id="i * 4 + j"
+              >
+                <i v-if="item" class="bi-box2-fill relative z-10"></i>
+              </span>
+              <div class="absolute w-full h-1 bg-gray-500 bottom-0"></div>
+            </div>
+          </div>
+      
         </div>
       </div>
     </template>
@@ -38,14 +44,16 @@
     @submit="sendSolution"
   >
     <template v-slot:title >
-      Zone {{ state.name }}
+      Storage Zone {{ state.name }}
     </template>
     <template v-slot:description >
-      Zone {{ state.name }} controller card. Use the arrows to move the payload to a safe location.
+      Misplaced packages in Zone {{ state.name }}. Use the arrows to move the items back to where they should be.
     </template>
     <template v-slot:content>
       <div class="relative top-1/2 -translate-y-2/4">
-        <template v-if="active">
+        <div :class="{
+          'pointer-events-none': !active
+        }">
           <button 
             class="absolute left-1 top-0 bottom-0 w-8 h-16 my-auto text-center" 
             @pointerdown.stop="tryMove(-1, 0)"
@@ -70,15 +78,16 @@
           >
             <i class="bi-arrow-down-circle-fill text-gray-400 text-3xl"></i>
           </button>
-        </template>
-        <div>
-          <div class="flex justify-center text-emerald-500 text-3xl text-center" v-for="row in board">
+        </div>
+        <div class="border-4 border-gray-500 mx-10">
+          <div v-for="row in board" class="flex justify-center text-center text-amber-500 text-3xl relative">
             <span 
-              v-for="num in row"
-              class="cell w-10 h-10 border border-dashed border-gray-600 rounded bg-gray-50" 
+              v-for="item in row"
+              class="cell min-w-10 h-10"
             >
-              <i v-if="num === 1" class="bi-archive-fill"></i>
+              <i v-if="item" class="bi-box2"></i>
             </span>
+            <div class="absolute w-full h-1 bg-gray-500 bottom-0"></div>
           </div>
         </div>
       </div>
@@ -113,18 +122,18 @@ export default {
   },
   methods: {
     tryMove(x, y) {
-      const newBoard = Array.from({ length: this.board.length }, () => Array(this.board[0].length).fill(0))
+      const newBoard = Array.from({ length: this.board.length }, () => Array(this.board[0].length).fill(false))
       const width = this.board[0].length
       const height = this.board.length
       for (let i = 0; i < height; i++) {
         const resY = i + y
         for (let j = 0; j < width; j++) {
           const resX = j + x
-          if (this.board[i][j] === 1) {
+          if (this.board[i][j]) {
             if (resY < 0 || resY >= height || resX < 0 || resX >= width) {
               return
             } else {
-              newBoard[resY][resX] = 1
+              newBoard[resY][resX] = true
             }
           }
         }
@@ -138,33 +147,13 @@ export default {
         x: this.x,
         y: this.y
       })
-    },
-    startHover(e) {
-      const touch = e.touches[0]
-      let element = document.elementFromPoint(touch.clientX, touch.clientY);
-
-      while (element != null && !element.dataset && !element.dataset.id) {
-        element = element.parentNode
-      }
-      if (element != null) {
-        this.touching = element.dataset.id
-      }
-    },
-    endHover() {
-      this.touching = -1
     }
   }
 }
 </script>
 
 <style scoped>
-.cell {
-  transition: color 1.5s ease-in, background-color 1.5s ease-in;
-}
-.cell:hover, .cell.hover_effect {
-  transition: none;
-}
-.cell i {
+.cell i, .i {
   line-height: 40px;
 }
 </style>

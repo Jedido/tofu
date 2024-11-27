@@ -14,6 +14,25 @@ interface WantedKeyPI extends PanelInfo {
 }
 
 export class WantedPuzzle extends Puzzle {
+  readonly faces = [
+    "angry",
+    "astonished",
+    "dizzy",
+    "expressionless",
+    "frown",
+    "grimace",
+    "grin",
+    "heart-eyes",
+    "kiss",
+    "laughing",
+    "neutral",
+    "smile",
+    "smile-upside-down",
+    "sunglasses",
+    "surprise",
+    "tear",
+    "wink"
+  ]
   static names: Set<string>
   puzzle: WantedPuzzlePI
   key: WantedKeyPI
@@ -32,8 +51,9 @@ export class WantedPuzzle extends Puzzle {
       name = `${letters.charAt(Math.floor(Math.random() * 26))}-${num}`
     } while (WantedPuzzle.names.has(name));
 
-    const faces: string[] = ["angry", "frown", "heart-eyes", "laughing", "smile", "sunglasses", "wink", "surprise", "dizzy"]
-    shuffle(faces)
+    const allFaces: string[] = this.faces.flatMap(f => [f, `${f}-fill`])
+    shuffle(allFaces)
+    const faces = allFaces.slice(0, 9)
     const wanted = new Set<string>()
     while (wanted.size < 2) {
       wanted.add(randomItem(faces))

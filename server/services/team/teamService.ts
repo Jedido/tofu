@@ -25,6 +25,7 @@ class TeamService extends GameService {
   readonly cutEvent: string = "team-cut-success"
   readonly loseEvent: string = "team-lose"
   readonly winEvent: string = "team-win"
+  readonly puzzleTypes = [DangerPuzzle, RequestPuzzle, PatternPuzzle, DicePuzzle, WantedPuzzle]
 
   gameState: {
     level: number
@@ -138,11 +139,7 @@ class TeamService extends GameService {
 
   generatePuzzles(numPuzzles: number): Panel[][] {
     const panelsByPuzzle: Panel[][] = []
-    DangerPuzzle.reset()
-    RequestPuzzle.reset()
-    PatternPuzzle.reset()
-    DicePuzzle.reset()
-    WantedPuzzle.reset()
+    this.puzzleTypes.forEach(x => x.reset())
 
     let id = 1
     const numWires = Math.min(Math.floor(this.gameState.level / 4 + 3), 5)
@@ -173,9 +170,8 @@ class TeamService extends GameService {
   }
 
   generatePuzzle(id: number): Panel[] {
-    const PuzzleType = randomItem([
-      WantedPuzzle
-    ])
+    // const PuzzleType = randomItem(this.puzzleTypes)
+    const PuzzleType = DangerPuzzle
     return new PuzzleType(id).panels()
   }
 
