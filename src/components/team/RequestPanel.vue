@@ -8,7 +8,7 @@
     </template>
     <template v-slot:content>
       <div class="text-center mt-8 rounded w-full">
-        <div class="overflow-hidden bg-gray-100 text-gray-580 mx-auto px-2 py-1 rounded border-t-2 border-b-2 border-gray-800 border-dotted">
+        <div class="overflow-hidden text-gray-580 mx-auto px-2 py-1 rounded border-t-2 border-b-2 border-gray-800 border-dotted">
         <div 
           class="slideshow relative flex gap-3" 
           :style="[`animation-delay: ${animationOffset}s`, this.paused || !this.active ? 'animation-play-state: paused' : '']"
@@ -31,12 +31,10 @@
       </div>
       <div class="mt-2">
         <i
-          class="text-5xl" 
+          class="text-5xl cursor-pointer" 
           :class="{
             'bi-play-circle-fill text-emerald-600': this.paused,
-            'bi-pause-circle-fill text-gray-500': !this.paused,
-            'cursor-pointer': active,
-            'pointer-events-none': !active
+            'bi-pause-circle-fill text-gray-500': !this.paused
           }"
           @pointerdown.stop="togglePause"></i>
       </div>
@@ -63,9 +61,7 @@
         <div
           v-for="(color, i) in colors"
           class="button"
-          :class="[color, {
-            'pointer-events-none': !active
-          }]"
+          :class="[color]"
           @pointerdown.stop="pressed(i)"></div>
       </div>
       <div class="flex justify-center gap-2 mt-8">
@@ -75,11 +71,7 @@
           :class="[sequence.length >= i ? colors[sequence[i - 1]] : 'bg-gray-800']"
         ></div>
         <i
-          class="bi-arrow-counterclockwise text-xl -my-1 text-gray-900" 
-          :class="{
-            'cursor-pointer': active,
-            'pointer-events-none': !active
-          }"
+          class="bi-arrow-counterclockwise text-xl -my-1 text-gray-900 cursor-pointer" 
           @pointerdown.stop="reset">
         </i>
       </div>

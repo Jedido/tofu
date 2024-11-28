@@ -48,9 +48,6 @@
           <span 
             v-for="(lit, j) in row"
             class="cell h-12 w-12 bg-gray-700 rounded cursor-pointer"
-            :class="{
-              'pointer-events-none': !active
-            }"
             :style="[lit ? `background-color: ${state.color}` : '']"
             @pointerdown.stop="tryMove(j, i)"
           >

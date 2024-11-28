@@ -34,9 +34,7 @@
         :style="`color: ${state.color};`"
       >
         <div v-for="(value, i) in state.dice" class="px-6">
-          <i :class="[`bi-dice-${value} cursor-pointer`, {
-            'pointer-events-none': !active
-          }]" @pointerdown.stop="roll(i)"></i>
+          <i :class="[`bi-dice-${value} cursor-pointer`]" @pointerdown.stop="roll(i)"></i>
         </div>
       </div>
     </template>

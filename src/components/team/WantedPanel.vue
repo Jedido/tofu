@@ -35,10 +35,7 @@
       >
         <div 
           v-for="(face, i) in state.faces" 
-          class="cursor-pointer" 
-          :class="{
-            'pointer-events-none': !active
-          }"
+          class="cursor-pointer"
           @pointerdown.stop="select(i)"
         >
           <i :class="[`bi-emoji-${face} transition-colors`, {

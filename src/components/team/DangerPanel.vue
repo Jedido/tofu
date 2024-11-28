@@ -51,9 +51,7 @@
     </template>
     <template v-slot:content>
       <div class="relative top-1/2 -translate-y-2/4">
-        <div :class="{
-          'pointer-events-none': !active
-        }">
+        <div>
           <button 
             class="absolute left-1 top-0 bottom-0 w-8 h-16 my-auto text-center" 
             @pointerdown.stop="tryMove(-1, 0)"

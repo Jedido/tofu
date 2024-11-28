@@ -1,11 +1,12 @@
 import { TSocket } from "../../utils/tsocket"
-import { DangerPuzzleSolution, DicePuzzleSolution, Panel, PanelEnum, PanelInfo, PatternPuzzleSolution, PuzzleEnum, PuzzleSolution, RequestPuzzleSolution, Submission, WantedPuzzleSolution, WirePuzzleSolution } from "./types"
+import { AlgebraPuzzleSolution, DangerPuzzleSolution, DicePuzzleSolution, Panel, PanelEnum, PanelInfo, PatternPuzzleSolution, PuzzleEnum, PuzzleSolution, RequestPuzzleSolution, Submission, WantedPuzzleSolution, WirePuzzleSolution } from "./types"
 import { DangerPuzzle } from "./dangerPuzzle"
 import { WirePuzzle } from "./wirePuzzle"
 import { RequestPuzzle } from "./requestPuzzle"
 import { PatternPuzzle } from "./patternPuzzle"
 import { DicePuzzle } from "./dicePuzzle"
 import { WantedPuzzle } from "./wantedPuzzle"
+import { AlgebraPuzzle } from "./algebraPuzzle"
 
 const GameService = require("../gameService.js")
 const { randomItem, shuffle } = require("../../utils/util.js")
@@ -25,7 +26,7 @@ class TeamService extends GameService {
   readonly cutEvent: string = "team-cut-success"
   readonly loseEvent: string = "team-lose"
   readonly winEvent: string = "team-win"
-  readonly puzzleTypes = [DangerPuzzle, RequestPuzzle, PatternPuzzle, DicePuzzle, WantedPuzzle]
+  readonly puzzleTypes = [DangerPuzzle, RequestPuzzle, PatternPuzzle, DicePuzzle, WantedPuzzle, AlgebraPuzzle]
 
   gameState: {
     level: number
@@ -170,8 +171,8 @@ class TeamService extends GameService {
   }
 
   generatePuzzle(id: number): Panel[] {
-    // const PuzzleType = randomItem(this.puzzleTypes)
-    const PuzzleType = DangerPuzzle
+    const PuzzleType = randomItem(this.puzzleTypes)
+    // const PuzzleType = AlgebraPuzzle
     return new PuzzleType(id).panels()
   }
 
@@ -204,6 +205,7 @@ class TeamService extends GameService {
         case PuzzleEnum.Pattern: return PatternPuzzle.solve(data as PatternPuzzleSolution, panelInfo)
         case PuzzleEnum.Dice: return DicePuzzle.solve(data as DicePuzzleSolution, panelInfo)
         case PuzzleEnum.Wanted: return WantedPuzzle.solve(data as WantedPuzzleSolution, panelInfo)
+        case PuzzleEnum.Algebra: return AlgebraPuzzle.solve(data as AlgebraPuzzleSolution, panelInfo)
         case PuzzleEnum.Wire: return true
       }
     } catch (e: unknown) {

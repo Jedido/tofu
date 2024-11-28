@@ -34,10 +34,10 @@
                 <span class="text-emerald-700 font-bold">Wire</span> cards can be submitted at any time, but don't forget the info!
               </li>
               <li>
-                <span class="text-cyan-800 font-bold">Puzzle</span> cards are submitted successfully when the puzzle is solved
+                <span class="text-cyan-800 font-bold">Puzzle</span> cards are submitted successfully when the puzzle is solved.
               </li>
               <li>
-                <span class="text-gray-800 font-bold">Key</span> cards are submitted successfully after the corresponding puzzle has been solved. 
+                <span class="text-gray-800 font-bold">Key</span> cards are submitted successfully after the corresponding puzzle has been solved. Make sure you communicate with your teammates to ensure everyone knows which puzzles have already been solved!
               </li>
             </ul>
           </li>
@@ -297,7 +297,7 @@ export default {
         panel: "k1",
         state: {
           dots: new Uint32Array([48000327, 52]),
-          count: 5,
+          count: 3,
           color: "chocolate"
         }
       }], [{
@@ -318,6 +318,42 @@ export default {
           data: ["angry", "laughing-fill"]
         }
       }], [{
+        id: 5,
+        puzzle: "x",
+        panel: "p",
+        state: {
+          n: 1,
+          hint: "a = 8",
+          y: "g"
+        }
+      }], [{
+        id: 5,
+        puzzle: "x",
+        panel: "k1",
+        state: {
+          x: "a",
+          n: 1,
+          equations: [{
+            color: "red",
+            m: 1,
+            b: 2,
+            y: "b",
+            n: 2
+          }, {
+            color: "blue",
+            m: 2,
+            b: -4,
+            y: "x",
+            n: 3
+          }, {
+            color: "green",
+            m: 1,
+            b: -3,
+            y: "g",
+            n: 1
+          }],
+        }
+      }], [{
       }]
     ]
     return {
@@ -330,7 +366,7 @@ export default {
       pendingResults: [],
       instructionalPanels,
       stacks: instructionalPanels,
-      order: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      order: instructionalPanels.map((_, i) => i),
       blackout: false,
       quota: 4,
       causeOfDeath: "",
