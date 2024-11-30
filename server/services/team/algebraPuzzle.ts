@@ -34,7 +34,6 @@ export class AlgebraPuzzle extends Puzzle {
       this.answers.set(c, Math.floor(Math.random() * 10))
     }
     this.n = 1
-    console.log(this.answers.entries())
     this.y = AlgebraPuzzle.letters.charAt(Math.floor(Math.random() * AlgebraPuzzle.letters.length))
   }
 

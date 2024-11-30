@@ -1,7 +1,7 @@
 <template>
   <div
     ref="card"
-    class="relative text-gray-50 max-w-64 panel"
+    class="relative text-gray-50 max-w-64 card"
     :class="{
       'hover': hover && !active,
       'drag': dragging,
@@ -10,14 +10,15 @@
     :style="`top:${cardY}px;`"
   >
     <div
-      ref="panel" 
+      ref="panel"
       class="submit-wrapper relative z-10 px-2 rounded flex flex-col justify-between w-64 h-96" 
       :class="{
         'bg-cyan-800': panelType === 'p',
         'bg-gray-500': panelType === 'd',
         'bg-gray-800': panelType === 'k1' || panelType === 'k2',
         'bg-emerald-700': panelType === 'w',
-        'send': !dragging
+        'send': !dragging,
+        'opacity-0 pointer-events-none': status !== 'pending'
       }"
       @pointerdown.stop="start"
       @contextmenu.prevent=""
@@ -48,8 +49,7 @@
       </div>
     </div>
     <div
-      style="height:384px;"
-      class="send-confirm w-full text-center text-amber-50 absolute bottom-0 pt-0 rounded overflow-hidden"
+      class="send-confirm w-full h-96 text-center text-amber-50 absolute bottom-0 pt-0 rounded overflow-hidden"
       :class="{
         'bg-cyan-400': status === 'pending',
         'bg-emerald-500': status === 'success',
@@ -60,10 +60,10 @@
       <div ref="send" class="absolute send-icon left-0 right-0" v-show="dragging">
         <i class="bi-chevron-double-up"></i>
       </div>
-      <span v-if="sending" class="absolute bottom-1/2 left-0 right-0 translate-y-2/4 large-icon">
-        <i v-if="status === 'pending'" class="bi-three-dots"></i>
+      <span class="absolute bottom-1/2 left-0 right-0 translate-y-2/4 large-icon">
+        <i v-if="sending && status === 'pending'" class="bi-three-dots"></i>
         <i v-else-if="status === 'failure'" class="bi-x-circle-fill"></i>
-        <i v-else class="bi-check-circle-fill"></i>
+        <i v-else-if="status === 'success'" class="bi-check-circle-fill"></i>
       </span>
     </div>
   </div>
@@ -105,10 +105,10 @@ export default {
       return e.touches ? e.touches[0] : e
     },
     start(e) {
-      const element = this.getElement(e)
-      if (this.sending || (this.active && this.panelType === 'd')) {
+      if (this.sending || (this.active && (this.panelType === 'd' || this.panelType === 'k1'))) {
         return
       }
+      const element = this.getElement(e)
       e.preventDefault()
       this.dragging = true
       if (this.active) {
@@ -131,8 +131,8 @@ export default {
         this.cardY = -this.currentOffsetY
         this.$refs.card.style.scale = Math.min(Math.max(1.05 - this.cardY / 100 * 0.2, 0.5), 1)
       } else {
-        if (this.currentOffsetY > 200) {
-        this.currentOffsetY = 200
+        if (this.currentOffsetY > 300) {
+        this.currentOffsetY = 300
         }
         if (this.currentOffsetY < 0) {
           this.currentOffsetY = 0
@@ -177,7 +177,6 @@ export default {
       }
       this.sending = true
       this.$refs.panel.style.top = "-420px";
-      this.$refs.send.style.height = "384px";
       this.$emit('submit')
     },
     dismiss() {
@@ -195,7 +194,7 @@ export default {
 </script>
 
 <style scoped>
-.panel {
+.card {
   scale: 0.5;
   transition: transform 0.1s ease, scale 0.1s ease-out, top 0.3s ease-out;
   overflow-y: hidden;

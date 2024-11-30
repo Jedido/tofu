@@ -280,7 +280,7 @@ export default {
             [false, true, false, false],
             [false, true, true, false]
           ],
-          rows: [2, 4, 2, 2],
+          rows: [2, 3, 2, 2],
           cols: [2, 3, 3, 1]
         }
       }], [{
@@ -362,7 +362,6 @@ export default {
       level: 1,
       hovering: -1,
       cuts: 0,
-      revealed: [],
       pendingResults: [],
       instructionalPanels,
       stacks: instructionalPanels,
@@ -423,17 +422,29 @@ export default {
       this.state = "lose"
     })
     this.on("solve", ({ id }) => {
-      this.revealed.push(id)
+      this.stacks.forEach((stack) => {
+        stack.forEach((panel) => {
+          if (panel.id === id) {
+            panel.status = "success"
+          }
+          console.log(panel.id)
+          console.log(panel.status)
+        })
+      })
     })
-    this.on("result", this.handleResult)
+    this.on("fail", ({ id, stack }) => {
+      const panel = this.stacks[stack][0]
+      if (panel.id === id) {
+        panel.status = "failure"
+      }
+    })
   },
   unmounted() {
     clearInterval(this.timer)
   },
   methods: {
     cycle(i) {
-      this.selectedStack = (i + this.selectedStack + this.instructionalPanels.length) % this.instructionalPanels.length 
-      console.log(this.selectedStack)
+      this.selectedStack = (i + this.selectedStack + this.instructionalPanels.length) % this.instructionalPanels.length
     },
     getTouchingPanel(x, y) {
       const touchedElement = document.elementFromPoint(x, y)
@@ -484,14 +495,6 @@ export default {
         return stack[0]
       } else {
         return {}
-      }
-    },
-    handleResult({ stack, id, result }) {
-      const panel = this.stacks[stack][0]
-      if (panel.id === id) {
-        panel.status = result
-      } else {
-        console.log("Double submission detected! ignoring...")
       }
     },
     dismiss(stack) {
@@ -570,6 +573,6 @@ export default {
   opacity: 99%;
   left: 50%;
   transform: translate(-50%, -36px);
-  animation: 1s blackout 2s forwards;
+  animation: 1s blackout 1.5s forwards;
 }
 </style>

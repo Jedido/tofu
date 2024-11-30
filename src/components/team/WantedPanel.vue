@@ -9,7 +9,7 @@
     <template v-slot:content>
       <div class="py-4">
         <div class="text-4xl font-serif text-center">Wanted!</div>
-        <div v-if="state.type === 'face'" class="flex justify-center gap-6 flex-wrap text-7xl text-amber-400 mt-8">
+        <div v-if="state.type === 'face'" class="flex justify-center gap-6 flex-wrap text-7xl text-amber-300 mt-8">
           <div v-for="face in state.data">
             <i :class="[`bi-emoji-${face}`]"></i>
           </div>
@@ -39,7 +39,7 @@
           @pointerdown.stop="select(i)"
         >
           <i :class="[`bi-emoji-${face} transition-colors`, {
-            'text-amber-400': selected[i]
+            'text-amber-300': selected[i]
           }]"></i>
         </div>
       </div>

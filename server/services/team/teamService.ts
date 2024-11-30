@@ -22,6 +22,7 @@ class TeamService extends GameService {
   readonly countdownEvent: string = "team-countdown"
   readonly startEvent: string = "team-start"
   readonly resultEvent: string = "team-result"
+  readonly failEvent: string = "team-fail"
   readonly solveEvent: string = "team-solve"
   readonly cutEvent: string = "team-cut-success"
   readonly loseEvent: string = "team-lose"
@@ -177,19 +178,19 @@ class TeamService extends GameService {
   }
 
   submitSolution({ type, id, data, stack }: Submission, socket: TSocket): void {
-    let result = { stack, id, result: 'failure' }
     if (!this.solved.has(id)) {
       setTimeout(() => {
-        result.result = this.solved.has(id) ? 'success' : 'failure'
-        socket.emit(this.resultEvent, result)
+        if (this.solved.has(id)) {
+          this.broadcastFn(this.solveEvent, { id })
+        } else {
+          socket.emit(this.failEvent, { id, stack })
+        }
       }, RESULT_DELAY)
       if (this.trySolution(id, type, data)) {
-        this.broadcastFn(this.solveEvent, { id })
         this.solved.add(id)
       }
     } else {
-      result.result = 'success'
-      socket.emit(this.resultEvent, result)
+      socket.emit(this.solveEvent, { id })
     }
   }
 
