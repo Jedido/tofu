@@ -2,6 +2,7 @@ const fs = require("fs")
 
 const GameService = require("./gameService.js")
 const Trie = require("../utils/trie.js")
+const { getRandomWeightedLetter } = require("../utils/util.js")
 
 class SquaredleService extends GameService {
   constructor(roomId) {
@@ -27,14 +28,6 @@ class SquaredleService extends GameService {
     })
     const dictionary = fs.readFileSync("./server/assets/zyzzyva.txt", "utf8")
     this.dictionary = dictionary.trim().split("\n")
-    const letterFrequency = fs.readFileSync("./server/assets/letter_frequency.csv", "utf8")
-    this.letterSampler = []
-    this.totalLetterFrequency = 0
-    letterFrequency.trim().split("\n").forEach((line) => {
-      const [letter, frequecy] = line.split(",")
-      this.totalLetterFrequency += Number(frequecy)
-      this.letterSampler.push([letter, this.totalLetterFrequency])
-    })
 
     // game state
     this.size = 0
@@ -81,7 +74,7 @@ class SquaredleService extends GameService {
       for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
           if (!this.board[i][j]) {
-            this.board[i][j] = this.getRandomLetter()
+            this.board[i][j] = getRandomWeightedLetter()
           }
         }
       }
@@ -175,16 +168,6 @@ class SquaredleService extends GameService {
       }
     }
     return true
-  }
-
-  getRandomLetter() {
-    const sample = Math.random() * this.totalLetterFrequency
-    for (let i = 0; i < this.letterSampler.length; i++) {
-      const [letter, cumulativeFrequency] = this.letterSampler[i]
-      if (sample < cumulativeFrequency) {
-        return letter
-      }
-    }
   }
 
   guess(word, socket) {

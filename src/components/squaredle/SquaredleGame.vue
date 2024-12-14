@@ -1,7 +1,7 @@
 <template>
   <div id="squaredle" class="select-none text-amber-900 text-center flex flex-col">
     <p class="text-3xl mb-4">Squaredle</p>
-    <div class="flex justify-between mb-2 w-1/2 mx-auto">
+    <div class="flex justify-between mb-2 mx-auto px-4" :style="`width:${boardWidth}px;`">
       <span class="text-xl">{{ this.foundWords.length }} / {{ Object.keys(this.allWords).length }} words</span>
       <span v-if="lastGuess" class="text-l">
         <span v-if="guessType === 'valid'">✔️</span>
@@ -27,7 +27,7 @@
     >
       <button
         v-for="(cell, index) in board"
-        class="relative border border-2 rounded"
+        class="relative border-2 rounded"
         :class="[highlightedIndexes.includes(index) ? 'bg-amber-900 text-amber-200 border-amber-200' : (cell.instances ? 'bg-amber-200 hover:bg-amber-300 border-amber-300' : 'bg-gray-300 border-gray-400 text-gray-400')]"
       >
         {{ cell.letter }}
@@ -90,7 +90,7 @@
             class="slider"
           />
         </div>
-        <button class="bg-emerald-600 border border-2 border-emerald-800 text-amber-50 rounded col-span-2" @click="emit('init', { size: boardSize })">
+        <button class="bg-emerald-600 border-2 border-emerald-800 text-amber-50 rounded col-span-2" @click="emit('init', { size: boardSize })">
           New Game
         </button>
     </div>
@@ -263,10 +263,7 @@ export default {
   },
   computed: {
     boardWidth() {
-      if (this.gameWidth < 768) {
-        return this.gameWidth * 2 / 3
-      }
-      return this.gameWidth / 2
+      return Math.max(Math.min(this.gameWidth, 600), 300)
     },
     cellSize() {
       return (this.boardWidth / 2 - 48) / this.size - 4

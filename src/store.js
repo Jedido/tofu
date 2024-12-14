@@ -25,7 +25,7 @@ export const store = createStore({
       state.id = id
     },
     setGameWidth(state, width) {
-      state.gameWidth = width
+      state.gameWidth = Math.max(Math.min(width, 768), 300)
     },
     changeScale(state, delta) {
       if (state.scale + delta > 0) {

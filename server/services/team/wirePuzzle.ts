@@ -61,4 +61,8 @@ export class WirePuzzle {
   static cut({ next }: WirePuzzleSolution) {
     return this.order.shift() === next
   }
+
+  static isCut(wire: number) {
+    return !this.order.includes(wire)
+  }
 }

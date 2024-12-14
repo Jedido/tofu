@@ -121,10 +121,7 @@ export class DangerPuzzle extends Puzzle {
           cols[j]--
         }
         if (row[j]) {
-          if (i + y >= 0 && i + y < puzzle.board.length && j + x >= 0 && j + x < puzzle.board[0].length) {
-            if (key.board[i][j] && puzzle.board[i + y][j + x]) {
-              return false
-            }
+          if ((i + y >= 0 && i + y < puzzle.board.length && j + x >= 0 && j + x < puzzle.board[0].length) || key.board[i + y][j + x]) {
             rows[i + y]--
             cols[j + x]--
           } else {

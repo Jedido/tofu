@@ -7,7 +7,8 @@ export enum PuzzleEnum {
   Pattern = 'p',
   Dice = "m",
   Wanted = "f",
-  Algebra = "x"
+  Algebra = "x",
+  Word = "a"
 }
 
 export enum PanelEnum {
@@ -62,4 +63,7 @@ export interface WantedPuzzleSolution extends PuzzleSolution {
 }
 export interface AlgebraPuzzleSolution extends PuzzleSolution {
   y: number
+}
+export interface WordPuzzleSolution extends PuzzleSolution {
+  valid: boolean[]
 }

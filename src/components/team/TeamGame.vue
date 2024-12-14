@@ -1,5 +1,5 @@
 <template>
-  <div id="team" class="select-none">
+  <div id="team" class="select-none touch-manipulation">
     <div
       v-if="state === 'menu'"
       class="px-8 py-4 bg-white mt-2"
@@ -35,15 +35,19 @@
               </li>
               <li>
                 <span class="text-cyan-800 font-bold">Puzzle</span> cards are submitted successfully when the puzzle is solved.
+                <ul class="list-disc ml-4">
+                  <li><i class="bi-check-circle-fill text-emerald-500"></i> means the submission was correct. Tap the card to proceed.</li>
+                  <li><i class="bi-x-circle-fill text-error"></i> means the submission was incorrect. Tap the card to try again.</li>
+                </ul>
               </li>
               <li>
-                <span class="text-gray-800 font-bold">Key</span> cards are submitted successfully after the corresponding puzzle has been solved. Make sure you communicate with your teammates to ensure everyone knows which puzzles have already been solved!
+                <span class="text-gray-800 font-bold">Key</span> cards automatically become <i class="bi-check-circle-fill text-emerald-500"></i> after the corresponding puzzle has been solved.
               </li>
             </ul>
           </li>
         </ul>
         <div class="col-span-6 text-2xl text-center font-semibold mt-2">Examples</div>
-        <div class="col-span-6 flex justify-center items-center gap-2 min-w-fit relative left-1/2 -translate-x-2/4">
+        <div class="col-span-6 flex justify-center items-center gap-2 min-w-fit relative left-1/2 -translate-x-2/4 overflow-y-hidden">
           <i class="bi-arrow-left p-4 hover:-translate-x-2 transition-transform text-4xl cursor-pointer" @pointerdown="cycle(-1)"></i>
           <PanelType
             :current-panel="instructionalPanels[selectedStack][0]"
@@ -81,7 +85,7 @@
         </div>
         <div class="grid grid-cols-3 bomb-panels">
           <BombPanel :wires="wires.slice(0, 3)" @cut="cutWire" />
-          <div class="mx-auto w-fit px-2 text-center py-1 bg-gray-900 font-mono text-4xl border border-4 border-gray-400 shadow shadow-inner">
+          <div class="mx-auto w-fit px-2 text-center py-1 bg-gray-900 font-mono text-4xl border-4 border-gray-400 shadow-inner">
             <span 
               class="relative z-50"
               :class="{
@@ -354,6 +358,22 @@ export default {
           }],
         }
       }], [{
+        id: 6,
+        puzzle: "a",
+        panel: "p",
+        state: {
+          name: "Filenven",
+          words: [ "WITCH", "ATTACH", "TWIST", "PATCH" ]
+        }
+      }], [{
+        id: 6,
+        puzzle: "a",
+        panel: "k1",
+        state: {
+          name: "Filenven",
+          letters: "HWCATI"
+        }
+      }], [{
       }]
     ]
     return {
@@ -520,7 +540,7 @@ export default {
   computed: {
     cardMargin() {
       const num = Math.max(this.stacks.length - 1, 1)
-      const spacePerCard = handWidth / num
+      const spacePerCard = Math.max(handWidth, this.$store.state.gameWidth) / num
       const cardSize = 256
       const space = (spacePerCard - cardSize) / 2
       return `margin: 0 ${space}px`

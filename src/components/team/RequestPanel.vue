@@ -15,8 +15,10 @@
         >
           <div v-for="requestor in requestors">
             <div class="py-3">
-              <div class="text-4xl font-mono uppercase requestor text-center">
-                {{ requestor.name }}
+              <div class="text-4xl font-mono uppercase requestor flex">
+                <div v-for="c in requestor.name" class="w-6 mr-[6px]">
+                  {{ c }}
+                </div>
               </div>
               <div class="flex justify-center gap-3 py-2">
                 <div

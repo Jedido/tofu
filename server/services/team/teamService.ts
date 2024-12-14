@@ -71,6 +71,10 @@ class TeamService extends GameService {
   }
 
   prepareNextLevel() {
+    // check that the game isn't ongoing
+    if (this.timer) {
+      return
+    }
     this.solved = new Set<number>()
 
     this.gameState.level++
@@ -105,6 +109,7 @@ class TeamService extends GameService {
     const time = Math.floor(numPuzzles * timePerPuzzle * 3 / 10) * 10
     this.timer = setTimeout(() => {
       this.broadcastFn(this.loseEvent, { cause: `you ran out of time` })
+      this.timer = undefined
     }, time * 1000)
     for (let i = 0; i < this.gameState.players.length; i++) {
       this.gameState.players[i].socket.emit(this.startEvent, {
@@ -146,7 +151,7 @@ class TeamService extends GameService {
     let id = 1
     const numWires = Math.min(Math.floor(this.gameState.level / 4 + 3), 5)
     WirePuzzle.init(numWires)
-    const maxWireValue = numWires * (numWires + 1) / 2
+    const maxWireValue = numPuzzles * (numPuzzles + 1) / 2
     const wireValues = Array.from({ length: numWires }, () => Math.random() * maxWireValue)
     const added = new Set<number>()
     let cumulative = 0
@@ -208,6 +213,7 @@ class TeamService extends GameService {
         case PuzzleEnum.Wanted: return WantedPuzzle.solve(data as WantedPuzzleSolution, panelInfo)
         case PuzzleEnum.Algebra: return AlgebraPuzzle.solve(data as AlgebraPuzzleSolution, panelInfo)
         case PuzzleEnum.Wire: return true
+        default: return false
       }
     } catch (e: unknown) {
       if (typeof e === "string") {
@@ -220,16 +226,21 @@ class TeamService extends GameService {
   }
   
   cutWire(solution: WirePuzzleSolution, socket: TSocket): void {
+    if (WirePuzzle.isCut(solution.next)) {
+      return
+    }
     if (WirePuzzle.cut(solution)) {
       this.broadcastFn(this.cutEvent, { next: solution.next, success: true })
       if (WirePuzzle.order.length === 0) {
         this.broadcastFn(this.winEvent)
         clearTimeout(this.timer)
+        this.timer = undefined
       } 
     } else {
       this.broadcastFn(this.cutEvent, { next: solution.next, success: false })
       this.broadcastFn(this.loseEvent, { cause: `${socket.ign} cut the wrong wire` })
       clearTimeout(this.timer)
+      this.timer = undefined
     }
   }
 }

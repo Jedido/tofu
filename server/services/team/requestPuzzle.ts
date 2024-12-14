@@ -1,6 +1,6 @@
 import { Puzzle } from "./puzzle"
 import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, RequestPuzzleSolution } from "./types"
-const { randomItem, shuffle } = require("../../utils/util.js")
+const { generateName, shuffle } = require("../../utils/util.js")
 
 interface RequestPuzzlePI extends PanelInfo {
   name: string
@@ -13,18 +13,6 @@ interface RequestKeyPI extends PanelInfo {
 }
 
 export class RequestPuzzle extends Puzzle {
-  readonly prefixes = [
-    "Al", "Be", "De", "El", "Fa", "Ga", "Jo", "Ka", "La", "Ma",
-    "Na", "Pa", "Ra", "Sa", "Ta", "Va", "Zy", "Fi", "Lu", "Or"
-  ]
-  readonly roots = [
-    "lin", "mar", "son", "vin", "dor", "ric", "dra", "len", "thy",
-    "mal", "ven", "cel", "ren", "vra", "ton", "ris", "ver", "wyn", "jas"
-  ]
-  readonly suffixes = [
-    "ina", "ous", "ian", "lyn", "ith", "ene", "ane", "ell", "ris", "wyn",
-    "ion", "ora", "ara", "ryn", "yna", "ine", "iel", "lin", "mar", "ven"
-  ]
   static names: Set<string>
 
   puzzle: RequestPuzzlePI
@@ -39,7 +27,7 @@ export class RequestPuzzle extends Puzzle {
     const names = Array.from({ length: 4 }, () => {
       let name = ""
       do {
-        name = this.generateName()
+        name = generateName()
       } while (RequestPuzzle.names.has(name));
       RequestPuzzle.names.add(name)
       return name
@@ -83,26 +71,5 @@ export class RequestPuzzle extends Puzzle {
       }
     }
     return true;
-  }
-
-  generateName() {
-    const prefix: string = randomItem(this.prefixes)
-    const root: string = randomItem(this.roots)
-    const suffix: string = randomItem(this.suffixes)
-
-    return this.stylizeName(prefix + root + suffix)
-  }
-
-  stylizeName(name: string): string {
-    if (Math.random() > 0.3) {
-      return name
-    }
-
-    // Randomly capitalize the second letter for effect
-    if (Math.random() > 0.6) {
-      name = name.substring(0, 2) + name.charAt(2).toUpperCase() + name.slice(3)
-    }
-  
-    return name.charAt(0).toUpperCase() + name.slice(1) // Ensure the first letter is capitalized
   }
 }
