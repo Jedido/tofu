@@ -30,15 +30,16 @@ export class PatternPuzzle extends Puzzle {
       combo = `${color}-${symbol}`
     } while (PatternPuzzle.combos.has(combo));
     PatternPuzzle.combos.add(combo)
+    const filled = Math.floor(Math.random() * 3) + 4
     this.puzzleBoard = {
       color,
       symbol,
-      board: PatternPuzzle.makeBoard()
+      board: PatternPuzzle.makeBoard(filled, true)
     }
     this.keyBoard = {
       color,
       symbol,
-      board: PatternPuzzle.makeBoard()
+      board: PatternPuzzle.makeBoard(filled, false)
     }
   }
 
@@ -56,8 +57,20 @@ export class PatternPuzzle extends Puzzle {
     }]
   }
 
-  static makeBoard(): boolean[][] {
-    return Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => Math.random() > 0.5))
+  static makeBoard(num: number, skip: boolean): boolean[][] {
+    const length = 3
+    let remaining = length * length
+    if (skip) {
+      remaining--;
+    }
+    return Array.from({ length }, () => Array.from({ length }, () => {
+      const result = remaining > 0 && Math.random() < num / remaining
+      remaining--
+      if (result) {
+        num--
+      }
+      return result
+    }))
   }
 
   static solve({ board }: PatternPuzzleSolution, puzzleParts: Map<PanelEnum, PanelInfo>): boolean {

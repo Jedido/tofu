@@ -1,14 +1,15 @@
 export type Id = number
 
 export enum PuzzleEnum {
+  Word = "a",
   Danger = "d",
-  Wire = "w",
-  Request = 'r',
-  Pattern = 'p',
-  Dice = "m",
   Wanted = "f",
+  Dice = "m",
+  Pattern = 'p',
+  Request = 'r',
+  Address = 's',
+  Wire = "w",
   Algebra = "x",
-  Word = "a"
 }
 
 export enum PanelEnum {
@@ -66,4 +67,7 @@ export interface AlgebraPuzzleSolution extends PuzzleSolution {
 }
 export interface WordPuzzleSolution extends PuzzleSolution {
   valid: boolean[]
+}
+export interface AddressPuzzleSolution extends PuzzleSolution {
+  code: string
 }

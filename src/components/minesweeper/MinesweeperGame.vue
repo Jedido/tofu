@@ -19,7 +19,7 @@
         'grid-template-columns': `repeat(${size}, 1fr)`,
         fontSize: cellSize,
         lineHeight: cellSize,
-        height: `${gameWidth - 24}px`,
+        height: `${this.$store.state.gameWidth - 24}px`,
       }"
     >
       <MinesweeperCell
@@ -76,9 +76,6 @@ export default {
   mixins: [socket],
   components: {
     MinesweeperCell,
-  },
-  props: {
-    gameWidth: Number,
   },
   data() {
     return {
@@ -158,7 +155,7 @@ export default {
   },
   computed: {
     cellSize() {
-      return `${(this.gameWidth - 48) / this.size - 2}px`
+      return `${(this.$store.state.gameWidth - 48) / this.size - 2}px`
     },
   },
 }

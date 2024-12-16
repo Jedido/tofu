@@ -11,6 +11,9 @@ import Header from "@/components/Header.vue"
 import Scene from "./components/Scene.vue"
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
+globalThis.__VUE_PROD_DEVTOOLS__ = false
+globalThis.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
+
 export default {
   name: "App",
   components: {

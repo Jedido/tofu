@@ -12,7 +12,6 @@
       <MinesweeperGame
         v-else-if="this.$store.state.scene === 'minesweeper'"
         :socket="socket"
-        :game-width="$store.state.gameWidth"
       />
       <AnagramGame
         v-else-if="this.$store.state.scene === 'anagram'"

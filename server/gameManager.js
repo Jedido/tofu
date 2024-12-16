@@ -89,7 +89,7 @@ function initGameManager(server) {
           console.log(
             `${user.id} (${user.ign}) triggered ${type} on ${
               gameRooms[user.roomId].gameId
-            } (${user.roomId}): ${JSON.stringify(data).substring(0, 100)}`
+            } (${user.roomId}): ${JSON.stringify(data).substring(0, 200)}`
           )
           actionFn(data, user)
         }

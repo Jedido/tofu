@@ -217,7 +217,7 @@ export default {
           board: [
             [false, false, false],
             [true, true, true],
-            [false, true, true]
+            [false, true, false]
           ]
         }
       }], [{
@@ -228,7 +228,7 @@ export default {
           color: "tomato",
           symbol: "diamond",
           board: [
-            [false, false, true],
+            [true, true, false],
             [true, false, false],
             [false, true, false]
           ]
@@ -447,8 +447,6 @@ export default {
           if (panel.id === id) {
             panel.status = "success"
           }
-          console.log(panel.id)
-          console.log(panel.status)
         })
       })
     })

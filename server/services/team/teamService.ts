@@ -27,7 +27,8 @@ class TeamService extends GameService {
   readonly cutEvent: string = "team-cut-success"
   readonly loseEvent: string = "team-lose"
   readonly winEvent: string = "team-win"
-  readonly puzzleTypes = [DangerPuzzle, RequestPuzzle, PatternPuzzle, DicePuzzle, WantedPuzzle, AlgebraPuzzle]
+  // readonly puzzleTypes = [DangerPuzzle, RequestPuzzle, PatternPuzzle, DicePuzzle, WantedPuzzle, AlgebraPuzzle]
+  readonly puzzleTypes = [PatternPuzzle]
 
   gameState: {
     level: number

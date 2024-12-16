@@ -8,15 +8,18 @@
     </template>
     <template v-slot:content>
       <div 
-        class="relative top-1/2 -translate-y-2/4 gap-1 flex flex-col"
+        class="relative text-center w-44 mx-auto top-1/2 -translate-y-2/4 text-3xl py-3 px-1 bg-gray-200 rounded flex flex-col gap-1"
       >
         <div
           v-for="row in board" 
-          class="flex justify-center mx-auto text-center text-3xl gap-1"
+          class="flex justify-center mx-auto text-3xl gap-1 px-1"
         >
           <span 
             v-for="lit in row"
             class="cell h-12 w-12 bg-gray-700 rounded"
+            :class="{
+              'border-2 border-gray-700': lit
+            }"
             :style="[lit ? `background-color: ${state.color}` : '']"
           >
             <i v-if="lit" class="opacity-50" :class="[`bi-${state.symbol}`]"></i>
@@ -35,25 +38,27 @@
       {{ state.color }} {{ state.symbol }} Pattern
     </template>
     <template v-slot:description >
-      Click a panel to light up all adjacent lights. Someone else may have a key.
+      Touch to slide the panels to the empty space. Someone else may have a key.
     </template>
     <template v-slot:content>
-      <div 
-        class="relative top-1/2 -translate-y-2/4 gap-1 flex flex-col"
-      >
-        <div
-          v-for="(row, i) in board" 
-          class="flex justify-center mx-auto text-center text-3xl gap-1"
-        >
-          <span 
-            v-for="(lit, j) in row"
-            class="cell h-12 w-12 bg-gray-700 rounded cursor-pointer"
-            :style="[lit ? `background-color: ${state.color}` : '']"
-            @pointerdown.stop="tryMove(j, i)"
-          >
-            <i class="opacity-50 text-gray-700" :class="[`bi-${state.symbol}`]"></i>
-          </span>
+      <div class="relative text-center w-44 mx-auto top-1/2 -translate-y-2/4 text-3xl py-3 px-1 bg-gray-200 rounded">
+        <div class="flex flex-col gap-1 px-2">
+          <div v-for="row in board" class="flex gap-1">
+            <div v-for="_ in row" class="h-12 w-12 bg-gray-700 rounded"></div>
+          </div>
         </div>
+        <template v-for="(row, i) in board">
+          <template v-for="(lit, j) in row">
+            <div
+              v-if="i !== 2 || j !== 2"
+              class="cell h-12 w-12 rounded absolute top-0 left-0 bg-gray-400 cursor-pointer border-2 border-gray-700"
+              :style="[lit ? `background-color: ${state.color};` : '', calculatePosition(j, i)]"
+              @pointerdown.stop="tryMove(j, i)"
+            >
+              <i v-if="lit" class="opacity-50 text-gray-700" :class="[`bi-${state.symbol}`]"></i>
+            </div>
+          </template>
+        </template>
       </div>
     </template>
   </Panel>
@@ -76,11 +81,12 @@ export default {
     'submit': false
   },
   data() {
+    const boardOffset = Array.from(this.state.board, (row, i) => Array.from({ length: row.length }, (_, j) => {
+      return { i, j }
+    }))
     return {
       board: this.state.board,
-      current: 0,
-      x: 0,
-      y: 0,
+      boardOffset,
       touching: -1
     }
   },
@@ -89,17 +95,28 @@ export default {
       if (!this.active) {
         return
       }
-      const adjacents = [[0, 0], [1, 0], [0, 1], [-1, 0], [0, -1]]
-      adjacents.forEach(([dx, dy]) => {
-        if (x + dx >= 0 && x + dx < 3 && y + dy >= 0 && y + dy < 3) {
-          this.board[y + dy][x + dx] = !this.board[y + dy][x + dx]
-        }
-      })
+      const old = this.boardOffset[2][2]
+      const { i, j } = this.boardOffset[y][x]
+      if (Math.abs(old.i - i) + Math.abs(old.j - j) === 1) {
+        this.boardOffset[y][x] = { i: old.i, j: old.j }
+        this.boardOffset[2][2] = { i, j }
+      }
     },
     sendSolution() {
-      this.$emit('submit', {
-        board: this.board
-      })
+      const board = Array.from(this.state.board, (row) => Array.from({ length: row.length }, () => false))
+      for (let y = 0; y < this.boardOffset.length; y++) {
+        const row = this.boardOffset[y]
+        for (let x = 0; x < row.length; x++) {
+          const { i, j } = row[x]
+          board[i][j] = this.board[y][x]
+        }
+      }
+      console.log(board)
+      this.$emit('submit', { board })
+    },
+    calculatePosition(x, y) {
+      const { i, j } = this.boardOffset[y][x]
+      return `transform: translate(${12 + j * 52}px, ${12 + i * 52}px);`
     }
   }
 }
@@ -107,7 +124,7 @@ export default {
 
 <style scoped>
 .cell {
-  transition: background-color 0.1s ease-out;
+  transition: transform 0.1s ease-out;
 }
 .cell i {
   line-height: 48px;
