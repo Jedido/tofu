@@ -69,5 +69,5 @@ export interface WordPuzzleSolution extends PuzzleSolution {
   valid: boolean[]
 }
 export interface AddressPuzzleSolution extends PuzzleSolution {
-  code: string
+  north: boolean[]
 }

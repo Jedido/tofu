@@ -4,11 +4,11 @@
       Key Pattern
     </template>
     <template v-slot:description>
-      The key pattern for the {{ state.color }} {{ state.symbol }} puzzle.
+      The key pattern for the {{ state.color }} {{ state.symbol }} puzzle. Match up all colored panels.
     </template>
     <template v-slot:content>
       <div 
-        class="relative text-center w-44 mx-auto top-1/2 -translate-y-2/4 text-3xl py-3 px-1 bg-gray-200 rounded flex flex-col gap-1"
+        class="relative text-center w-44 mx-auto top-1/2 -translate-y-2/4 text-3xl py-3 px-1 bg-gray-300 rounded flex flex-col gap-1"
       >
         <div
           v-for="row in board" 
@@ -16,10 +16,7 @@
         >
           <span 
             v-for="lit in row"
-            class="cell h-12 w-12 bg-gray-700 rounded"
-            :class="{
-              'border-2 border-gray-700': lit
-            }"
+            class="cell h-12 w-12 bg-gray-50 rounded border-2 border-gray-700"
             :style="[lit ? `background-color: ${state.color}` : '']"
           >
             <i v-if="lit" class="opacity-50" :class="[`bi-${state.symbol}`]"></i>
@@ -41,17 +38,17 @@
       Touch to slide the panels to the empty space. Someone else may have a key.
     </template>
     <template v-slot:content>
-      <div class="relative text-center w-44 mx-auto top-1/2 -translate-y-2/4 text-3xl py-3 px-1 bg-gray-200 rounded">
+      <div class="relative text-center w-44 mx-auto top-1/2 -translate-y-2/4 text-3xl py-3 px-1 bg-gray-300 rounded">
         <div class="flex flex-col gap-1 px-2">
           <div v-for="row in board" class="flex gap-1">
-            <div v-for="_ in row" class="h-12 w-12 bg-gray-700 rounded"></div>
+            <div v-for="_ in row" class="h-12 w-12 bg-gray-500 rounded"></div>
           </div>
         </div>
         <template v-for="(row, i) in board">
           <template v-for="(lit, j) in row">
             <div
               v-if="i !== 2 || j !== 2"
-              class="cell h-12 w-12 rounded absolute top-0 left-0 bg-gray-400 cursor-pointer border-2 border-gray-700"
+              class="cell h-12 w-12 rounded absolute top-0 left-0 bg-gray-50 cursor-pointer border-2 border-gray-700"
               :style="[lit ? `background-color: ${state.color};` : '', calculatePosition(j, i)]"
               @pointerdown.stop="tryMove(j, i)"
             >
@@ -111,7 +108,6 @@ export default {
           board[i][j] = this.board[y][x]
         }
       }
-      console.log(board)
       this.$emit('submit', { board })
     },
     calculatePosition(x, y) {

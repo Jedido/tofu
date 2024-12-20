@@ -4,26 +4,30 @@
       Letter Pyramid
     </template>
     <template v-slot:description>
-      Letters for {{ state.name }}'s keywords. The letters can be reused.
+      Reusable letters for {{ state.name }}'s keywords. Tap the spotlight to change its color.
     </template>
     <template v-slot:content>
-      <div class="flex flex-col items-center text-5xl mt-6 font-serif">
-        <div class="border-2 border-gray-800 rounded h-16 w-14 text-center overflow-x-hidden curser-pointer">
-          <div class="border-b-4 border-double" :class="[letterColor(state.letters[0])]">
-            {{ state.letters[0] }}
-          </div>
+      <div class="relative">
+        <div class="spotlight absolute -top-4 left-0 right-0 mx-auto w-56 h-56 rounded-full cursor-pointer" :class="[`bg-${colors[colorIndex]}`]" @pointerdown.stop="cycleSpotlight()">
         </div>
-        <div class="flex gap-1">
-          <div v-for="letter in state.letters.slice(1, 3)" class="border-2 border-gray-800 rounded h-16 w-14 text-center overflow-x-hidden">
-            <div class="border-b-4 border-double" :class="[letterColor(letter)]">
-              {{ letter }}
+        <div class="relative top-0 left-0 flex flex-col items-center text-5xl mt-6 font-serif pointer-events-none">
+          <div class="h-16 w-14 text-center overflow-x-hidden curser-pointer">
+            <div class="border-b-2 border-white" :class="[letterColor(state.letters[0])]">
+              {{ state.letters[0] }}
             </div>
           </div>
-        </div>
-        <div class="flex gap-1">
-          <div v-for="letter in state.letters.slice(3, 6)" class="border-2 border-gray-800 rounded h-16 w-14 text-center overflow-x-hidden">
-            <div class="border-b-4 border-double"  :class="[letterColor(letter)]">
-              {{ letter }}
+          <div class="flex gap-1">
+            <div v-for="letter in state.letters.slice(1, 3)" class="h-16 w-14 text-center overflow-x-hidden">
+              <div class="border-b-2 border-white" :class="[letterColor(letter)]">
+                {{ letter }}
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-1">
+            <div v-for="letter in state.letters.slice(3, 6)" class="h-16 w-14 text-center overflow-x-hidden">
+              <div class="border-b-2 border-white"  :class="[letterColor(letter)]">
+                {{ letter }}
+              </div>
             </div>
           </div>
         </div>
@@ -40,7 +44,7 @@
       Keywords
     </template>
     <template v-slot:description >
-      Cross out all words that are not {{ state.name }}'s keywords.
+      Select all words that can be spelled with {{ state.name }}'s letters.
     </template>
     <template v-slot:content>
       <div class="text-3xl justify-center py-2 font-serif">
@@ -81,7 +85,9 @@ export default {
   data() {
     return {
       selected: Array(4).fill(false),
-      index: Array(6).fill(0)
+      index: Array(6).fill(0),
+      colorIndex: Math.floor(Math.random() * 3),
+      colors: ['red', 'green', 'blue']
     }
   },
   methods: {
@@ -94,8 +100,10 @@ export default {
       })
     },
     letterColor(c) {
-      const colors = ['red', 'yellow', 'green', 'blue']
-      return colors[c.charCodeAt(0) % 4]
+      return this.colors[c.charCodeAt(0) % 3]
+    },
+    cycleSpotlight() {
+      this.colorIndex = (this.colorIndex + Math.ceil(Math.random() * 2)) % 3
     }
   }
 }
@@ -103,19 +111,24 @@ export default {
 
 <style scoped>
 .red {
-  color: #FF5733;
-  border-bottom-color: #FF5733;
+  color: #ff8258;
 }
-.yellow {
-  color: #FFC300;
-  border-bottom-color: #FFC300;
+.bg-red {
+  background-color: #ff8258;
 }
 .green {
-  color: #28B463;
-  border-bottom-color: #28B463;
+  color: #89ff68;
+}
+.bg-green {
+  background-color: #89ff68;
 }
 .blue {
-  color: #3498DB;
-  border-bottom-color: #3498DB;
+  color: #62c5ff;
+}
+.bg-blue {
+  background-color: #62c5ff;
+}
+.spotlight {
+  transition: background-color 0.2s;
 }
 </style>

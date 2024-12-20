@@ -20,6 +20,7 @@ import DicePanel from './DicePanel.vue';
 import WantedPanel from './WantedPanel.vue';
 import AlgebraPanel from './AlgebraPanel.vue';
 import WordPanel from './WordPanel.vue';
+import AddressPanel from './AddressPanel.vue';
 
 export default {
   name: "PanelType",
@@ -32,7 +33,8 @@ export default {
     WantedPanel,
     WirePanel,
     AlgebraPanel,
-    WordPanel
+    WordPanel,
+    AddressPanel
   },
   props: {
     currentPanel: Object
@@ -48,6 +50,7 @@ export default {
         case 'w': return WirePanel
         case 'x': return AlgebraPanel
         case 'a': return WordPanel
+        case 's': return AddressPanel
         default: return EmptyPanel
       }
     }

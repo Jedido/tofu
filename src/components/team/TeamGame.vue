@@ -374,6 +374,31 @@ export default {
           letters: "HWCATI"
         }
       }], [{
+        id: 7,
+        puzzle: "s",
+        panel: "p",
+        state: {
+          streets: [ 'Fox Way', 'Maple Ct', 'Willow Ln', 'Forest Ave' ],
+          city: "Crystalhaven"
+        }
+      }], [{
+        id: 7,
+        puzzle: "s",
+        panel: "k1",
+        state: {
+          streets: [
+            'Magnolia Dr',
+            'Fox Way',
+            'Forest Ave',
+            'Silver Ave',
+            'Maple Ct',
+            'Willow Ln',
+            'Aspen Blvd',
+            'Fern Blvd'
+          ],
+          city: "Crystalhaven"
+        }
+      }], [{
       }]
     ]
     return {
