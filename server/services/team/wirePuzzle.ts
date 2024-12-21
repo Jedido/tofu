@@ -5,12 +5,14 @@ const { colors, shuffle, randomItem } = require("../../utils/util.js")
 export class WirePuzzle {
   static wires: Wire[]
   static order: number[]
+  static cutWires: number[]
   static quota: number
 
   static init(quota: number) {
     this.quota = quota
     this.wires = []
     this.order = []
+    this.cutWires = []
     const combos = new Set<string>()
     combos.add("")
 
@@ -59,10 +61,11 @@ export class WirePuzzle {
   }
 
   static cut({ next }: WirePuzzleSolution) {
+    this.cutWires.push(next)
     return this.order.shift() === next
   }
 
   static isCut(wire: number) {
-    return !this.order.includes(wire)
+    return this.cutWires.includes(wire)
   }
 }

@@ -178,10 +178,12 @@
 </template>
 
 <script>
+import confetti from "canvas-confetti"
+
 import socket from "@/mixins/socket.js"
 import PanelType from "./PanelType.vue"
-import BombPanel from "./BombPanel.vue";
-import DynamiteStick from "./DynamiteStick.vue";
+import BombPanel from "./BombPanel.vue"
+import DynamiteStick from "./DynamiteStick.vue"
 
 const handWidth = 256;
 
@@ -453,18 +455,15 @@ export default {
     })
     this.on("win", () => {
       clearInterval(this.timer)
-      // play audio
       this.bombActive = false
-      setTimeout(() => {
-        this.state = "win"
-      }, 5000)
+      this.confetti(15)
     })
     this.on("lose", ({ cause }) => {
       this.cuts = 0
       this.causeOfDeath = cause
       clearInterval(this.timer)
-      this.bombActive = false
-      this.state = "lose"
+      this.timeLeft = 0
+      this.explode(8)
     })
     this.on("solve", ({ id }) => {
       this.stacks.forEach((stack) => {
@@ -558,6 +557,59 @@ export default {
     },
     cutWire(e) {
       this.emit('cut', { next: e })
+    },
+    explode(times) {
+      if (times > 0) {
+        setTimeout(() => {
+          this.explode(times - 1)
+        }, 500)
+        confetti({
+          shapes: [confetti.shapeFromText({ text: '💥', scalar: 20 })],
+          particleCount: 10,
+          startVelocity: 40,
+          spread: 360,
+          origin: {
+            x: Math.random(),
+            y: Math.random()
+          },
+          gravity: 0,
+          scalar: 20,
+          decay: 0.9,
+          flat: true,
+          ticks: 200
+        })
+      } else {
+        setTimeout(() => {
+          this.state = "lose"
+          confetti({
+            shapes: [confetti.shapeFromText({ text: '💥', scalar: 80 })],
+            particleCount: 4,
+            startVelocity: 40,
+            gravity: 0,
+            spread: 360,
+            scalar: 80,
+            flat: true,
+            ticks: 400
+          })
+        }, 1000)
+      }
+    },
+    confetti(times) {
+      if (times > 0) {
+        confetti({
+          particleCount: 50,
+          spread: 360,
+          origin: { x: Math.random(), y: Math.random() - 0.3 },
+          startVelocity: 20
+        })
+        setTimeout(() => {
+          this.confetti(times - 1)
+        }, 150)
+      } else {
+        setTimeout(() => {
+          this.state = "win"
+        }, 1000)
+      }
     }
   },
   computed: {
