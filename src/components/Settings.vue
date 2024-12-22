@@ -77,10 +77,11 @@ export default {
     }
   },
   mounted() {
-    this.socket.on("set-user", (ign, id) => {
-      this.$store.commit("setIgn", ign)
-      this.$store.commit("setId", id)
-      this.ign = ign
+    this.socket.on("set-user", (user) => {
+      this.$store.commit("setIgn", user.ign)
+      this.$store.commit("setId", user.id)
+      this.ign = user.ign
+      localStorage.setItem("user", JSON.stringify(user))
     })
   },
   methods: {
@@ -94,7 +95,9 @@ export default {
       if (this.editIgn) {
         this.editIgn = false
         this.socket.emit("set-ign", this.ign)
-        localStorage.setItem("ign", this.ign)
+        const user = localStorage.setItem("user", JSON.stringify(user))
+        user.ign = this.ign
+        localStorage.setItem("user", JSON.stringify(user))
       } else {
         this.editIgn = true
       }

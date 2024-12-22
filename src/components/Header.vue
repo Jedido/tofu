@@ -38,4 +38,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+header {
+  transition: top 0.2s;
+}
+</style>

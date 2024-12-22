@@ -7,6 +7,14 @@ class GameService {
       broadcast(roomId, ...args)
     }
   }
+
+  join(socket) {
+    this.broadcastFn("log", `${socket.ign} has joined the room.`)
+  }
+
+  leave(socket) {
+    this.broadcastFn("log", `${socket.ign} has left the room.`)
+  }
 }
 
 module.exports = GameService

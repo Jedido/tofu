@@ -120,7 +120,7 @@ export class WordPuzzle extends Puzzle {
     }]
   }
 
-  static solve({ valid }: WordPuzzleSolution, puzzleParts: Map<PanelEnum, PanelInfo>): boolean {
+  static solve({ selected }: WordPuzzleSolution, puzzleParts: Map<PanelEnum, PanelInfo>): boolean {
     const puzzle = puzzleParts.get(PanelEnum.Puzzle)! as WordPuzzlePI
     const key = puzzleParts.get(PanelEnum.Key1)! as WordKeyPI
     const letters = new Set(key.letters)
@@ -129,7 +129,7 @@ export class WordPuzzle extends Puzzle {
       for (const c of new Set(puzzle.words[i])) {
         isValid &&= letters.has(c)
       }
-      if (valid[i] !== isValid) {
+      if (selected[i] !== isValid) {
         return false
       }
     }

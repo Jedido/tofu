@@ -1,5 +1,5 @@
 <template>
-  <div id="team" class="select-none touch-manipulation">
+  <div id="team" class="select-none touch-manipulation overflow-x-clip">
     <div
       v-if="state === 'menu'"
       class="px-8 py-4 bg-white mt-2"
@@ -76,8 +76,8 @@
         </button>
       </div>
     </div>
-    <div v-else-if="state === 'game'" class="relative">
-      <div v-show="blackout" class="blackout fixed bg-gray-900 w-screen z-40 pointer-events-none"></div>
+    <div v-else-if="state === 'game'" class="relative h-screen overflow-y-hidden">
+      <div v-if="blackout" class="blackout fixed bg-gray-900 w-screen h-full -translate-x-2/4 left-1/2 z-40"></div>
       <div class="bg-gray-500 w-80 mx-auto rounded-xl border-gray-900 pt-2 mt-1 relative shadow-lg">
         <div class="absolute -left-1 -right-1 -z-10 flex flex-col">
           <DynamiteStick />
@@ -108,7 +108,7 @@
       </div>
       <div
         id="panel-collection"
-        class="flex flex-nowrap justify-center gap-2 relative overflow-y-none mb-56"
+        class="flex flex-nowrap justify-center gap-2 relative mb-56"
         @touchend.prevent="touchStack"
         @pointermove.prevent="(e) => this.hovering = this.getTouchingPanel(e.clientX, e.clientY)"
         @pointerleave="this.hovering = -1"
@@ -413,7 +413,7 @@ export default {
       instructionalPanels,
       stacks: instructionalPanels,
       order: instructionalPanels.map((_, i) => i),
-      blackout: false,
+      blackout: true,
       quota: 4,
       causeOfDeath: "",
       timeTotal: 1000,
@@ -425,16 +425,17 @@ export default {
     }
   },
   mounted() {
-    this.on("start", ({ stacks, wires, quota, level, time, timeStart }) => {
+    this.on("start", ({ stacks, wires, quota, level, time, timeStart, solved }) => {
+      console.log("start event")
       this.blackout = true
       setTimeout(() => {
-        this.blackout = false
         this.bombActive = true
-      }, 3000)
+        this.blackout = false
+      }, 2500)
       this.state = "game"
       this.selectedStack = 0
       this.cuts = 0
-      this.stacks = stacks
+      this.stacks = stacks.map(stack => stack.filter(panel => !solved.includes(panel.id)))
       this.wires = wires
       this.quota = quota
       this.timeTotal = time
@@ -456,7 +457,7 @@ export default {
     this.on("win", () => {
       clearInterval(this.timer)
       this.bombActive = false
-      this.confetti(15)
+      this.confetti(10)
     })
     this.on("lose", ({ cause }) => {
       this.cuts = 0
@@ -480,6 +481,7 @@ export default {
         panel.status = "failure"
       }
     })
+    this.emit("state")
   },
   unmounted() {
     clearInterval(this.timer)
@@ -589,7 +591,7 @@ export default {
             spread: 360,
             scalar: 80,
             flat: true,
-            ticks: 400
+            ticks: 100
           })
         }, 1000)
       }
@@ -604,7 +606,7 @@ export default {
         })
         setTimeout(() => {
           this.confetti(times - 1)
-        }, 150)
+        }, 250)
       } else {
         setTimeout(() => {
           this.state = "win"
@@ -663,11 +665,8 @@ export default {
     opacity: 0%;
   }
 }
-.blackout { 
-  height: calc(100vh - 4px);
+.blackout {
   opacity: 99%;
-  left: 50%;
-  transform: translate(-50%, -36px);
   animation: 1s blackout 1.5s forwards;
 }
 </style>

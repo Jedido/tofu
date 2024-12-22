@@ -21,8 +21,7 @@ class JeopardyService extends GameService {
       "jeopardy-question-reset": this.resetQuestion.bind(this),
       "jeopardy-clear-buzzer": this.clearBuzzer.bind(this),
       "jeopardy-question-next": this.continueQuestion.bind(this),
-      "jeopardy-show-answer": this.showAnswer.bind(this),
-      "disconnect": this.removePlayer.bind(this)
+      "jeopardy-show-answer": this.showAnswer.bind(this)
     }
     // responses
     this.updatePlayers = "jeopardy-update-players"
@@ -49,14 +48,8 @@ class JeopardyService extends GameService {
     }
   }
 
-  dropOut(socket) {
-    if (this.host.id === socket.id) {
-      this.broadcastFn("log", "The host has disconnected! The game must be restarted.")
-    }
-    this.removePlayer(socket)
-  }
-
-  removePlayer(socket) {
+  leave(socket) {
+    super.disconnect(socket)
     let index = this.players.findIndex(player => player.id === socket.id)
     if (index > -1) {
       this.players.splice(index, 1)

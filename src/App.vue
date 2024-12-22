@@ -1,7 +1,9 @@
 <template>
-  <div id="content" class="h-screen relative grid">
-    <Header id="header" :socket="socket" />
-    <Scene id="scene" :socket="socket" />
+  <div id="content" class="h-screen overflow-y-hidden relative">
+    <div id="scroll" class="overflow-y-auto h-full">
+      <Header id="header" :socket="socket" />
+      <Scene id="scene" :socket="socket" />
+    </div>
   </div>
 </template>
 
@@ -30,15 +32,16 @@ export default {
     this.socket = io(`ws://${window.location.host}`)
     this.socket.on("connect", () => {
       // Session Save
+      if (localStorage.getItem("user")) {
+        this.socket.emit("restore-user", JSON.parse(localStorage.getItem("user")))
+      } else {
+        this.socket.emit("create-user")
+      }
       if (this.$store.state.room) {
         this.socket.emit("join-room", this.$store.state.room)
-        this.socket.emit("restore-user", { id: this.$store.state.id, ign: this.$store.state.ign })
         return
       } else if (window.location.pathname.length === 6) {
         this.socket.emit("join-room", window.location.pathname.substring(1))
-      }
-      if (localStorage.getItem("ign")) {
-        this.socket.emit("set-ign", localStorage.getItem("ign"))
       }
     })
   },
@@ -63,10 +66,6 @@ export default {
 </script>
 
 <style>
-#content {
-  grid-template-rows: auto 1fr;
-}
-
 #app {
   font-family: Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -74,7 +73,7 @@ export default {
   background-color: white;
 }
 
-#scene {
+#scroll {
   overflow: overlay;
   scrollbar-width: none;
 }

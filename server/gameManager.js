@@ -12,6 +12,8 @@ const TeamService = require("./services/team/teamService.ts")
 const SandboxService = require("./services/sandboxService.js")
 
 const { TSocket } = require("./utils/tsocket.ts")
+const { decrypt } = require("./utils/cipher.ts")
+const { randomItem } = require("./utils/util.js")
 
 dotenv.config({ path: `.env.local` })
 dotenv.config()
@@ -35,11 +37,18 @@ const games = [
 const gameRooms = {}
 let io
 
-let username = 0
+const wordList = [
+  'alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot', 'golf', 'hotel', 'india', 'juliet', 
+  'kilo', 'lima', 'mike', 'november', 'oscar', 'papa', 'quebec', 'romeo', 'sierra', 'tango',
+  'uniform', 'victor', 'whiskey', 'xray', 'yankee', 'zulu', 'panda', 'dragon', 'eagle', 'tiger',
+  'lion', 'bear', 'shark', 'wolf', 'elephant', 'giraffe', 'monkey', 'zebra', 'horse', 'cat'
+]
+
 function initGameManager(server) {
   io = new Server(server)
   io.on("connection", (socket) => {
-    const user = new TSocket(socket, `user ${username++}`)
+    const num = `${Math.floor(Math.random() * 100)}`.padStart(2, '0')
+    const user = new TSocket(socket, `${randomItem(wordList)}-${randomItem(wordList)}-${num}`)
     users.set(socket.id, user)
     socket.on("create-room", (gameId) => {
       createRoom(gameId, user)
@@ -54,14 +63,25 @@ function initGameManager(server) {
       console.log(`${user.id} (${user.ign}) has changed their name to ${ign}`)
       const oldIgn = user.ign
       user.ign = ign
-      socket.emit("set-user", user.ign, user.id)
+      socket.emit("set-user", user.details())
       broadcast(user.socket.roomId, "log", `${oldIgn} has changed their name to ${ign}`)
     })
-    socket.on("restore-user", ({ ign, id }) => {
-      user.ign = ign
-      user.id = id
-      socket.emit("set-user", user.ign, user.id)
-      console.log(`${user.id} (${user.ign}) session restored.`)
+    socket.on("restore-user", ({ id, ign, iv }) => {
+      try {
+        user.ign = ign
+        user.id = decrypt(id, iv)
+        console.log(`Returning user ${user.id} (${user.ign})`)
+        socket.emit("set-user", user.details())
+      } catch (e) {
+        console.log(`${user.ign} failed to execute: ${e}`)
+        console.log(e.stack)
+        console.log("creating a new user instead")
+        socket.emit("set-user", user.details())
+      }
+    })
+    socket.on("create-user", () => {
+      console.log(`New user ${user.id}`)
+      socket.emit("set-user", user.details())
     })
     socket.on("send-message", (msg) => {
       if (!hasRoom(user.roomId)) {
@@ -98,18 +118,17 @@ function initGameManager(server) {
         console.log(e.stack)
       }
     })
-    socket.on("disconnect", function () {
+    socket.on("disconnect", () => {
       const roomId = user.roomId
       console.log(`Lost connection to ${user.id} (${user.ign})`)
       setTimeout(() => {
         if (roomId && !io.sockets.adapter.rooms.get(roomId)) {
           removeGame(roomId)
         }
-        leaveRoom(roomId, socket)
       }, 30000)
-    })
-    socket.emit("set-user", user.ign, user.id)
-    console.log(`${user.id} has connected`)
+      leaveRoom(roomId, socket)
+      users.delete(user.socket.id)
+  })
   })
 }
 
@@ -148,20 +167,17 @@ function joinRoom(roomId, socket) {
   socket.join(roomId)
   console.log(`${socket.ign} joined room ${roomId}: ${gameId}`)
   broadcast(roomId, "log", `${socket.ign} has joined the room.`)
+  gameRooms[roomId].game.join(socket)
 }
 function leaveRoom(roomId, socket) {
   if (!hasRoom(roomId)) {
     return
   }
   socket.leave()
-  broadcast(roomId, "log", `${socket.ign} has left the room.`)
   if (!io.sockets.adapter.rooms.get(roomId)) {
     removeGame(roomId)
   } else {
-    const onDisconnect = gameRooms[roomId].game.actions["disconnect"]
-    if (onDisconnect) {
-      onDisconnect(socket)
-    }
+    gameRooms[roomId].game.leave(socket)
   }
 }
 function hasRoom(roomId) {

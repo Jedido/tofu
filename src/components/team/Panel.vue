@@ -1,7 +1,7 @@
 <template>
   <div
     ref="card"
-    class="relative text-gray-50 max-w-64 card"
+    class="relative text-gray-50 min-w-64 card"
     :class="{
       'hover': hover && !active,
       'drag': dragging,

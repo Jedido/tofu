@@ -12,6 +12,11 @@ export enum PuzzleEnum {
   Algebra = "x",
 }
 
+export enum GameState {
+  Ongoing = "ongoing",
+  Idle = "idle"
+}
+
 export enum PanelEnum {
   Puzzle = "p",
   Wire="w",
@@ -66,7 +71,7 @@ export interface AlgebraPuzzleSolution extends PuzzleSolution {
   y: number
 }
 export interface WordPuzzleSolution extends PuzzleSolution {
-  valid: boolean[]
+  selected: boolean[]
 }
 export interface AddressPuzzleSolution extends PuzzleSolution {
   north: boolean[]
