@@ -4,6 +4,7 @@ const cors = require("cors")
 const http = require("http")
 
 const { initGameManager } = require("./gameManager.js")
+const { initDatabaseManager } = require("./databaseManager.ts")
 const loggingMiddleware = require("./middleware/loggingMiddleware.js")
 
 const app = express()
@@ -29,6 +30,7 @@ app.get("/:room", function (_, res) {
 
 // Game Socket Handling
 initGameManager(server)
+// initDatabaseManager()
 
 // listen on the port
 server.listen(port)

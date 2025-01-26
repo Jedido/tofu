@@ -100,14 +100,14 @@ function initGameManager(server) {
         const actionFn = gameRooms[user.roomId].game.actions[type]
         if (!actionFn) {
           console.log(
-            `${user.ign} triggered unknown event: ${type} (${JSON.stringify(
+            `${user.ign} (${user.id}) triggered unknown event: ${type} (${JSON.stringify(
               data
             )})`
           )
         } else {
           // logging
           console.log(
-            `${user.id} (${user.ign}) triggered ${type} on ${
+            `${user.ign} (${user.id}) triggered ${type} on ${
               gameRooms[user.roomId].gameId
             } (${user.roomId}): ${JSON.stringify(data).substring(0, 200)}`
           )

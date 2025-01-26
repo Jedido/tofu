@@ -23,9 +23,7 @@ export class WirePuzzle {
     const positions = leftPositions.concat(rightPositions)
 
     for (let i = 0; i < 6; i++) {
-      if (i < quota) {
-        this.order.push(i)
-      }
+      this.order.push(i)
       let color = ""
       let stripe = ""
       while (combos.has(color + stripe)) {
@@ -53,8 +51,8 @@ export class WirePuzzle {
       puzzle: PuzzleEnum.Wire,
       panel: PanelEnum.Wire,
       state: {
-        wire: this.wires[i],
-        order: this.order.findIndex(x => x === this.wires[i].index),
+        wire: this.wires[this.order[i]],
+        order: i,
         quota: this.quota
       }
     }]
@@ -67,5 +65,9 @@ export class WirePuzzle {
 
   static isCut(wire: number) {
     return this.cutWires.includes(wire)
+  }
+
+  static completed() {
+    return this.cutWires.length === this.quota
   }
 }

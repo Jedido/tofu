@@ -425,7 +425,7 @@ export default {
     }
   },
   mounted() {
-    this.on("start", ({ stacks, wires, quota, level, time, timeStart, solved }) => {
+    this.on("start", ({ stacks, wires, quota, level, time, timeStart, solved, cut }) => {
       console.log("start event")
       this.blackout = true
       setTimeout(() => {
@@ -442,6 +442,9 @@ export default {
       this.timeStart = timeStart
       this.level = level
       this.order = []
+      for (let w of cut) {
+        this.wires[w].cut = true
+      }
       clearInterval(this.timer)
       this.timer = setInterval(this.refreshTimer, 40)
       for (let i = 0; i < stacks.length; i++) {

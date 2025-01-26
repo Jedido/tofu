@@ -71,7 +71,8 @@ class TeamService extends GameService {
           time: this.timeTotal,
           timeStart: this.timeStart,
           level: this.gameState.level,
-          solved: Array.from(this.solved)
+          solved: Array.from(this.solved),
+          cut: WirePuzzle.cutWires
         })
       }
     }
@@ -105,11 +106,11 @@ class TeamService extends GameService {
     this.solved = new Set<number>()
 
     this.gameState.level++
-    const numStacks: number = Math.min(Math.ceil(this.gameState.level / 3) + 1, 6)
+    const numStacks: number = Math.min(Math.ceil((this.gameState.level + 1) / 3) + 1, 6)
 
     // create puzzles
     this.puzzles = new Map<number, Map<PanelEnum, PanelInfo>>
-    const numPuzzles: number = Math.ceil(this.gameState.players.length * Math.sqrt(this.gameState.level) * 3)
+    const numPuzzles: number = Math.ceil(this.gameState.players.length * Math.sqrt(this.gameState.level) * 2)
     const panelsByPuzzle: Panel[][] = this.generatePuzzles(numPuzzles)
     shuffle(panelsByPuzzle)
 
@@ -132,7 +133,7 @@ class TeamService extends GameService {
 
     // assign stacks to players
     this.timeStart = Date.now()
-    const timePerPuzzle = 16 * Math.pow(0.96, this.gameState.level)
+    const timePerPuzzle = 12 * Math.pow(0.9, this.gameState.level)
     this.timeTotal = Math.floor(numPuzzles * timePerPuzzle * 3 / 10) * 10
     this.timer = setTimeout(() => {
       this.broadcastFn(this.loseEvent, { cause: `you ran out of time` })
@@ -148,7 +149,8 @@ class TeamService extends GameService {
         time: this.timeTotal,
         timeStart: this.timeStart,
         level: this.gameState.level,
-        solved: []
+        solved: [],
+        cut: []
       })
     }
     this.gameState.status = GameState.Ongoing
@@ -266,7 +268,7 @@ class TeamService extends GameService {
     }
     if (WirePuzzle.cut(solution)) {
       this.broadcastFn(this.cutEvent, { next: solution.next, success: true })
-      if (WirePuzzle.order.length === 0) {
+      if (WirePuzzle.completed()) {
         this.broadcastFn(this.winEvent)
         clearTimeout(this.timer)
         this.timer = undefined
