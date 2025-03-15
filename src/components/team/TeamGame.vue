@@ -1,5 +1,5 @@
 <template>
-  <div id="team" class="select-none touch-manipulation overflow-x-clip">
+  <div id="team" class="select-none touch-manipulation overflow-x-clip" @click.prevent="">
     <div
       v-if="state === 'menu'"
       class="px-8 py-4 bg-white mt-2"

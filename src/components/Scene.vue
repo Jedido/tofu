@@ -41,6 +41,14 @@
         v-else-if="this.$store.state.scene === 'team'"
         :socket="socket"
       />
+      <RPGGame
+        v-else-if="this.$store.state.scene === 'rpg'"
+        :socket="socket"
+      />
+      <AnidleGame
+        v-else-if="this.$store.state.scene === 'anidle'"
+        :socket="socket"
+      />
       <RoomSelection
         v-else
         :socket="socket"
@@ -53,7 +61,7 @@
 <script>
 import { defineAsyncComponent } from "vue"
 import RoomSelection from "./RoomSelection.vue"
-import breakpoints from "@/mixins/breakpoints";
+import breakpoints from "@/mixins/breakpoints"
 
 export default {
   name: "Scene",
@@ -79,6 +87,8 @@ export default {
     SquaredleGame: defineAsyncComponent(() => import("./squaredle/SquaredleGame.vue")),
     SandboxGame: defineAsyncComponent(() => import("./sandbox/SandboxGame.vue")),
     TeamGame: defineAsyncComponent(() => import("./team/TeamGame.vue")),
+    RPGGame: defineAsyncComponent(() => import("./rpg/RPGGame.vue")),
+    AnidleGame: defineAsyncComponent(() => import("./anidle/AnidleGame.vue")),
   },
   mixins: [breakpoints],
   data() {

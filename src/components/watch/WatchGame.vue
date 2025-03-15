@@ -1,6 +1,8 @@
 <template>
-  <div id="watch" class="select-none text-amber-900 overflow-x-hidden">
-    <h1 v-if="this.md" class="text-center text-3xl mb-4">Watch Together!</h1>
+  <div id="watch" class="select-none text-amber-900 overflow-x-hidden" :class="{
+    'absolute left-1/2 -translate-x-2/4': theaterMode
+  }">
+    <h1 v-if="this.md && !this.theaterMode" class="text-center text-3xl mb-4">Watch Together!</h1>
     <div
       class="
         flex flex-col
@@ -22,7 +24,7 @@
           v-model="url"
           type="text"
           id="input"
-          class="outline-none bg-amber-50 px-4 py-2 col-span-4"
+          class="outline-none bg-amber-50 px-4 py-2 col-span-3"
           autocomplete="off"
           placeholder="Enter a youtube URL or query..."
           :disabled="!isReady"
@@ -39,6 +41,13 @@
           :disabled="!isReady"
         >
           Sync
+        </button>
+        <button
+          class="focus:outline-none bg-amber-200 hover:bg-amber-300 text-lg disabled:bg-gray-300"
+          @click.prevent="theaterMode = !theaterMode"
+          :disabled="!isReady"
+        >
+           {{ theaterMode ? "Default" : "Theater" }}
         </button>
       </form>
     </div>
@@ -98,7 +107,8 @@ export default {
       searchResults: [],
       playlist: [],
       paused: true,
-      time: 0
+      time: 0,
+      theaterMode: false
     }
   },
   mounted() {
@@ -120,8 +130,8 @@ export default {
     })
     this.on("request-start", ({ videoId }) => {
       this.currentlyPlaying = videoId
-      this.youtube.cueVideoById(videoId)
-      this.paused = true
+      this.youtube.loadVideoById(videoId)
+      this.paused = false
     })
     this.on("request-sync", ({ time, pause }) => {
       this.youtube.seekTo(time)
@@ -199,7 +209,10 @@ export default {
       }
     },
     sync() {
-      this.emit("sync", { time: this.youtube.getCurrentTime(), pause: this.youtube.getPlayerState() === 2 })
+      this.emit("sync", {
+        time: this.youtube.getCurrentTime(),
+        pause: this.youtube.getPlayerState() === 2
+      })
     },
     stateChange(event) {
       if (event.data === 1 && this.paused) {
@@ -207,7 +220,12 @@ export default {
         this.emit("sync", { time: this.youtube.getCurrentTime() })
       } else if (event.data === 2) {
         this.paused = true
-        this.emit("pause")
+        this.emit("sync", {
+          time: this.youtube.getCurrentTime(),
+          pause: true
+        })
+      } else if (event.data === 0) {
+        this.emit("next", { videoId: this.currentlyPlaying })
       }
     },
     queue(video) {
@@ -227,10 +245,12 @@ export default {
   },
   computed: {
     videoWidth() {
-      if (this.md) {
+      if (this.theaterMode) {
+        return this.$store.state.screenWidth
+      } else if (this.md) {
         return 640
       } else {
-        return this.$store.state.gameWidth + 2
+        return this.$store.state.gameWidth
       }
     },
     videoHeight() {
@@ -253,7 +273,5 @@ export default {
   right: -48px;
   transform: translate(-50%, -50%);
   line-height: 100%;
-  transition: background-color linear 0.2s;
-  transition: color linear 0.2s;
 }
 </style>

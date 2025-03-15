@@ -8,6 +8,7 @@ export const store = createStore({
       id: "",
       ign: "",
       gameWidth: 0,
+      screenWidth: 0,
       scale: 1
     }
   },
@@ -26,6 +27,9 @@ export const store = createStore({
     },
     setGameWidth(state, width) {
       state.gameWidth = Math.max(Math.min(width, 768), 300)
+    },
+    setScreenWidth(state, width) {
+      state.screenWidth = width
     },
     changeScale(state, delta) {
       if (state.scale + delta > 0) {

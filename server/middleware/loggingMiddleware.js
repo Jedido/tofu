@@ -1,26 +1,22 @@
-const getActualRequestDurationInMilliseconds = (start) => {
-  const NS_PER_SEC = 1e9
-  const NS_TO_MS = 1e6
-  const diff = process.hrtime(start)
-  return (diff[0] * NS_PER_SEC + diff[1]) / NS_TO_MS
-}
+const { getDurationMs } = require("../utils/timing")
 
 const loggingMiddleware = (req, res, next) => {
-  const now = new Date()
-  const date = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
   const start = process.hrtime()
-  const elapsed = getActualRequestDurationInMilliseconds(start)
   res.on("finish", () => {
+    const now = new Date()
+    const date = `${now.getFullYear()}-${now.getMonth()}-${now.getMonth() + 1} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
+    const elapsed = getDurationMs(start)
     console.log({
-      info: `[${date}] ${req.method} ${req.url} responded with ${res.statusCode} (${elapsed}ms)`,
-      payload: {
-        params: req.params,
-        query: req.query,
-        body: req.body,
-      },
-      response: {
-        client: req.connection.remoteAddress,
-      },
+      cat: "access",
+      uri: req.url,
+      method: req.method,
+      status: res.statusCode,
+      params: req.params,
+      query: req.query,
+      body: req.body,
+      durationms: elapsed,
+      client: req.connection.remoteAddress,
+      ts: date,
     })
   })
   next()

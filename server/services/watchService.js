@@ -1,5 +1,4 @@
 const GameService = require("./gameService.js")
-const https = require('https');
 
 class WatchService extends GameService {
   constructor(roomId) {
@@ -10,7 +9,7 @@ class WatchService extends GameService {
       "watch-queue": this.queueVideo.bind(this),
       "watch-start": this.startVideo.bind(this),
       "watch-sync": this.syncVideo.bind(this),
-      "watch-pause": this.pauseVideo.bind(this),
+      "watch-next": this.nextVideo.bind(this),
       "watch-search": this.searchVideo.bind(this),
       "watch-remove": this.removeVideo.bind(this),
       "watch-get-state": this.getState.bind(this)
@@ -29,6 +28,7 @@ class WatchService extends GameService {
     this.time = 0
     this.startTime = 0
     this.paused = false
+    this.waitingNextVideo = null
   }
 
   getState(_, socket) {
@@ -76,13 +76,16 @@ class WatchService extends GameService {
   }
 
   startVideo({ videoId }) {
+    if (this.waitingNextVideo) {
+      clearTimeout(this.waitingNextVideo)
+    }
     this.currentVideo = videoId
     this.broadcastFn(this.startEvent, { videoId })
-    this.paused = true
+    this.paused = false
   }
 
   syncVideo({ time, pause }) {
-    if (!this.startTime && !pause) {
+    if (!pause) {
       this.startTime = Date.now()
     }
     this.time = time
@@ -90,11 +93,26 @@ class WatchService extends GameService {
     this.broadcastFn(this.syncEvent, { time, pause })
   }
 
-  pauseVideo() {
-    this.time += (Date.now() - this.startTime) / 1000
-    this.startTime = 0
-    this.paused = true
-    this.broadcastFn(this.pauseEvent)
+  nextVideo({ videoId }, socket) {
+    if (this.waitingNextVideo) {
+      return
+    }
+    const index = this.playlist.findIndex((v) => v.videoId === videoId)
+    if (this.currentVideo !== videoId || index < 0) {
+      this.getState(null, socket)
+      return
+    }
+    this.waitingNextVideo = setTimeout(() => {
+      this.time = 0
+      this.startTime = Date.now()
+      this.paused = false
+      this.removeVideo({ index })
+      if (this.playlist.length > index) {
+        const videoId = this.playlist[index].videoId
+        this.startVideo({ videoId })
+      }
+      this.waitingNextVideo = null
+    }, 3000)
   }
 
   removeVideo({ index }) {

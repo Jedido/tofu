@@ -60,6 +60,7 @@ export default {
     },
     resizeGame() {
       this.$store.commit("setGameWidth", document.getElementById("content").clientWidth)
+      this.$store.commit("setScreenWidth", document.getElementById("content").clientWidth)
     }
   },
 }

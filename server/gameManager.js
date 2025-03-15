@@ -10,6 +10,8 @@ const JeopardyService = require("./services/jeopardyService.js")
 const SquaredleService = require("./services/squaredleService.js")
 const TeamService = require("./services/team/teamService.ts")
 const SandboxService = require("./services/sandboxService.js")
+const RPGService = require("./services/rpg/rpgService.ts")
+const AnidleService = require("./services/anidleService.ts")
 
 const { TSocket } = require("./utils/tsocket.ts")
 const { decrypt } = require("./utils/cipher.ts")
@@ -30,6 +32,8 @@ const games = [
   SquaredleService,
   TeamService,
   SandboxService,
+  RPGService,
+  AnidleService
 ].reduce((acc, cur) => {
   acc[cur.prototype.id] = cur
   return acc
@@ -70,12 +74,10 @@ function initGameManager(server) {
       try {
         user.ign = ign
         user.id = decrypt(id, iv)
-        console.log(`Returning user ${user.id} (${user.ign})`)
         socket.emit("set-user", user.details())
       } catch (e) {
         console.log(`${user.ign} failed to execute: ${e}`)
         console.log(e.stack)
-        console.log("creating a new user instead")
         socket.emit("set-user", user.details())
       }
     })
@@ -91,7 +93,7 @@ function initGameManager(server) {
         broadcast(user.roomId, "log-message", { ign: user.ign, msg })
       }
     })
-    socket.on("action", (type, data) => {
+    socket.on("action", async (type, data) => {
       try {
         if (!hasRoom(user.roomId)) {
           console.log(`Unknown room ${user.roomId}`)
@@ -111,7 +113,7 @@ function initGameManager(server) {
               gameRooms[user.roomId].gameId
             } (${user.roomId}): ${JSON.stringify(data).substring(0, 200)}`
           )
-          actionFn(data, user)
+          await actionFn(data, user)
         }
       } catch (e) {
         console.log(`${user.ign} failed to execute: ${e}`)
@@ -193,7 +195,6 @@ function removeGame(roomId) {
     onShutdown()
   }
   delete gameRooms[roomId]
-  // TODO deactivate game somehow - shutdown function?
 }
 function broadcast(roomId, type, ...params) {
   if (!hasRoom(roomId)) {

@@ -46,6 +46,8 @@ export default {
         { name: "Squaredle", scene: "squaredle" },
         { name: "Sandbox", scene: "sandbox" },
         { name: "Team", scene: "team" },
+        { name: "RPG", scene: "rpg" },
+        { name: "Anidle", scene: "anidle" },
       ],
       room: "",
     }

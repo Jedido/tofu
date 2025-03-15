@@ -22,8 +22,8 @@ const path = require('path').join(__dirname, "/../dist/index.html")
 app.use(express.static(__dirname + "/../dist/"))
 app.use(bodyParser.json())
 app.use(cors())
-app.use(express.urlencoded({ extended: true }))
 app.use(loggingMiddleware)
+app.use(express.urlencoded({ extended: true }))
 app.get("/:room", function (_, res) {
   res.sendFile(path);
 })
