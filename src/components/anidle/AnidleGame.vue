@@ -5,9 +5,9 @@
       <div class="mt-4 bg-gray-800 text-amber-50 border-2 border-gray-600 px-6 py-3 rounded-lg min-w-80">
         <h2 class="text-2xl text-center">{{ loading ? "Finding an Anime..." : (revealed ? answer : '???') }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-3">
-          <div class="space-y-2">
+          <div class="mb-2">
             <div>
-              <div class="font-semibold mb-1">Theme{{ revealed ? `: ${audioClue.track.title}` : "" }}</div>
+              <div class="font-semibold mb-1">Theme{{ revealed ? `: ${audioClue.track.title} (${audioClue.track.slug})` : "" }}</div>
               <AudioClue
                 v-if="!loading"
                 :track="audioClue.track.link"
@@ -105,8 +105,8 @@
       </div>
       <div class="mt-4">
         <h2 class="text-xl font-semibold mb-2">Guesses</h2>
-        <ul class="space-y-2 flex flex-col-reverse">
-          <GuessCard v-for="(guess, index) in guesses" :key="index" v-bind="guess" />
+        <ul class="flex flex-col-reverse">
+          <GuessCard v-for="(guess, index) in guesses" :key="index" v-bind="guess" class="mb-2" />
         </ul>
       </div>
       <div class="mt-4" v-if="revealed">
@@ -165,7 +165,9 @@ export default {
       loading: false,
       revealedData: {},
       autocompleteOptions: [],
-      autocompleteQuery: ""
+      autocompleteQuery: "",
+      synopsis: "",
+      revealedSynopsis: []
     }
   },
   mounted() {
@@ -173,13 +175,13 @@ export default {
       this.state = "game"
       this.loading = true
     })
-    this.on("init-game", ({ themes, synopsis, audioClue, revealedData }) => {
+    this.on("init-game", ({ synopsis, audioClue, revealedData }) => {
       this.state = "game"
       this.guesses = []
       this.loading = false
       this.revealed = false
-      this.themes = themes
       this.synopsis = synopsis
+      this.revealedSynopsis = Array.from({ length: synopsis.split(" ").length }, () => false)
       this.audioClue = audioClue
       this.revealedData = revealedData
     })
@@ -207,7 +209,7 @@ export default {
     guessStart(guess) {
       this.guesses.push(guess)
     },
-    guessResult({ revealedData, guess }) {
+    guessResult({ revealedData, guess, revealIndices }) {
       this.revealedData = revealedData
 
       const existingGuess = this.guesses.find(g => g.mal_id === guess.mal_id)
@@ -215,6 +217,10 @@ export default {
         existingGuess.image_url = guess.image_url
         existingGuess.correct = guess.correct
       }
+
+      revealIndices.forEach((index) => {
+        this.revealedSynopsis[index] = true
+      })
     },
     guess() {
       if (!this.input || !this.autocompleteSuggestions.length) {
@@ -277,10 +283,9 @@ export default {
       if (this.loading) {
         return []
       }
-      const resolvedGuesses = this.guesses.filter(g => g.correct === false)
       return this.synopsis.split(" ").map((word, index) => ({
-        word,
-        unredact: resolvedGuesses.length > index || this.revealed
+        word: word.trim(),
+        unredact: this.revealedSynopsis[index] || this.revealed
       }))
     }
   },

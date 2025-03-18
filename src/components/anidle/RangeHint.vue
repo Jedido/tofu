@@ -29,7 +29,7 @@ export default {
       if (!value) {
         return "?"
       }
-      return value instanceof String ? new Date(value).toLocaleString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }) : value
+      return typeof value === "number" ? value : new Date(value).toLocaleString('en-US', { year: 'numeric', month: 'short', day: '2-digit' })
     }
   }
 }

@@ -101,18 +101,31 @@ function initGameManager(server) {
         }
         const actionFn = gameRooms[user.roomId].game.actions[type]
         if (!actionFn) {
-          console.log(
-            `${user.ign} (${user.id}) triggered unknown event: ${type} (${JSON.stringify(
-              data
-            )})`
-          )
+          console.log({
+            cat: "socket",
+            type,
+            user: {
+              ign: user.ign,
+              id: user.id,
+            },
+            game: gameRooms[user.roomId].gameId,
+            room: user.roomId,
+            data,
+            error: "Unknown event"
+          })
         } else {
           // logging
-          console.log(
-            `${user.ign} (${user.id}) triggered ${type} on ${
-              gameRooms[user.roomId].gameId
-            } (${user.roomId}): ${JSON.stringify(data).substring(0, 200)}`
-          )
+          console.log({
+            cat: "socket",
+            type,
+            user: {
+              ign: user.ign,
+              id: user.id,
+            },
+            game: gameRooms[user.roomId].gameId,
+            room: user.roomId,
+            data
+          })
           await actionFn(data, user)
         }
       } catch (e) {

@@ -8,7 +8,8 @@
     "lint": "vue-cli-service lint --no-fix",
     "dev": "nodemon start --ext vue",
     "start": "npm run build && npx ts-node server/server.js",
-    "prod": "npm run build && npx ts-node server/server.js prod"
+    "prod": "npm run build && npx ts-node server/server.js prod",
+    "test": "jest --config jest.config.js server/"
   },
   "dependencies": {
     "@vue/component-compiler-utils": "^3.3.0",
@@ -26,6 +27,7 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.14",
     "@vue/cli-plugin-babel": "~5.0.8",
     "@vue/cli-service": "~5.0.8",
     "@vue/compiler-sfc": "^3.5.13",
@@ -33,12 +35,14 @@
     "axios": "^1.7.9",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-vue": "^9.32.0",
+    "jest": "^29.7.0",
     "nodemon": "^3.1.9",
     "postcss": "^8.4.49",
     "prettier": "^3.4.2",
     "socket.io": "^4.8.1",
     "sqlite3": "^5.1.7",
     "tailwindcss": "^3.4.16",
+    "ts-jest": "^29.2.6",
     "ts-json-schema-generator": "^2.3.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",

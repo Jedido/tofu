@@ -19,7 +19,7 @@
         'grid-template-columns': `repeat(${size}, 1fr)`,
         fontSize: cellSize,
         lineHeight: cellSize,
-        height: `${this.$store.state.gameWidth - 24}px`,
+        height: `${this.$store.state.gameWidth}px`,
       }"
     >
       <MinesweeperCell

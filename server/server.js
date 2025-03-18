@@ -30,7 +30,7 @@ app.get("/:room", function (_, res) {
 
 // Game Socket Handling
 initGameManager(server)
-// initDatabaseManager()
+initDatabaseManager()
 
 // listen on the port
 server.listen(port)
