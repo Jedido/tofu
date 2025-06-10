@@ -20,6 +20,12 @@ describe("Anidle Service", () => {
     expect(sourceAnime.mal_id).toBe(16498)
   }, 30000) 
 
+  test("should fetch an anime with a distant source - Boku no Hero Academia", async () => {
+    const fullAnime: FullAnime = await service.getFullAnime(49918)
+    const sourceAnime: FullAnime = await service.getSourceFromFullAnime(fullAnime)
+    expect(sourceAnime.mal_id).toBe(31964)
+  }, 30000) 
+
   test("should fetch an anime from cache", async () => {
     const anime = await service.findRandomAnime()
     await service.getFullAnime(anime.mal_id)

@@ -12,6 +12,7 @@ const TeamService = require("./services/team/teamService.ts")
 const SandboxService = require("./services/sandboxService.js")
 const RPGService = require("./services/rpg/rpgService.ts")
 const AnidleService = require("./services/anidleService.ts")
+const TileService = require("./services/tileService.ts")
 
 const { TSocket } = require("./utils/tsocket.ts")
 const { decrypt } = require("./utils/cipher.ts")
@@ -33,7 +34,8 @@ const games = [
   TeamService,
   SandboxService,
   RPGService,
-  AnidleService
+  AnidleService,
+  TileService,
 ].reduce((acc, cur) => {
   acc[cur.prototype.id] = cur
   return acc

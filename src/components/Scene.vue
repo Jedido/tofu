@@ -2,7 +2,7 @@
   <main class="bg-amber-50" :class="{ 'px-3': this.md }">
     <div 
       id="main-content" 
-      class="mx-auto" 
+      class="flex justify-center align-center mx-auto" 
       :style="[`scale: ${$store.state.scale}; transform: translateY(${translate}%)`]"
     >
       <ExampleGame
@@ -49,6 +49,10 @@
         v-else-if="this.$store.state.scene === 'anidle'"
         :socket="socket"
       />
+      <TileGame
+        v-else-if="this.$store.state.scene === 'tile'"
+        :socket="socket"
+      />
       <RoomSelection
         v-else
         :socket="socket"
@@ -89,6 +93,7 @@ export default {
     TeamGame: defineAsyncComponent(() => import("./team/TeamGame.vue")),
     RPGGame: defineAsyncComponent(() => import("./rpg/RPGGame.vue")),
     AnidleGame: defineAsyncComponent(() => import("./anidle/AnidleGame.vue")),
+    TileGame: defineAsyncComponent(() => import("./tile/TileGame.vue")),
   },
   mixins: [breakpoints],
   data() {
@@ -119,5 +124,6 @@ export default {
 <style scoped>
 #main-content {
   max-width: 48rem;
+  height: 100vh;
 }
 </style>

@@ -28,19 +28,19 @@ export async function run(sql: string, ...args: any[]): Promise<{ lastID: number
         })    
         reject(err)
       } else {
-        console.log({
-          cat: "client",
-          client: "db-client",
-          status: "success",
-          durationms: getDurationMs(start),
-          in: {
-            sql, args: args.map(arg => JSON.stringify(arg).substring(0, 20))
-          },
-          out: {
-            lastID: this.lastID,
-            changes: this.changes
-          }
-        })
+        // console.log({
+        //   cat: "client",
+        //   client: "db-client",
+        //   status: "success",
+        //   durationms: getDurationMs(start),
+        //   in: {
+        //     sql, args: args.map(arg => JSON.stringify(arg).substring(0, 20))
+        //   },
+        //   out: {
+        //     lastID: this.lastID,
+        //     changes: this.changes
+        //   }
+        // })
         resolve({
           lastID: this.lastID,
           changes: this.changes
@@ -67,16 +67,16 @@ export async function get(sql: string, ...args: any[]): Promise<any> {
         })    
         reject(err)
       } else {
-        console.log({
-          cat: "client",
-          client: "db-client",
-          status: "success",
-          durationms: getDurationMs(start),
-          in: {
-            sql, args
-          },
-          out: `${rows?.length || 0} rows`
-        })    
+        // console.log({
+        //   cat: "client",
+        //   client: "db-client",
+        //   status: "success",
+        //   durationms: getDurationMs(start),
+        //   in: {
+        //     sql, args
+        //   },
+        //   out: `${rows?.length || 0} rows`
+        // })    
         resolve(rows)
       }
     })

@@ -21,7 +21,8 @@ interface AnimeThemesResponse {
           id: number
           link: string
         }
-      }[]
+      }[],
+      spoiler: boolean
     }[]
   }[]
 }

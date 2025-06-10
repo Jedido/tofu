@@ -1,5 +1,5 @@
 <template>
-  <div id="minesweeper" class="select-none text-gray-700">
+  <div id="minesweeper" class="select-none text-gray-700 w-full">
     <h2 class="text-2xl text-center">Minesweeper</h2>
     <div class="flex justify-between text-sm">
       <p v-if="status === 'ongoing'">Time: {{ time }} seconds</p>

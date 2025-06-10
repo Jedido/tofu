@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white p-4">
+  <div class="bg-white p-4 mt-8">
     <form class="mb-4 flex flex-col justify-center items-center" @submit.prevent="joinRoom">
       <label>
         <p class="text-lg select-none">Join with a Room Code</p>
@@ -48,6 +48,7 @@ export default {
         { name: "Team", scene: "team" },
         { name: "RPG", scene: "rpg" },
         { name: "Anidle", scene: "anidle" },
+        { name: "Hexagon", scene: "tile" },
       ],
       room: "",
     }

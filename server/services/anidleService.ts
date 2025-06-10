@@ -3,6 +3,7 @@ import { MALGetAnimeClient, MALSearchAnimeClient, Anime, FullAnime, MALGetCharac
 import { TSocket } from "../utils/tsocket"
 import { get, run } from "../databaseManager"
 
+const { randomItem } = require("../utils/util")
 const GameService = require("./gameService.js")
 
 interface Guess {
@@ -11,6 +12,11 @@ interface Guess {
   user: string,
   correct?: boolean,
   image_url?: string
+}
+
+interface GameSettings {
+  maxPopularity: number
+  themeType: "ALL" | "OP" | "ED"
 }
 
 class AnidleService extends GameService {
@@ -72,6 +78,7 @@ class AnidleService extends GameService {
     start: number
   }
   won: boolean
+  settings: GameSettings
 
   constructor(roomId: string) {
     super(roomId)
@@ -84,9 +91,16 @@ class AnidleService extends GameService {
     this.revealedSynopsis = []
     this.loading = false
     this.won = false
+    this.settings = {
+      maxPopularity: 200,
+      themeType: "ALL"
+    }
   }
 
-  async startGame() {
+  async startGame(settings?: GameSettings) {
+    if (settings) {
+      this.settings = settings
+    }
     this.loading = true
     this.won = false
     this.record = []
@@ -97,9 +111,9 @@ class AnidleService extends GameService {
 
     const selectedAnime = await this.findRandomAnime()
     const mal_id = selectedAnime.mal_id
-    const animeSourcePromise = this.malGetAnimeClient.fetch({ mal_id }).then((animeResponse: { data: FullAnime }) => {
-      this.anime = animeResponse.data
-      return this.getSourceFromFullAnime(animeResponse.data)
+    const animeSourcePromise = this.getFullAnime(mal_id).then((animeResponse: FullAnime) => {
+      this.anime = animeResponse
+      return this.getSourceFromFullAnime(animeResponse)
     })
     const animeThemesPromise = this.animeThemesClient.fetch({ mal_id })
     const [animeThemesResponse, animeSourceResponse] = await Promise.all([animeThemesPromise, animeSourcePromise])
@@ -109,22 +123,22 @@ class AnidleService extends GameService {
       correctGenres: [],
       incorrectGenres: []
     }
-    this.themes = animeThemesResponse.animethemes.map(theme => {
+    const availableThemes = animeThemesResponse.animethemes.map(theme => {
       return {
         id: theme.id,
         title: theme.song.title,
-        link: theme.animethemeentries[0].videos[0].audio.link,
+        link: (theme.animethemeentries.find(e => !e.spoiler) || theme.animethemeentries[0]).videos[0].audio.link,
         type: theme.type,
         slug: theme.slug,
       }
-    })
+    }).filter(theme => this.settings.themeType === "ALL" || theme.type === this.settings.themeType)
     this.animeSource = animeSourceResponse
     this.anime!.synopsis = this.anime!.synopsis
       .replace("[Written by MAL Rewrite]", "")
       .trim()
     this.awaitingNext = true
     this.selectedAudio = {
-      track: this.themes[Math.floor(Math.random() * this.themes.length)],
+      track: randomItem(availableThemes),
       start: Math.random() * 90
     }
     this.broadcastFn(this.startEvent, {
@@ -135,7 +149,7 @@ class AnidleService extends GameService {
     this.loading = false
   }
 
-  async findRandomAnime(min: number = 1, max: number = 300): Promise<Anime> {
+  async findRandomAnime(min: number = 1, max: number = 200): Promise<Anime> {
     if (min < 1) {
       min = 1
     }
@@ -302,9 +316,12 @@ class AnidleService extends GameService {
 
     guessResult.image_url = anime.images.jpg.image_url
     guessResult.correct = mal_id === this.anime.mal_id
-    const synopsisLength = this.anime.synopsis.split(" ").length
-    const numRevealed = Math.min(5, Math.floor(synopsisLength / 20))
-    const eligible = Array.from({ length: synopsisLength }, (_, i) => i).filter(i => !this.revealedSynopsis[i])
+    const synopsisSplit = this.anime.synopsis.split(" ")
+    const synopsisLength = synopsisSplit.length
+    const numRevealed = Math.min(5, Math.floor(synopsisLength / 10))
+    const eligible = Array.from({ length: synopsisLength }, (_, i) => i).filter(
+      i => !this.revealedSynopsis[i] && synopsisSplit[i].charAt(0) !== synopsisSplit[i].charAt(0).toUpperCase()
+    )
     let revealIndices = []
     if (eligible.length < numRevealed) {
       revealIndices = eligible
