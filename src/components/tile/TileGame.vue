@@ -133,7 +133,6 @@ export default {
     this.on("complete-order", this.completeOrder)
     this.on("new-order", this.newOrder)
     this.on("game-over", this.gameOver)
-    document.getElementById("tile").requestFullscreen()
   },
   methods: {
     updateState({ state, board, units, orders }) {

@@ -30,10 +30,10 @@ export class TSocket {
   }
 
   details() {
-    const encryption = encrypt(this.id)
+    // const encryption = encrypt(this.id)
     return {
-      id: encryption.content,
-      iv: encryption.iv,
+      id: this.id,
+      // iv: encryption.iv,
       ign: this.ign
     }
   }

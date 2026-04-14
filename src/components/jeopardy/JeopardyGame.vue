@@ -1,6 +1,6 @@
 <template>
   <div id="jeopardy" class="select-none text-gray-700">
-    <div class="grid grid-cols-6 gap-3" v-if="status === 'menu'">
+    <div class="grid grid-cols-6 gap-3 w-80" v-if="status === 'menu'">
       <button
         class="
           mt-2
@@ -69,7 +69,7 @@
       </form>
     </div>
     <div v-else>
-      <div v-if="status === 'categories'" class="grid gap-2 grid-flow-col h-100" :style="[jeopardyGridStyle]">
+      <div v-if="status === 'categories'" class="grid gap-2 mt-1 grid-flow-col h-100" :style="[jeopardyGridStyle]">
         <template v-for="category in categories">
           <h2 class="font-bold font-mono text-center my-auto leading-tight overflow-auto">{{ category.name }}</h2>
           <JeopardyButton

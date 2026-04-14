@@ -2,7 +2,7 @@
   <div id="team" class="select-none touch-manipulation overflow-x-clip" @click.prevent="">
     <div
       v-if="state === 'menu'"
-      class="px-8 py-4 bg-white mt-2"
+      class="px-8 py-4 bg-white"
     >
       <h2 class="text-2xl text-center font-semibold mb-2">Instructions</h2>
       <div class="grid grid-cols-6 gap-2 w-full select-none">

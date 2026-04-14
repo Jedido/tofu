@@ -397,6 +397,9 @@ class TileService extends GameService {
   expire(orderID: string) {
     if (this.orders.has(orderID)) {
       this.gameState = "end"
+      this.orders.clear()
+      this.units.clear()
+      clearTimeout(this.nextBlockTimer)
       this.broadcastFn(this.gameOverEvent, {
         ordersCompleted: this.ordersCompleted
       })

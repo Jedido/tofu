@@ -2,7 +2,7 @@
   <main class="bg-amber-50" :class="{ 'px-3': this.md }">
     <div 
       id="main-content" 
-      class="flex justify-center align-center mx-auto" 
+      class="flex justify-center align-center mx-auto"
       :style="[`scale: ${$store.state.scale}; transform: translateY(${translate}%)`]"
     >
       <ExampleGame

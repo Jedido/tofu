@@ -31,7 +31,6 @@ class JeopardyService extends GameService {
     this.setQuestionState = "jeopardy-set-question-state"
     this.toggleSubmission = "jeopardy-toggle-submission"
     this.buzzer = "jeopardy-buzzer"
-    // TODO: Allow a selection
     this.host = {
       id: null,
       ign: "None"
@@ -48,11 +47,21 @@ class JeopardyService extends GameService {
     }
   }
 
+  join(socket) {
+    this.joinAsPlayer({}, socket)
+  }
+
   leave(socket) {
     super.disconnect(socket)
     let index = this.players.findIndex(player => player.id === socket.id)
     if (index > -1) {
       this.players.splice(index, 1)
+    }
+    if (this.host.id == socket.id) {
+      this.host = {
+        id: null,
+        ign: "None"
+      }
     }
     this.broadcastPlayerUpdate()
   }
@@ -74,15 +83,19 @@ class JeopardyService extends GameService {
   joinAsHost(_, socket) {
     if (!this.host.id) {
       this.host = this.buildPlayerInfo(socket)
-      this.removePlayer(socket)
+      const playerIndex = this.players.findIndex(player => player.id === socket.id)
+      if (playerIndex >= 0) {
+        this.players.splice(playerIndex, 1)
+        this.broadcastPlayerUpdate()
+      }
       this.broadcastHostUpdate(socket)
     }
   }
 
   startGame({ jeopardy }, socket) {
     try {
-      this.game = JSON.parse(fs.readFileSync("./server/assets/jeopardy4.json"))
-    //   this.game = JSON.parse(jeopardy)
+      // this.game = JSON.parse(fs.readFileSync("./server/assets/jeopardy4.json"))
+      this.game = JSON.parse(jeopardy)
       this.round = 0
       this.questionState = 0
       this.categories = this.game.rounds[this.round]

@@ -75,10 +75,11 @@ function initGameManager(server) {
     socket.on("restore-user", ({ id, ign, iv }) => {
       try {
         user.ign = ign
-        user.id = decrypt(id, iv)
+        user.id = id
+        // user.id = decrypt(id, iv)
         socket.emit("set-user", user.details())
       } catch (e) {
-        console.log(`${user.ign} failed to execute: ${e}`)
+        console.log(`${user.ign} failed to execute restore-user: ${e}`)
         console.log(e.stack)
         socket.emit("set-user", user.details())
       }
@@ -131,7 +132,7 @@ function initGameManager(server) {
           await actionFn(data, user)
         }
       } catch (e) {
-        console.log(`${user.ign} failed to execute: ${e}`)
+        console.log(`${user.ign} failed to execute ${type}: ${e}`)
         console.log(e.stack)
       }
     })
@@ -145,7 +146,7 @@ function initGameManager(server) {
       }, 30000)
       leaveRoom(roomId, socket)
       users.delete(user.socket.id)
-  })
+    })
   })
 }
 
