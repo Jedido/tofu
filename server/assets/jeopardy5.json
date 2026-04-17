@@ -402,10 +402,10 @@
         "name": "Final",
         "questions": [
           {
-            "points": "U.S. History",
+            "points": "famous Figures",
             "type": "text",
-            "question": "This philologist (scholar of language) and high-fantasy author wrote the phrase \"All that is gold does not glitter, Not all those who wander are lost\"",
-            "answer": "J.R.R. Tolkien"
+            "question": "The phrase \"I have not slept one wink\" began seeing use in the 14th century, and was popularized by this 16th century writer.",
+            "answer": "William Shakespeare"
           }
         ]
       }
