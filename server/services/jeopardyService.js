@@ -30,6 +30,7 @@ class JeopardyService extends GameService {
     this.showQuestion = "jeopardy-show-question"
     this.setQuestionState = "jeopardy-set-question-state"
     this.toggleSubmission = "jeopardy-toggle-submission"
+    this.setLocal = "jeopardy-set-local"
     this.buzzer = "jeopardy-buzzer"
     this.host = {
       id: null,
@@ -37,6 +38,7 @@ class JeopardyService extends GameService {
     }
     this.players = []
     this.activePlayer = ""
+    this.localGame = false
   }
 
   buildPlayerInfo(socket) {
@@ -49,10 +51,11 @@ class JeopardyService extends GameService {
 
   join(socket) {
     this.joinAsPlayer({}, socket)
+    socket.emit(this.setLocal, this.local)
   }
 
   leave(socket) {
-    super.disconnect(socket)
+    // super.disconnect(socket)
     let index = this.players.findIndex(player => player.id === socket.id)
     if (index > -1) {
       this.players.splice(index, 1)
@@ -92,13 +95,15 @@ class JeopardyService extends GameService {
     }
   }
 
-  startGame({ jeopardy }, socket) {
+  startGame({ jeopardy, local }, socket) {
     try {
       // this.game = JSON.parse(fs.readFileSync("./server/assets/jeopardy4.json"))
       this.game = JSON.parse(jeopardy)
       this.round = 0
       this.questionState = 0
       this.categories = this.game.rounds[this.round]
+      this.localGame = local
+      this.broadcastFn(this.setLocal, this.localGame)
       this.displayCategories(jeopardy, socket)
     } catch (error) {
       socket.emit("log", `An error occurred while trying to start the game: ${error}`)
@@ -161,7 +166,7 @@ class JeopardyService extends GameService {
       points: question.points,
       type: question.type
     })
-    socket.emit("log", `${category} for ${question.points}: ${question.answer} ${question.description}`)
+    socket.emit("log", `${category} for ${question.points}: ${question.answer} ${question.description ? question.description : ""}`)
   }
 
   showSubmission({ show }, socket) {

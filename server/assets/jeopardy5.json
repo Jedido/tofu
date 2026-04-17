@@ -1,0 +1,414 @@
+{
+  "num_rounds": 3,
+  "rounds": [
+    [
+      {
+        "name": "Oh Canada",
+        "questions": [
+          {
+            "points": 100,
+            "type": "text",
+            "question": "The national tree of Canada, as seen on its flag.",
+            "answer": "maple tree"
+          },
+          {
+            "points": 200,
+            "type": "text",
+            "question": "The capital of Canada.",
+            "answer": "Ottawa"
+          },
+          {
+            "points": 300,
+            "type": "text",
+            "question": "It's the national animal of Canada.",
+            "answer": "Beaver"
+          },
+          {
+            "points": 400,
+            "type": "text",
+            "question": "A popular dish originating from Quebec. It is made with French fries that are topped with cheese curds and covered in gravy.",
+            "answer": "Poutine"
+          },
+          {
+            "points": 500,
+            "type": "text",
+            "question": "Canada is the second largest country in the world, followed closely by this other country.",
+            "answer": "United States"
+          }
+        ]
+      },
+      {
+        "name": "Spelling Bee",
+        "questions": [
+          {
+            "points": 100,
+            "type": "text",
+            "question": "To multiply sexually or asexually",
+            "answer": "Propagate"
+          },
+          {
+            "points": 200,
+            "type": "text",
+            "question": "To steal and pass off (the ideas or words of another) as one's own",
+            "answer": "Plagiarize"
+          },
+          {
+            "points": 300,
+            "type": "text",
+            "question": "A sauce made typically of oil, vinegar, and seasonings and used especially on salads, cold meats, or fish",
+            "answer": "Vinaigrette"
+          },
+          {
+            "points": 400,
+            "type": "text",
+            "question": "Of or relating to a molecule that is not superimposable on its mirror image",
+            "answer": "chiral"
+          },
+          {
+            "points": 500,
+            "type": "text",
+            "question": "A ghostly counterpart of a living person",
+            "answer": "Doppelganger"
+          }
+        ]
+      },
+      {
+        "name": "Common Animals",
+        "questions": [
+          {
+            "points": 100,
+            "type": "text",
+            "question": "Canis lupus familiaris",
+            "answer": "Dog"
+          },
+          {
+            "points": 200,
+            "type": "text",
+            "question": "Rattus",
+            "answer": "Rat"
+          },
+          {
+            "points": 300,
+            "type": "text",
+            "question": "Hippocampus",
+            "answer": "Seahorse"
+          },
+          {
+            "points": 400,
+            "type": "text",
+            "question": "Formicidae",
+            "answer": "Ant"
+          },
+          {
+            "points": 500,
+            "type": "text",
+            "question": "Columbidae",
+            "answer": "Dove/Pigeon"
+          }
+        ]
+      },
+      {
+        "name": "Outer Space",
+        "questions": [
+          {
+            "points": 100,
+            "type": "text",
+            "question": "This space mission from NASA launched four astronauts to the moon and back in April 2026.",
+            "answer": "Artemis II"
+          },
+          {
+            "points": 200,
+            "type": "text",
+            "question": "Our solar system consists of this many planets. Just ask my very educated mother!",
+            "answer": "Eight"
+          },
+          {
+            "points": 300,
+            "type": "text",
+            "question": "This man-made structure is the third brightest object in the sky, after the Sun and the Moon.",
+            "answer": "International Space Station"
+          },
+          {
+            "points": 400,
+            "type": "text",
+            "question": "This gas giant is the largest planet in our solar system.",
+            "answer": "Jupiter"
+          },
+          {
+            "points": 500,
+            "type": "text",
+            "question": "These giant clouds of space dust can span hundreds of light-years, acting as \"star nurseries\" where new stars form.",
+            "answer": "Nebula"
+          }
+        ]
+      },
+      {
+        "name": "2020s Movie Posters",
+        "questions": [
+          {
+            "points": 100,
+            "type": "blur",
+            "question": {
+              "image": "https://i.ebayimg.com/images/g/DIAAAOSwi9hkwl7g/s-l1600.jpg",
+              "blur": 50,
+              "speed": 10
+            },
+            "answer": "Barbie"
+          },
+          {
+            "points": 200,
+            "type": "zoom",
+            "question": {
+              "image": "https://i.ebayimg.com/images/g/J68AAOSwqsRjBVNr/s-l1600.jpg",
+              "x": 0.78,
+              "y": 0.28,
+              "scale": 0.04,
+              "speed": 10
+            },
+            "answer": "Spider-Man: No Way Home"
+          },
+          {
+            "points": 300,
+            "type": "blur",
+            "question": {
+              "image": "https://i.ebayimg.com/images/g/FaUAAOSwvFteklwI/s-l1600.jpg",
+              "blur": 30,
+              "speed": 10
+            },
+            "answer": "Soul"
+          },
+          {
+            "points": 400,
+            "type": "zoom",
+            "question": {
+              "image": "https://m.media-amazon.com/images/I/71gQCXpKiKL._AC_SL1333_.jpg",
+              "x": 0.21,
+              "y": 0.40,
+              "scale": 0.03,
+              "speed": 20
+            },
+            "answer": "Puss in Boots: The Last Wish"
+          },
+          {
+            "points": 500,
+            "type": "zoom",
+            "question": {
+              "image": "https://m.media-amazon.com/images/I/71RZ-ZSmyYL._AC_SL1348_.jpg",
+              "x": 0.89,
+              "y": 0.76,
+              "scale": 0.08,
+              "speed": 20
+            },
+            "answer": "Dungeon & Dragons: Honor Among Thieves"
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "name": "Folklore",
+        "questions": [
+          {
+            "points": 100,
+            "type": "text",
+            "question": "A English folklore figure, known for stealing from the rich and giving to the poor.",
+            "answer": "Robin Hood"
+          },
+          {
+            "points": 200,
+            "type": "text",
+            "question": "Clotho, Lachesis, and Atropos are three goddesses in Greek mythology better known by this name.",
+            "answer": "Three Fates"
+          },
+          {
+            "points": 300,
+            "type": "text",
+            "question": "A mythological female warrior in Norse mythology that delivers warriors fallen in battle to Valhalla.",
+            "answer": "Valkyrie"
+          },
+          {
+            "points": 400,
+            "type": "text",
+            "question": "A sailor and merchant featured in 1001 Nights, known for his treacherous adventures filled with monsters and magical lands.",
+            "answer": "Sinbad"
+          },
+          {
+            "points": 500,
+            "type": "text",
+            "question": "The ancient Egyptian deity, known as a falcon-headed sky god with an eye-catching symbol.",
+            "answer": "Horus"
+          }
+        ]
+      },
+      {
+        "name": "Made With \"Ai\"",
+        "questions": [
+          {
+            "points": 100,
+            "type": "text",
+            "question": "An online marketplace and hospitality service that acts as an alternative to hotels.",
+            "answer": "Airbnb"
+          },
+          {
+            "points": 200,
+            "type": "text",
+            "question": "This 1990s manga series features a group of characters named after celestial bodies as they fight against evil.",
+            "answer": "Sailor Moon"
+          },
+          {
+            "points": 300,
+            "type": "text",
+            "question": "This country is the leading manufacturer of semi-conductors.",
+            "answer": "Taiwan"
+          },
+          {
+            "points": 400,
+            "type": "text",
+            "question": "In the Catholic Church, this post-mortem title is granted through a rigorous process called canonization.",
+            "answer": "Saint"
+          },
+          {
+            "points": 500,
+            "type": "text",
+            "question": "This was the very first dog to go to outer space, originally a stray from Moscow.",
+            "answer": "Laika"
+          }
+        ]
+      },
+      {
+        "name": "Hatsune Miku",
+        "questions": [
+          {
+            "points": 100,
+            "type": "text",
+            "question": "Officially, Hatsune Miku is 5'2\", and eternally this age.",
+            "answer": "16"
+          },
+          {
+            "points": 200,
+            "type": "text",
+            "question": "Hatsune Miku is commonly depicted holding this vegetable, popularized by its appearance in Ievan Polkka.",
+            "answer": "Leek (Negi/Welsh Onion)"
+          },
+          {
+            "points": 300,
+            "type": "text",
+            "question": "This popular 2011 meme feline originated from a Hatsune Miku music video, although Momone Momo sings its most popular version.",
+            "answer": "Nyan Cat"
+          },
+          {
+            "points": 400,
+            "type": "text",
+            "question": "This free 3D animation software was originally produced for Hatsune Miku but is now used for creating many other music videos.",
+            "answer": "MikuMikuDance (MMD)"
+          },
+          {
+            "points": 500,
+            "type": "text",
+            "question": "The media company that debuted Hatsune Miku on August 31, 2007.",
+            "answer": "Crypton Future Media"
+          }
+        ]
+      },
+      {
+        "name": "Word Associations",
+        "questions": [
+          {
+            "points": 100,
+            "type": "text",
+            "question": "Click, Fish, Rage",
+            "answer": "Bait"
+          },
+          {
+            "points": 200,
+            "type": "text",
+            "question": "Wild, Escape, Fighter",
+            "answer": "Fire"
+          },
+          {
+            "points": 300,
+            "type": "text",
+            "question": "Zone, Machine, Bed",
+            "answer": "Time"
+          },
+          {
+            "points": 400,
+            "type": "text",
+            "question": "Keeper, Tail, Flood",
+            "answer": "Gate"
+          },
+          {
+            "points": 500,
+            "type": "text",
+            "question": "Cook, Head, Sky",
+            "answer": "Line"
+          }
+        ]
+      },
+      {
+        "name": "Sports \"balls\"",
+        "questions": [
+          {
+            "points": 100,
+            "type": "image",
+            "question": "https://sportsfacilitiesgroup.com/store/content/images/thumbs/0020061_jex-800-deluxe-tournament-grade-yellow-shuttlecock-for-badminton_300.gif",
+            "answer": "Badminton"
+          },
+          {
+            "points": 200,
+            "type": "image",
+            "question": "https://i.ebayimg.com/images/g/MD8AAOSwF9Ffc1eb/s-l1600.jpg",
+            "answer": "Rugby"
+          },
+          {
+            "points": 300,
+            "type": "zoom",
+            "question": {
+              "image": "https://images.propstore.com/09415cb0f5253c71df71b15a9d532089.jpg",
+              "x": 0.72,
+              "y": 0.44,
+              "scale": 0.08,
+              "speed": 20
+            },
+            "answer": "Quidditch"
+          },
+          {
+            "points": 400,
+            "type": "blur",
+            "question": {
+              "image": "https://hockeytron.com/cdn/shop/products/pucks_2000x.jpg?v=1632505792",
+              "blur": 30,
+              "speed": 10
+            },
+            "answer": "Hockey"
+          },
+          {
+            "points": 500,
+            "type": "zoom",
+            "question": {
+              "image": "https://i.ebayimg.com/images/g/J1gAAOSwoCxkHdZ3/s-l960.jpg",
+              "x": 0.5,
+              "y": 0.5,
+              "scale": 0.1,
+              "speed": 10
+            },
+            "answer": "Cricket"
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "name": "Final",
+        "questions": [
+          {
+            "points": "U.S. History",
+            "type": "text",
+            "question": "This philologist (scholar of language) and high-fantasy author wrote the phrase \"All that is gold does not glitter, Not all those who wander are lost\"",
+            "answer": "J.R.R. Tolkien"
+          }
+        ]
+      }
+    ]
+  ]
+}

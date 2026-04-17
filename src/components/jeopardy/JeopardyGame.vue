@@ -1,6 +1,6 @@
 <template>
-  <div id="jeopardy" class="select-none text-gray-700">
-    <div class="grid grid-cols-6 gap-3 w-80" v-if="status === 'menu'">
+  <div id="jeopardy" class="select-none text-gray-700 w-full">
+    <div class="grid grid-cols-6 gap-3 w-80 mx-auto" v-if="status === 'menu'">
       <button
         class="
           mt-2
@@ -47,10 +47,15 @@
           </li>
         </ul>
       </div>
+      
       <form v-if="hosting" class="col-span-6 flex flex-col">
         <p class="mb-2">Questions</p>
         <textarea type="text" class="font-mono text-sm" rows="24" cols="30" v-model="questionsJson">
         </textarea>
+        <label>
+          <input type="checkbox" v-model="local">
+          <span>Local Game?</span>
+        </label>
         <button
           class="
             mt-4
@@ -62,31 +67,33 @@
             active:bg-emerald-800
             rounded
           "
-          @click.prevent="emit('start-game', { jeopardy: questionsJson })"
+          @click.prevent="emit('start-game', { local: local, jeopardy: questionsJson })"
         >
           Start Game
         </button>
       </form>
     </div>
     <div v-else>
-      <div v-if="status === 'categories'" class="grid gap-2 mt-1 grid-flow-col h-100" :style="[jeopardyGridStyle]">
-        <template v-for="category in categories">
-          <h2 class="font-bold font-mono text-center my-auto leading-tight overflow-auto">{{ category.name }}</h2>
-          <JeopardyButton
-            v-for="question in category.questions"
-            :class="[question.completed ? 'bg-gray-300' : 'bg-emerald-600']"
-            @click.prevent="openQuestion(category.name, question.points)"
-          >
-            {{ question.points }}
-          </JeopardyButton>
-        </template>
-      </div>
-      <div
-        v-else-if="status === 'question'"
-        class="text-2xl bg-white mx-6 h-100 p-3"
-      >
-        <JeopardyQuestion :question="question" :level="level" :preload="hosting" :buzzer="buzzer" />
-      </div>
+      <template v-if="hosting || !local">
+        <div v-if="status === 'categories'" class="grid gap-2 mt-1 grid-flow-col h-100" :style="[jeopardyGridStyle]">
+          <template v-for="category in categories">
+            <h2 class="font-bold font-mono text-center my-auto leading-tight overflow-auto">{{ category.name }}</h2>
+            <JeopardyButton
+              v-for="question in category.questions"
+              :class="[question.completed ? 'bg-gray-300' : 'bg-emerald-600']"
+              @click.prevent="openQuestion(category.name, question.points)"
+            >
+              {{ question.points }}
+            </JeopardyButton>
+          </template>
+        </div>
+        <div
+          v-else-if="status === 'question'"
+          class="text-2xl bg-white mx-6 h-100 p-3"
+        >
+          <JeopardyQuestion :question="question" :level="level" :preload="hosting" :buzzer="buzzer" />
+        </div>
+      </template>
       <div v-if="hosting" class="w-full grid grid-cols-6 gap-2 mt-2">
         <template v-if="status === 'categories'">
           <JeopardyButton class="col-span-6" @click.prevent="emit('next-round')">
@@ -139,7 +146,7 @@
           />
           <p v-if="lastSubmission" class="mx-auto">Your Response: {{ lastSubmission }}</p>
         </div>
-        <JeopardyButton v-else class="mt-2" @click.prevent="buzz()">
+        <JeopardyButton v-else class="mt-2 min-w-40" @click.prevent="buzz()">
           Buzz
         </JeopardyButton>
       </div>
@@ -220,7 +227,8 @@ export default {
       questionsJson: "",
       showSubmission: false,
       submission: "",
-      lastSubmission: ""
+      lastSubmission: "",
+      local: false
     }
   },
   mounted() {
@@ -257,6 +265,10 @@ export default {
       this.showSubmission = show
       this.lastSubmission = ""
       this.submission = ""
+    })
+    this.on("set-local", (local) => {
+      this.local = local
+      console.log(local)
     })
   },
   methods: {

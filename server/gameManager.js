@@ -206,11 +206,15 @@ function removeGame(roomId) {
     return
   }
   console.log(`deleting room ${roomId} since all players have left`)
-  const onShutdown = gameRooms[roomId].game.actions["shutdown"]
-  if (onShutdown) {
-    onShutdown()
+  try {
+    const gameRoom = gameRooms[roomId].game
+    if (gameRoom.actions && gameRoom.actions["shutdown"]) {
+      gameRoom.actions["shutdown"]()
+    }
+    delete gameRooms[roomId]
+  } catch (e) {
+    console.log(e.stack)
   }
-  delete gameRooms[roomId]
 }
 function broadcast(roomId, type, ...params) {
   if (!hasRoom(roomId)) {
