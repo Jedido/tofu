@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import Square from "./Square.vue"
+import Square from "@/components/tile/Square.vue"
 
 export default {
   name: "Block",

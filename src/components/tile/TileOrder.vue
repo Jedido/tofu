@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import Block from "./Block.vue"
+import Block from "@/components/tile/Block.vue"
 
 export default {
   name: "TileOrder",

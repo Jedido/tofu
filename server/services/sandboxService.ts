@@ -1,7 +1,7 @@
-import GameService from "./gameService.js"
+import GameService from "./gameService.ts"
 
 class SandboxService extends GameService {
-  constructor(roomId) {
+  constructor(roomId: string) {
     super(roomId)
   }
 }

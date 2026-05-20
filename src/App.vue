@@ -7,16 +7,18 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue'
+import type { Socket } from 'socket.io-client'
 import io from "socket.io-client"
 import Header from "@/components/Header.vue"
-import Scene from "./components/Scene.vue"
+import Scene from "@/components/Scene.vue"
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
-globalThis.__VUE_PROD_DEVTOOLS__ = false
-globalThis.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
+;(globalThis as any).__VUE_PROD_DEVTOOLS__ = false
+;(globalThis as any).__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
 
-export default {
+export default defineComponent({
   name: "App",
   components: {
     Header,
@@ -25,45 +27,46 @@ export default {
   data() {
     return {
       scene: "select",
-      socket: null,
+      socket: null as Socket | null,
     }
   },
   created() {
     this.socket = io(`ws://${window.location.host}`)
     this.socket.on("connect", () => {
       // Session Save
+      const socket = this.socket!
       if (localStorage.getItem("user")) {
-        this.socket.emit("restore-user", JSON.parse(localStorage.getItem("user")))
+        socket.emit("restore-user", JSON.parse(localStorage.getItem("user")!))
       } else {
-        this.socket.emit("create-user")
+        socket.emit("create-user")
       }
       if (this.$store.state.room) {
-        this.socket.emit("join-room", this.$store.state.room)
+        socket.emit("join-room", this.$store.state.room)
         return
       } else if (window.location.pathname.length === 6) {
-        this.socket.emit("join-room", window.location.pathname.substring(1))
+        socket.emit("join-room", window.location.pathname.substring(1))
       }
     })
   },
   mounted() {
     window.addEventListener("resize", this.resizeGame)
     this.resizeGame()
-    this.socket.on("alert", (message) => {
+    this.socket!.on("alert", (message: string) => {
       alert(message)
     })
   },
   methods: {
-    launchGame(game) {
+    launchGame(game: string) {
       this.scene = game
       this.$store.commit("setGame", game)
-      this.socket.emit("create-room", game, this.$store.state.ign)
+      this.socket!.emit("create-room", game, this.$store.state.ign)
     },
     resizeGame() {
-      this.$store.commit("setGameWidth", document.getElementById("content").clientWidth)
-      this.$store.commit("setScreenWidth", document.getElementById("content").clientWidth)
+      this.$store.commit("setGameWidth", document.getElementById("content")!.clientWidth)
+      this.$store.commit("setScreenWidth", document.getElementById("content")!.clientWidth)
     }
   },
-}
+})
 </script>
 
 <style>

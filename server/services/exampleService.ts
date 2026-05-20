@@ -1,7 +1,10 @@
-import GameService from "./gameService.js"
+import { TSocket } from "../utils/tsocket.ts"
+import GameService from "./gameService.ts"
 
 class ExampleService extends GameService {
-  constructor(roomId) {
+  readonly receiveMessage: string
+
+  constructor(roomId: string) {
     super(roomId)
 
     // requests
@@ -13,7 +16,7 @@ class ExampleService extends GameService {
   }
 
   // sends message
-  sendMessage(message, socket) {
+  sendMessage(message: string, socket: TSocket) {
     this.broadcastFn(this.receiveMessage, socket.ign, message)
   }
 }

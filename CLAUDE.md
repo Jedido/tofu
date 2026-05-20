@@ -53,11 +53,11 @@ service: calls this.broadcastFn("event-name", payload)
 client:  socket.on("event-name", handler)   // via socket mixin
 ```
 
-### TypeScript migration
+### TypeScript
 
-The backend is partially migrated — newer services (e.g., `anidleService.ts`, `tileService.ts`, `rpgService.ts`, `databaseManager.ts`) are already TypeScript. The `tsconfig.json` targets `server/**` only (ESNext/bundler, strict). Frontend Vue files are still JS. New backend files should be `.ts`.
+The entire `server/` is TypeScript — no `.js` files remain. The `tsconfig.json` targets `server/**` (ESNext/bundler, strict). Frontend Vue files are still JS.
 
-The entire server uses ESM (`import`/`export`) — no `require()` or `module.exports`. Bun runs TypeScript natively so `.ts` files can be imported directly with their `.ts` extension.
+The server uses full ESM (`import`/`export`). Bun runs TypeScript natively so `.ts` extensions are used directly in import paths. New backend files should be `.ts` with explicit `.ts` import extensions.
 
 ## Key config files
 

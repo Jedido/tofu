@@ -1,6 +1,7 @@
+import { Request, Response, NextFunction } from "express"
 import { getDurationMs } from "../utils/timing.ts"
 
-const loggingMiddleware = (req, res, next) => {
+const loggingMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const start = process.hrtime()
   res.on("finish", () => {
     const now = new Date()
@@ -15,7 +16,7 @@ const loggingMiddleware = (req, res, next) => {
       query: req.query,
       body: req.body,
       durationms: elapsed,
-      client: req.connection.remoteAddress,
+      client: req.socket.remoteAddress,
       ts: date,
     })
   })

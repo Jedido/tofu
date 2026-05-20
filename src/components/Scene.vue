@@ -64,7 +64,7 @@
 
 <script>
 import { defineAsyncComponent } from "vue"
-import RoomSelection from "./RoomSelection.vue"
+import RoomSelection from "@/components/RoomSelection.vue"
 import breakpoints from "@/mixins/breakpoints"
 
 export default {
@@ -75,25 +75,25 @@ export default {
   components: {
     RoomSelection,
     ExampleGame: defineAsyncComponent(() =>
-      import("./example/ExampleGame.vue")
+      import("@/components/example/ExampleGame.vue")
     ),
     MinesweeperGame: defineAsyncComponent(() =>
-      import("./minesweeper/MinesweeperGame.vue")
+      import("@/components/minesweeper/MinesweeperGame.vue")
     ),
     AnagramGame: defineAsyncComponent(() =>
-      import("./anagram/AnagramGame.vue")
+      import("@/components/anagram/AnagramGame.vue")
     ),
-    GachaGame: defineAsyncComponent(() => import("./gacha/GachaGame.vue")),
-    WatchGame: defineAsyncComponent(() => import("./watch/WatchGame.vue")),
+    GachaGame: defineAsyncComponent(() => import("@/components/gacha/GachaGame.vue")),
+    WatchGame: defineAsyncComponent(() => import("@/components/watch/WatchGame.vue")),
     JeopardyGame: defineAsyncComponent(() =>
-      import("./jeopardy/JeopardyGame.vue")
+      import("@/components/jeopardy/JeopardyGame.vue")
     ),
-    SquaredleGame: defineAsyncComponent(() => import("./squaredle/SquaredleGame.vue")),
-    SandboxGame: defineAsyncComponent(() => import("./sandbox/SandboxGame.vue")),
-    TeamGame: defineAsyncComponent(() => import("./team/TeamGame.vue")),
-    RPGGame: defineAsyncComponent(() => import("./rpg/RPGGame.vue")),
-    AnidleGame: defineAsyncComponent(() => import("./anidle/AnidleGame.vue")),
-    TileGame: defineAsyncComponent(() => import("./tile/TileGame.vue")),
+    SquaredleGame: defineAsyncComponent(() => import("@/components/squaredle/SquaredleGame.vue")),
+    SandboxGame: defineAsyncComponent(() => import("@/components/sandbox/SandboxGame.vue")),
+    TeamGame: defineAsyncComponent(() => import("@/components/team/TeamGame.vue")),
+    RPGGame: defineAsyncComponent(() => import("@/components/rpg/RPGGame.vue")),
+    AnidleGame: defineAsyncComponent(() => import("@/components/anidle/AnidleGame.vue")),
+    TileGame: defineAsyncComponent(() => import("@/components/tile/TileGame.vue")),
   },
   mixins: [breakpoints],
   data() {

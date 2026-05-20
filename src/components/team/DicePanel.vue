@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import Panel from './Panel.vue';
+import Panel from '@/components/team/Panel.vue';
 
 import bitwise from '@/mixins/bitwise';
 

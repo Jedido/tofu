@@ -20,8 +20,8 @@
 </template>
   
 <script>
-import HexCell from './HexCell.vue';
-import PlayerUnit from './PlayerUnit.vue';
+import HexCell from '@/components/tile/HexCell.vue';
+import PlayerUnit from '@/components/tile/PlayerUnit.vue';
 
 export default {
   name: "HexGrid",

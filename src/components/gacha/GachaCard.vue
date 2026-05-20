@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import CharacterCard from "./CharacterCard.vue"
+import CharacterCard from "@/components/gacha/CharacterCard.vue"
 
 const TYPE_NAME = ["earth-back", "sea-back", "sky-back", "holy-back"]
 

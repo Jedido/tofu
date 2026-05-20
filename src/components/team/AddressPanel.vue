@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import Panel from './Panel.vue';
+import Panel from '@/components/team/Panel.vue';
 
 const limit = 42
 export default {

@@ -1,7 +1,7 @@
 import { Puzzle } from "./puzzle"
 import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, PatternPuzzleSolution } from "./types"
 
-import { colors, symbols, randomItem } from "../../utils/util.js"
+import { colors, symbols, randomItem } from "../../utils/util.ts"
 
 interface PatternPI extends PanelInfo {
   color: string,

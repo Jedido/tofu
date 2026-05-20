@@ -117,8 +117,8 @@
 </template>
 
 <script>
-import ZoomImage from "../jeopardy/ZoomImage.vue";
-import BlurImage from "../jeopardy/BlurImage.vue";
+import ZoomImage from "@/components/jeopardy/ZoomImage.vue";
+import BlurImage from "@/components/jeopardy/BlurImage.vue";
 
 export default {
   name: "SandboxGame",

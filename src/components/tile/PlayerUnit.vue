@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import Block from "./Block.vue";
+import Block from "@/components/tile/Block.vue";
 
 const Direction = {
   NONE: -1,

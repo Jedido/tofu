@@ -11,16 +11,16 @@
 </template>
 
 <script>
-import DangerPanel from './DangerPanel.vue';
-import EmptyPanel from './EmptyPanel.vue';
-import PatternPanel from './PatternPanel.vue';
-import RequestPanel from './RequestPanel.vue';
-import WirePanel from './WirePanel.vue';
-import DicePanel from './DicePanel.vue';
-import WantedPanel from './WantedPanel.vue';
-import AlgebraPanel from './AlgebraPanel.vue';
-import WordPanel from './WordPanel.vue';
-import AddressPanel from './AddressPanel.vue';
+import DangerPanel from '@/components/team/DangerPanel.vue';
+import EmptyPanel from '@/components/team/EmptyPanel.vue';
+import PatternPanel from '@/components/team/PatternPanel.vue';
+import RequestPanel from '@/components/team/RequestPanel.vue';
+import WirePanel from '@/components/team/WirePanel.vue';
+import DicePanel from '@/components/team/DicePanel.vue';
+import WantedPanel from '@/components/team/WantedPanel.vue';
+import AlgebraPanel from '@/components/team/AlgebraPanel.vue';
+import WordPanel from '@/components/team/WordPanel.vue';
+import AddressPanel from '@/components/team/AddressPanel.vue';
 
 export default {
   name: "PanelType",

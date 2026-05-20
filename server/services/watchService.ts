@@ -1,7 +1,29 @@
-import GameService from "./gameService.js"
+import { TSocket } from "../utils/tsocket.ts"
+import GameService from "./gameService.ts"
+
+interface VideoItem {
+  videoId: string
+  title: string
+  channel: string
+}
 
 class WatchService extends GameService {
-  constructor(roomId) {
+  readonly queueEvent: string
+  readonly startEvent: string
+  readonly syncEvent: string
+  readonly pauseEvent: string
+  readonly removeEvent: string
+  readonly searchResultsEvent: string
+  readonly stateEvent: string
+
+  playlist: VideoItem[]
+  currentVideo: string
+  time: number
+  startTime: number
+  paused: boolean
+  waitingNextVideo: ReturnType<typeof setTimeout> | null
+
+  constructor(roomId: string) {
     super(roomId)
 
     // requests
@@ -31,7 +53,7 @@ class WatchService extends GameService {
     this.waitingNextVideo = null
   }
 
-  getState(_, socket) {
+  getState(_: any, socket: TSocket) {
     const time = this.time + (this.paused ? 0 : Date.now() - this.startTime / 100)
     socket.emit(this.stateEvent, {
       videoId: this.currentVideo,
@@ -41,7 +63,7 @@ class WatchService extends GameService {
     })
   }
 
-  queueVideo({ video }, socket) {
+  queueVideo({ video }: { video: VideoItem }, socket: TSocket) {
     if (this.playlist.find(v => v.videoId === video.videoId)) {
       socket.emit("alert", "This video is already queued!")
       return
@@ -55,12 +77,12 @@ class WatchService extends GameService {
     }
   }
 
-  searchVideo({ query }, socket) {
+  searchVideo({ query }: { query: string }, socket: TSocket) {
     try {
       fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${query}&key=${process.env.YOUTUBE_API_KEY}`)
       .then(res => res.json())
-      .then(json => {
-        const results = json.items.map(video => {
+      .then((json: any) => {
+        const results = json.items.map((video: any) => {
           return {
             videoId: video.id.videoId,
             title: video.snippet.title,
@@ -71,11 +93,11 @@ class WatchService extends GameService {
       })
     } catch (e) {
       console.log(`${socket.ign} failed to execute: ${e}`)
-      console.log(e.stack)
+      console.log((e as Error).stack)
     }
   }
 
-  startVideo({ videoId }) {
+  startVideo({ videoId }: { videoId: string }) {
     if (this.waitingNextVideo) {
       clearTimeout(this.waitingNextVideo)
     }
@@ -84,7 +106,7 @@ class WatchService extends GameService {
     this.paused = false
   }
 
-  syncVideo({ time, pause }) {
+  syncVideo({ time, pause }: { time: number; pause: boolean }) {
     if (!pause) {
       this.startTime = Date.now()
     }
@@ -93,7 +115,7 @@ class WatchService extends GameService {
     this.broadcastFn(this.syncEvent, { time, pause })
   }
 
-  nextVideo({ videoId }, socket) {
+  nextVideo({ videoId }: { videoId: string }, socket: TSocket) {
     if (this.waitingNextVideo) {
       return
     }
@@ -108,14 +130,14 @@ class WatchService extends GameService {
       this.paused = false
       this.removeVideo({ index })
       if (this.playlist.length > index) {
-        const videoId = this.playlist[index].videoId
-        this.startVideo({ videoId })
+        const nextVideoId = this.playlist[index].videoId
+        this.startVideo({ videoId: nextVideoId })
       }
       this.waitingNextVideo = null
     }, 3000)
   }
 
-  removeVideo({ index }) {
+  removeVideo({ index }: { index: number }) {
     this.playlist.splice(index, 1)
     this.broadcastFn(this.removeEvent, { index })
   }

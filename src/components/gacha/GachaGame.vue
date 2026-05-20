@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import socket from "../../mixins/socket.js"
-import GachaCard from "./GachaCard.vue"
+import socket from "@/mixins/socket.js"
+import GachaCard from "@/components/gacha/GachaCard.vue"
 
 export default {
   name: "GachaGame",

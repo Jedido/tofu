@@ -89,7 +89,7 @@
 <script>
 import socket from "@/mixins/socket.js"
 import breakpoints from "@/mixins/breakpoints.js"
-import VideoCard from "./VideoCard.vue"
+import VideoCard from "@/components/watch/VideoCard.vue"
 
 export default {
   name: "WatchGame",

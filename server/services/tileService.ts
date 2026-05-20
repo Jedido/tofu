@@ -1,7 +1,7 @@
 import { TSocket } from "../utils/tsocket"
 
-import GameService from "./gameService.js"
-import { randomItem, shuffle } from "../utils/util.js"
+import GameService from "./gameService.ts"
+import { randomItem, shuffle } from "../utils/util.ts"
 
 interface TargetUnit {
   unit: string

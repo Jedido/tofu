@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import socket from "../../mixins/socket.js"
+import socket from "@/mixins/socket.js"
 
 export default {
   name: "ExampleGame",

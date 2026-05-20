@@ -2,7 +2,7 @@ import { Puzzle } from "./puzzle"
 import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, DicePuzzleSolution } from "./types"
 import { BitArray } from "../../utils/bitarray"
 
-import { colors, randomItem } from "../../utils/util.js"
+import { colors, randomItem } from "../../utils/util.ts"
 
 interface DicePuzzlePI extends PanelInfo {
   dice: number[]

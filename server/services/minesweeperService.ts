@@ -1,4 +1,5 @@
-import GameService from "./gameService.js"
+import { TSocket } from "../utils/tsocket.ts"
+import GameService from "./gameService.ts"
 
 const BOMB = -10
 const FLAG = -20
@@ -7,7 +8,17 @@ const BLANK = -40
 const BOOM = -50
 
 class MinesweeperService extends GameService {
-  constructor(roomId) {
+  readonly boardEvent: string
+  readonly updateSpaceEvent: string
+
+  field: number[][]
+  revealed: number[][]
+  gameStatus: string
+  spaces: number
+  numBombs: number
+  time: Date | number
+
+  constructor(roomId: string) {
     super(roomId)
 
     // requests
@@ -27,6 +38,7 @@ class MinesweeperService extends GameService {
     this.gameStatus = ""
     this.spaces = 0
     this.numBombs = 100
+    this.time = 0
   }
 
   revealBoard() {
@@ -40,23 +52,23 @@ class MinesweeperService extends GameService {
     }
   }
 
-  increment(field, x, y) {
+  increment(field: number[][], x: number, y: number) {
     if (this.verify(field, x, y) && field[x][y] !== BOMB) {
       field[x][y]++
     }
   }
 
-  verify(field, x, y) {
+  verify(field: number[][], x: number, y: number): boolean {
     const size = field.length
     return x >= 0 && x < size && y >= 0 && y < size
   }
 
-  getBoard(_, socket) {
-    socket.emit(this.boardEvent, this.getState())
+  getBoard(_: any, socket: TSocket) {
+    socket.emit(this.boardEvent, this.getBoardState())
   }
 
   // returns the whole state of the board (expensive)
-  getState() {
+  getBoardState() {
     return {
       status: this.gameStatus,
       size: this.revealed.length,
@@ -64,19 +76,19 @@ class MinesweeperService extends GameService {
       board: this.revealed,
       time:
         this.gameStatus === "ongoing"
-          ? Math.round((new Date() - this.time) / 1000)
+          ? Math.round((new Date().getTime() - (this.time as Date).getTime()) / 1000)
           : this.time,
     }
   }
 
-  init({ size, bombs }, socket) {
+  init({ size, bombs }: { size: number; bombs: number }, socket: TSocket) {
     this.gameStatus = "ongoing"
     this.field = []
     this.revealed = []
     this.time = new Date()
     for (let x = 0; x < size; x++) {
-      const row = []
-      const rev = []
+      const row: number[] = []
+      const rev: number[] = []
       for (let y = 0; y < size; y++) {
         row[y] = 0
         rev[y] = HIDDEN
@@ -110,29 +122,29 @@ class MinesweeperService extends GameService {
       "log",
       `${socket.ign} started a new game (bombs=${bombs}, size=${size})`
     )
-    this.broadcastFn(this.boardEvent, this.getState())
+    this.broadcastFn(this.boardEvent, this.getBoardState())
   }
 
-  reveal({ x, y }, socket) {
+  reveal({ x, y }: { x: number; y: number }, socket: TSocket) {
     if (this.revealed[x][y] !== FLAG) {
       this.broadcastFn("log", `${socket.ign} revealed (${x}, ${y})`)
       if (this.field[x][y] === BOMB) {
         this.revealBoard()
         this.revealed[x][y] = BOOM
         this.gameStatus = "lose"
-        this.time = Math.round((new Date() - this.time) / 1000)
-        this.broadcastFn(this.boardEvent, this.getState())
+        this.time = Math.round((new Date().getTime() - (this.time as Date).getTime()) / 1000)
+        this.broadcastFn(this.boardEvent, this.getBoardState())
         this.broadcastFn(
           "log",
           `${socket.ign} blew everyone up after ${this.time} seconds.`
         )
       } else {
-        const queue = []
+        const queue: [number, number][] = []
         queue.push([x, y])
         while (queue.length > 0) {
-          const next = queue.shift()
-          const a = parseInt(next[0])
-          const b = parseInt(next[1])
+          const next = queue.shift()!
+          const a = parseInt(next[0].toString())
+          const b = parseInt(next[1].toString())
           if (this.verify(this.field, a, b)) {
             const reveal = this.revealed[a][b]
             if (reveal === HIDDEN) {
@@ -157,14 +169,14 @@ class MinesweeperService extends GameService {
         if (this.spaces === 0) {
           this.revealBoard()
           this.gameStatus = "win"
-          this.time = Math.round((new Date() - this.time) / 1000)
-          this.broadcastFn(this.boardEvent, this.getState())
+          this.time = Math.round((new Date().getTime() - (this.time as Date).getTime()) / 1000)
+          this.broadcastFn(this.boardEvent, this.getBoardState())
           this.broadcastFn(
             "log",
             `${socket.ign} revealed the last space after ${this.time} seconds.`
           )
         } else if (this.field[x][y] === 0) {
-          this.broadcastFn(this.boardEvent, this.getState())
+          this.broadcastFn(this.boardEvent, this.getBoardState())
         } else {
           this.broadcastFn(this.updateSpaceEvent, x, y, this.revealed[x][y])
         }
@@ -172,7 +184,7 @@ class MinesweeperService extends GameService {
     }
   }
 
-  flag({ x, y }) {
+  flag({ x, y }: { x: number; y: number }) {
     if (this.revealed[x][y] === FLAG) {
       this.revealed[x][y] = HIDDEN
     } else if (this.revealed[x][y] === HIDDEN) {

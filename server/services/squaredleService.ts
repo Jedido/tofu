@@ -1,10 +1,35 @@
 import fs from "fs"
-import GameService from "./gameService.js"
-import Trie from "../utils/trie.js"
-import { getRandomWeightedLetter } from "../utils/util.js"
+import { TSocket } from "../utils/tsocket.ts"
+import GameService from "./gameService.ts"
+import Trie from "../utils/trie.ts"
+import { getRandomWeightedLetter } from "../utils/util.ts"
+
+interface BoardCell {
+  letter: string
+  instances: number
+  starts: number
+}
 
 class SquaredleService extends GameService {
-  constructor(roomId) {
+  readonly boardEvent: string
+  readonly revealWordEvent: string
+  readonly bonusWordEvent: string
+  readonly guessResponseEvent: string
+
+  words: string[]
+  wordTrie: Trie
+  dictionary: string[]
+  size: number
+  revealed: Set<string>
+  answers: Map<string, [number, number][]>
+  submissions: Record<string, any>
+  gameStatus: string
+  board: string[][]
+  instanceCount: number[][]
+  startingCount: number[][]
+  bonusWords?: Set<string>
+
+  constructor(roomId: string) {
     super(roomId)
 
     // requests
@@ -34,9 +59,12 @@ class SquaredleService extends GameService {
     this.answers = new Map()
     this.submissions = {}
     this.gameStatus = "menu"
+    this.board = []
+    this.instanceCount = []
+    this.startingCount = []
   }
 
-  init({ size }, socket) {
+  init({ size }: { size: number }, socket: TSocket) {
     if (size <= 2) {
       return
     }
@@ -73,7 +101,7 @@ class SquaredleService extends GameService {
       for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
           if (!this.board[i][j]) {
-            this.board[i][j] = getRandomWeightedLetter()
+            this.board[i][j] = getRandomWeightedLetter()!
           }
         }
       }
@@ -85,15 +113,15 @@ class SquaredleService extends GameService {
     this.broadcastFn(this.boardEvent, this.getState())
   }
 
-  getAdjacents([ox, oy]) {
-    return [[1, 1], [0, 1], [-1, 1], [1, 0], [-1, 0], [1, -1], [0, -1], [-1, -1]].filter(([nx, ny]) => {
+  getAdjacents([ox, oy]: [number, number]): [number, number][] {
+    return ([[1, 1], [0, 1], [-1, 1], [1, 0], [-1, 0], [1, -1], [0, -1], [-1, -1]] as [number, number][]).filter(([nx, ny]) => {
       const x = ox + nx
       const y = oy + ny
       return x >= 0 && x < this.size && y >= 0 && y < this.size
     })
   }
 
-  shuffle(arr) {
+  shuffle<T>(arr: T[]) {
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
       const temp = arr[j]
@@ -102,7 +130,7 @@ class SquaredleService extends GameService {
     }
   }
 
-  findPath(x, y, k, path) {
+  findPath(x: number, y: number, k: number, path: [number, number][]): [number, number][] {
     if (path.length === k) {
       return path
     }
@@ -128,7 +156,7 @@ class SquaredleService extends GameService {
     return []
   }
 
-  traverse(x, y, path, trieNode) {
+  traverse(x: number, y: number, path: [number, number][], trieNode: any) {
     if (!!trieNode.word && !this.answers.has(trieNode.word)) {
       // add as word
       this.answers.set(trieNode.word, path.slice())
@@ -153,7 +181,7 @@ class SquaredleService extends GameService {
     }
   }
 
-  solve() {
+  solve(): boolean {
     for (let i = 0; i < this.size; i++) {
       for (let j = 0; j < this.size; j++) {
         this.traverse(i, j, [], this.wordTrie.root)
@@ -169,7 +197,7 @@ class SquaredleService extends GameService {
     return true
   }
 
-  guess(word, socket) {
+  guess(word: string, socket: TSocket) {
     word = word.toUpperCase()
     if (this.revealed.has(word)) {
       // already found this word, maybe the user is behind?
@@ -177,9 +205,9 @@ class SquaredleService extends GameService {
       return
     }
     if (this.answers.has(word)) {
-      const letters = this.answers.get(word)
+      const letters = this.answers.get(word)!
       this.startingCount[letters[0][0]][letters[0][1]]--
-      for (let [x, y] of letters) {
+      for (const [x, y] of letters) {
         this.instanceCount[x][y]--
       }
       this.revealed.add(word)
@@ -195,14 +223,14 @@ class SquaredleService extends GameService {
     }
   }
 
-  requestBoard(_, socket) {
+  requestBoard(_: any, socket: TSocket) {
     if (this.gameStatus !== "menu") {
       socket.emit(this.boardEvent, this.getState())
     }
   }
 
   getState() {
-    const boardInfo = []
+    const boardInfo: BoardCell[][] = []
     for (let x = 0; x < this.size; x++) {
       boardInfo[x] = []
       for (let y = 0; y < this.size; y++) {

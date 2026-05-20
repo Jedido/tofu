@@ -203,8 +203,8 @@
 import socket from "@/mixins/socket.js"
 import breakpoints from "@/mixins/breakpoints.js"
 import TimerBar from "@/components/TimerBar.vue"
-import PlayerCard from "./PlayerCard.vue"
-import EndCard from "./EndCard.vue"
+import PlayerCard from "@/components/anagram/PlayerCard.vue"
+import EndCard from "@/components/anagram/EndCard.vue"
 
 export default {
   name: "AnagramGame",

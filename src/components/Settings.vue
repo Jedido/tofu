@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import IconButton from './IconButton.vue';
+import IconButton from '@/components/IconButton.vue';
 import Modal from '@/components/Modal.vue';
 
 export default {

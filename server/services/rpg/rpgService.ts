@@ -2,7 +2,7 @@ import { JsonSchema, RPGActionResult, RPGEnemyAction, RPGEntity, RPGInit, RPGAtt
 import { AIClient } from "../../clients/aiClient"
 import { TSocket } from "../../utils/tsocket"
 
-import GameService from "../gameService.js"
+import GameService from "../gameService.ts"
 
 interface RPGPlayer {
   socket: TSocket

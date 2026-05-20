@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import Panel from './Panel.vue';
+import Panel from '@/components/team/Panel.vue';
 
 export default {
   name: "DangerPanel",

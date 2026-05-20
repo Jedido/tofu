@@ -1,10 +1,11 @@
-import GameService from "./gameService.js"
+import { TSocket } from "../utils/tsocket.ts"
+import GameService from "./gameService.ts"
 import fs from "fs"
 
 const MS_TO_S = 1000
 const NEXT_WORD_DELAY = 400
 
-function shuffle(phrase) {
+function shuffle(phrase: string): string {
   let res = ""
   // split into words, for each word:
   phrase.split(" ").forEach((word) => {
@@ -20,25 +21,54 @@ function shuffle(phrase) {
   return res
 }
 
+interface AnagramPlayer {
+  ign: string
+  score: number
+  round: number
+  time: number
+  submissions: string[]
+  strikes: number
+}
+
+interface AnagramSettings {
+  gameMode: string
+  showAnswer: boolean
+  oneshot: boolean
+  strikes: number
+  ciphers: number
+  cipherTime: number | string
+  timerType: string
+  scoreLimit: number
+  timeLimit: number | string
+}
+
 class AnagramService extends GameService {
-  constructor(roomId) {
+  readonly startEvent: string
+  readonly resultEvent: string
+  readonly updatePlayerEvent: string
+  readonly endGameEvent: string
+  readonly cipherEvent: string
+
+  settings!: AnagramSettings
+  players!: Record<string, AnagramPlayer>
+  numPlayers: number
+  numAnswered: number
+  showingAnswer: boolean
+  wordList: string[]
+  ciphers: [string, string][]
+  wordTimerId: ReturnType<typeof setTimeout> | number
+  gameTimerId!: ReturnType<typeof setTimeout>
+
+  constructor(roomId: string) {
     super(roomId)
     // players: id to { ign, score, round, startTime, time, submissions, strikes }
-    this.initPlayers = () => {
-      return this.getPlayers().reduce((acc, cur) => {
-        acc[cur.id] = {
-          ign: cur.ign,
-          score: 0,
-          round: 0,
-          time: parseInt(this.settings.cipherTime),
-          submissions: [],
-          strikes: 0,
-        }
-        return acc
-      }, {})
-    }
     const file = fs.readFileSync("./server/assets/words.txt", "utf8")
     this.wordList = file.trim().split("\n")
+    this.numPlayers = 0
+    this.numAnswered = 0
+    this.showingAnswer = false
+    this.ciphers = []
+    this.wordTimerId = -1
 
     // TODO: update to get players on init (no need for getting state)
     // requests
@@ -53,15 +83,23 @@ class AnagramService extends GameService {
     this.updatePlayerEvent = "anagram-update-player" // update score on screen
     this.endGameEvent = "anagram-end" // end the game
     this.cipherEvent = "anagram-cipher" // send the next scrambled phrase
-
-    this.nextCipher = this.nextCipher.bind(this)
-    this.generateCipher = this.generateCipher.bind(this)
-    this.endGame = this.endGame.bind(this)
-    this.wordTimeout = this.wordTimeout.bind(this)
-    this.currentWord = this.currentWord.bind(this)
   }
 
-  init(settings) {
+  initPlayers(): Record<string, AnagramPlayer> {
+    return this.getPlayers().reduce((acc: Record<string, AnagramPlayer>, cur: TSocket) => {
+      acc[cur.id] = {
+        ign: cur.ign,
+        score: 0,
+        round: 0,
+        time: parseInt(this.settings.cipherTime as string),
+        submissions: [],
+        strikes: 0,
+      }
+      return acc
+    }, {})
+  }
+
+  init(settings: AnagramSettings) {
     /*
      * Game Mods (0 is infinite):
      * gameMode: string (coop) - coop (share score), sync (first to get it), rush (at your own pace)
@@ -89,7 +127,7 @@ class AnagramService extends GameService {
         ign: "co-op",
         score: 0,
         round: 0,
-        time: parseInt(settings.cipherTime),
+        time: parseInt(settings.cipherTime as string),
         submissions: [],
         strikes: 0,
       }
@@ -101,26 +139,26 @@ class AnagramService extends GameService {
     this.wordTimerId = -1
     // 3 second countdown
     this.gameTimerId = setTimeout(
-      this.endGame,
-      MS_TO_S * (parseInt(settings.timeLimit) + 3)
+      this.endGame.bind(this),
+      MS_TO_S * (parseInt(settings.timeLimit as string) + 3)
     )
     this.ciphers = []
     this.generateCipher()
     const newWord = this.ciphers[0]
     setTimeout(() => {
       this.wordTimerId = setTimeout(
-        this.wordTimeout,
-        settings.cipherTime * MS_TO_S
+        this.wordTimeout.bind(this),
+        (settings.cipherTime as number) * MS_TO_S
       )
       this.broadcastFn(
         this.cipherEvent,
         newWord[1],
-        settings.cipherTime * MS_TO_S
+        (settings.cipherTime as number) * MS_TO_S
       )
     }, 3000)
   }
 
-  submit(message, socket) {
+  submit(message: string, socket: TSocket) {
     if (!message || this.showingAnswer) {
       return
     }
@@ -184,14 +222,8 @@ class AnagramService extends GameService {
         }
       }
     } else {
-      if (message === this.currentWord) {
+      if (message === this.currentWord()) {
         socket.emit(this.resultEvent, true)
-        this.scores[socket.id]++
-        this.broadcastFn(
-          this.updateScoreEvent,
-          socket.id,
-          this.scores[socket.id]
-        )
         this.wordTimeout()
       } else {
         socket.emit(this.resultEvent, false)
@@ -200,17 +232,18 @@ class AnagramService extends GameService {
   }
 
   // probably pass in socket
-  nextCipher(ign) {
-    if (this.players.coop.round === parseInt(this.settings.ciphers)) {
+  nextCipher(ign?: string) {
+    if (this.players.coop.round === parseInt(this.settings.ciphers as unknown as string)) {
       this.endGame()
     }
-    let newWord
+    let newWord: [string, string]
     if (this.settings.timerType === "faster") {
       this.players.coop.time -= 0.5
       this.players.coop.time = Math.max(this.players.coop.time, 3)
     }
     if (
       this.settings.gameMode !== "coop" &&
+      ign &&
       this.players[ign].round < this.ciphers.length
     ) {
       newWord = this.ciphers[this.players[ign].round]
@@ -227,7 +260,7 @@ class AnagramService extends GameService {
           this.players.coop.time * MS_TO_S
         )
         this.wordTimerId = setTimeout(
-          this.wordTimeout,
+          this.wordTimeout.bind(this),
           this.players.coop.time * MS_TO_S
         )
       }, NEXT_WORD_DELAY)
@@ -238,13 +271,13 @@ class AnagramService extends GameService {
         this.players.coop.time * MS_TO_S
       )
       this.wordTimerId = setTimeout(
-        this.wordTimeout,
+        this.wordTimeout.bind(this),
         this.players.coop.time * MS_TO_S
       )
     }
   }
 
-  generateCipher() {
+  generateCipher(): [string, string] {
     const word =
       this.wordList[Math.floor(Math.random() * this.wordList.length)].trim()
     const cipher = shuffle(word)
@@ -252,17 +285,17 @@ class AnagramService extends GameService {
     return [word, cipher]
   }
 
-  currentWord(ign) {
+  currentWord(ign?: string): string {
     return this.settings.gameMode === "coop"
       ? this.ciphers[this.players.coop.round][0]
-      : this.ciphers[this.players[ign].round][0]
+      : this.ciphers[this.players[ign!].round][0]
   }
 
   endGame() {
     clearTimeout(this.gameTimerId)
     clearTimeout(this.wordTimerId)
     const results = Object.entries(this.players).reduce(
-      (res, [userId, data]) => {
+      (res: Record<string, { ign: string; score: number; submissions: string[] }>, [userId, data]) => {
         res[userId] = {
           ign: data.ign,
           score: data.score,
@@ -296,7 +329,7 @@ class AnagramService extends GameService {
     )
     if (this.settings.showAnswer) {
       this.broadcastFn(this.resultEvent, current, true)
-      setTimeout(this.nextCipher, NEXT_WORD_DELAY)
+      setTimeout(this.nextCipher.bind(this), NEXT_WORD_DELAY)
     } else {
       this.nextCipher()
     }

@@ -181,9 +181,9 @@
 import confetti from "canvas-confetti"
 
 import socket from "@/mixins/socket.js"
-import PanelType from "./PanelType.vue"
-import BombPanel from "./BombPanel.vue"
-import DynamiteStick from "./DynamiteStick.vue"
+import PanelType from "@/components/team/PanelType.vue"
+import BombPanel from "@/components/team/BombPanel.vue"
+import DynamiteStick from "@/components/team/DynamiteStick.vue"
 
 const handWidth = 256;
 

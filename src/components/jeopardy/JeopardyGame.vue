@@ -202,9 +202,9 @@
   
 <script>
 import { debounce } from "lodash"
-import socket from "../../mixins/socket.js"
-import JeopardyQuestion from "./JeopardyQuestion.vue"
-import JeopardyButton from "./JeopardyButton.vue"
+import socket from "@/mixins/socket.js"
+import JeopardyQuestion from "@/components/jeopardy/JeopardyQuestion.vue"
+import JeopardyButton from "@/components/jeopardy/JeopardyButton.vue"
 
 export default {
   name: "JeopardyGame",

@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import GameChoice from "./GameChoice.vue"
+import GameChoice from "@/components/GameChoice.vue"
 import socket from "@/mixins/socket";
 
 export default {

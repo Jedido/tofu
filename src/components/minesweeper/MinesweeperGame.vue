@@ -68,8 +68,8 @@
 </template>
 
 <script>
-import MinesweeperCell from "./MinesweeperCell.vue"
-import socket from "../../mixins/socket.js"
+import MinesweeperCell from "@/components/minesweeper/MinesweeperCell.vue"
+import socket from "@/mixins/socket.js"
 
 export default {
   name: "MinesweeperGame",

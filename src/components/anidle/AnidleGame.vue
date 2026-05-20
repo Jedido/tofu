@@ -137,11 +137,11 @@ import confetti from "canvas-confetti"
 
 import socket from "@/mixins/socket.js"
 import breakpoints from "@/mixins/breakpoints.js"
-import RangeHint from "./RangeHint.vue"
-import AudioClue from "./AudioClue.vue"
-import GuessCard from "./GuessCard.vue"
-import RedactedWord from "./RedactedWord.vue"
-import AutocompleteSuggestion from "./AutocompleteSuggestion.vue"
+import RangeHint from "@/components/anidle/RangeHint.vue"
+import AudioClue from "@/components/anidle/AudioClue.vue"
+import GuessCard from "@/components/anidle/GuessCard.vue"
+import RedactedWord from "@/components/anidle/RedactedWord.vue"
+import AutocompleteSuggestion from "@/components/anidle/AutocompleteSuggestion.vue"
 
 export default {
   name: "AnidleGame",

@@ -1,6 +1,6 @@
 export default {
   methods: {
-    getAsBoolean(index, uintarray) {
+    getAsBoolean(index: number, uintarray: number[]): boolean {
       const arr = new Uint32Array(uintarray)
       const chunkIndex = Math.floor(index / 32)
       const bitIndex = index % 32

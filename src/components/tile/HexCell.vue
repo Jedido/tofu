@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import Block from "./Block.vue"
+import Block from "@/components/tile/Block.vue"
 const tileType = ["floor", "extend-single", "extend-double", "extend-double-r", "extend-double-l", "wall", "paint"]
 
 export default {

@@ -1,24 +1,28 @@
 import { Server } from "socket.io"
 
-import ExampleService from "./services/exampleService.js"
-import AnagramService from "./services/anagramService.js"
-import MinesweeperService from "./services/minesweeperService.js"
-import GachaService from "./services/gachaService.js"
-import WatchService from "./services/watchService.js"
-import JeopardyService from "./services/jeopardyService.js"
-import SquaredleService from "./services/squaredleService.js"
+import ExampleService from "./services/exampleService.ts"
+import AnagramService from "./services/anagramService.ts"
+import MinesweeperService from "./services/minesweeperService.ts"
+import GachaService from "./services/gachaService.ts"
+import WatchService from "./services/watchService.ts"
+import JeopardyService from "./services/jeopardyService.ts"
+import SquaredleService from "./services/squaredleService.ts"
 import TeamService from "./services/team/teamService.ts"
-import SandboxService from "./services/sandboxService.js"
+import SandboxService from "./services/sandboxService.ts"
 import RPGService from "./services/rpg/rpgService.ts"
 import AnidleService from "./services/anidleService.ts"
 import TileService from "./services/tileService.ts"
 
 import { TSocket } from "./utils/tsocket.ts"
-import { randomItem } from "./utils/util.js"
+import { randomItem } from "./utils/util.ts"
 
-const users = new Map()
+import type GameService from "./services/gameService.ts"
 
-const games = [
+type GameServiceConstructor = new (roomId: string) => GameService
+
+const users = new Map<string, TSocket>()
+
+const games: Record<string, GameServiceConstructor> = [
   MinesweeperService,
   AnagramService,
   ExampleService,
@@ -31,12 +35,18 @@ const games = [
   RPGService,
   AnidleService,
   TileService,
-].reduce((acc, cur) => {
-  acc[cur.prototype.id] = cur
+].reduce((acc: Record<string, GameServiceConstructor>, cur) => {
+  acc[(cur as any).prototype.id] = cur
   return acc
 }, {})
-const gameRooms = {}
-let io
+
+interface GameRoom {
+  game: GameService
+  gameId: string
+}
+
+const gameRooms: Record<string, GameRoom> = {}
+let io: Server
 
 const wordList = [
   'alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot', 'golf', 'hotel', 'india', 'juliet',
@@ -45,29 +55,29 @@ const wordList = [
   'lion', 'bear', 'shark', 'wolf', 'elephant', 'giraffe', 'monkey', 'zebra', 'horse', 'cat'
 ]
 
-function initGameManager(server) {
+function initGameManager(server: any) {
   io = new Server(server)
   io.on("connection", (socket) => {
     const num = `${Math.floor(Math.random() * 100)}`.padStart(2, '0')
     const user = new TSocket(socket, `${randomItem(wordList)}-${randomItem(wordList)}-${num}`)
     users.set(socket.id, user)
-    socket.on("create-room", (gameId) => {
+    socket.on("create-room", (gameId: string) => {
       createRoom(gameId, user)
     })
-    socket.on("join-room", (roomId) => {
+    socket.on("join-room", (roomId: string) => {
       joinRoom(roomId.toUpperCase(), user)
     })
     socket.on("leave-room", () => {
       leaveRoom(user.roomId, user)
     })
-    socket.on("set-ign", (ign) => {
+    socket.on("set-ign", (ign: string) => {
       console.log(`${user.id} (${user.ign}) has changed their name to ${ign}`)
       const oldIgn = user.ign
       user.ign = ign
       socket.emit("set-user", user.details())
       broadcast(user.socket.roomId, "log", `${oldIgn} has changed their name to ${ign}`)
     })
-    socket.on("restore-user", ({ id, ign, iv }) => {
+    socket.on("restore-user", ({ id, ign, iv }: { id: string; ign: string; iv?: string }) => {
       try {
         user.ign = ign
         user.id = id
@@ -75,7 +85,7 @@ function initGameManager(server) {
         socket.emit("set-user", user.details())
       } catch (e) {
         console.log(`${user.ign} failed to execute restore-user: ${e}`)
-        console.log(e.stack)
+        console.log((e as Error).stack)
         socket.emit("set-user", user.details())
       }
     })
@@ -83,7 +93,7 @@ function initGameManager(server) {
       console.log(`New user ${user.id}`)
       socket.emit("set-user", user.details())
     })
-    socket.on("send-message", (msg) => {
+    socket.on("send-message", (msg: string) => {
       if (!hasRoom(user.roomId)) {
         console.log(`Unknown room ${user.roomId}`)
         return
@@ -91,7 +101,7 @@ function initGameManager(server) {
         broadcast(user.roomId, "log-message", { ign: user.ign, msg })
       }
     })
-    socket.on("action", async (type, data) => {
+    socket.on("action", async (type: string, data: any) => {
       try {
         if (!hasRoom(user.roomId)) {
           console.log(`Unknown room ${user.roomId}`)
@@ -128,7 +138,7 @@ function initGameManager(server) {
         }
       } catch (e) {
         console.log(`${user.ign} failed to execute ${type}: ${e}`)
-        console.log(e.stack)
+        console.log((e as Error).stack)
       }
     })
     socket.on("disconnect", () => {
@@ -139,7 +149,7 @@ function initGameManager(server) {
           removeGame(roomId)
         }
       }, 30000)
-      leaveRoom(roomId, socket)
+      leaveRoom(roomId, socket as any)
       users.delete(user.socket.id)
     })
   })
@@ -148,14 +158,14 @@ function initGameManager(server) {
 const roomIdLength = 5
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const charactersLength = characters.length
-function createRoom(gameId, socket) {
+function createRoom(gameId: string, socket: TSocket) {
   if (!gameId || !games[gameId]) {
     console.log(`${socket.id} failed to load game ${gameId}`)
     return
   }
-  let roomId
+  let roomId: string
   do {
-    const result = []
+    const result: string[] = []
     for (let i = 0; i < roomIdLength; i++) {
       result.push(
         characters.charAt(Math.floor(Math.random() * charactersLength))
@@ -168,7 +178,7 @@ function createRoom(gameId, socket) {
   console.log(`created room with id ${roomId} and game ${gameId}`)
   joinRoom(roomId, socket)
 }
-function joinRoom(roomId, socket) {
+function joinRoom(roomId: string, socket: TSocket) {
   if (!hasRoom(roomId)) {
     socket.emit("set-room", "")
     socket.emit("set-scene", "select")
@@ -182,7 +192,7 @@ function joinRoom(roomId, socket) {
   broadcast(roomId, "log", `${socket.ign} has joined the room.`)
   gameRooms[roomId].game.join(socket)
 }
-function leaveRoom(roomId, socket) {
+function leaveRoom(roomId: string, socket: TSocket) {
   if (!hasRoom(roomId)) {
     return
   }
@@ -193,10 +203,10 @@ function leaveRoom(roomId, socket) {
     gameRooms[roomId].game.leave(socket)
   }
 }
-function hasRoom(roomId) {
-  return roomId && gameRooms[roomId]
+function hasRoom(roomId: string): boolean {
+  return !!(roomId && gameRooms[roomId])
 }
-function removeGame(roomId) {
+function removeGame(roomId: string) {
   if (!hasRoom(roomId)) {
     return
   }
@@ -204,27 +214,29 @@ function removeGame(roomId) {
   try {
     const gameRoom = gameRooms[roomId].game
     if (gameRoom.actions && gameRoom.actions["shutdown"]) {
-      gameRoom.actions["shutdown"]()
+      gameRoom.actions["shutdown"](undefined, undefined as any)
     }
     delete gameRooms[roomId]
   } catch (e) {
-    console.log(e.stack)
+    console.log((e as Error).stack)
   }
 }
-function broadcast(roomId, type, ...params) {
+function broadcast(roomId: string, type: string, ...params: any[]) {
   if (!hasRoom(roomId)) {
     return
   }
   io.to(roomId).emit(type, ...params)
 }
-function players(roomId) {
+function players(roomId: string): TSocket[] {
   if (!hasRoom(roomId)) {
-    return
+    return []
   }
-  const res = []
-  io.sockets.adapter.rooms.get(roomId).forEach((id) => {
+  const res: TSocket[] = []
+  io.sockets.adapter.rooms.get(roomId)!.forEach((id) => {
     const socket = users.get(id)
-    res.push(socket)
+    if (socket) {
+      res.push(socket)
+    }
   })
   return res
 }

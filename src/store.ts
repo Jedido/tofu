@@ -1,6 +1,22 @@
-import { createStore } from "vuex"
+import { createStore, Store } from "vuex"
 
-export const store = createStore({
+declare module "@vue/runtime-core" {
+  interface ComponentCustomProperties {
+    $store: Store<State>
+  }
+}
+
+export interface State {
+  room: string
+  scene: string
+  id: string
+  ign: string
+  gameWidth: number
+  screenWidth: number
+  scale: number
+}
+
+export const store = createStore<State>({
   state() {
     return {
       room: "",
@@ -13,25 +29,25 @@ export const store = createStore({
     }
   },
   mutations: {
-    setRoom(state, room) {
+    setRoom(state, room: string) {
       state.room = room
     },
-    setScene(state, scene) {
+    setScene(state, scene: string) {
       state.scene = scene
     },
-    setIgn(state, ign) {
+    setIgn(state, ign: string) {
       state.ign = ign
     },
-    setId(state, id) {
+    setId(state, id: string) {
       state.id = id
     },
-    setGameWidth(state, width) {
+    setGameWidth(state, width: number) {
       state.gameWidth = Math.max(Math.min(width, 768), 300)
     },
-    setScreenWidth(state, width) {
+    setScreenWidth(state, width: number) {
       state.screenWidth = width
     },
-    changeScale(state, delta) {
+    changeScale(state, delta: number) {
       if (state.scale + delta > 0) {
         state.scale = Math.round((state.scale + delta) * 10) / 10
       }

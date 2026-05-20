@@ -93,14 +93,14 @@
 </template>
 
 <script>
-import socket from "../../mixins/socket.js"
-import HexGrid from "./HexGrid.vue"
-import TileOrder from "./TileOrder.vue"
-import Tool from "./Tool.vue"
-import MovementTools from "./MovementTools.vue"
-import AppendTools from "./AppendTools.vue"
-import PaintTools from "./PaintTools.vue"
-import SubmitTool from "./SubmitTool.vue"
+import socket from "@/mixins/socket.js"
+import HexGrid from "@/components/tile/HexGrid.vue"
+import TileOrder from "@/components/tile/TileOrder.vue"
+import Tool from "@/components/tile/Tool.vue"
+import MovementTools from "@/components/tile/MovementTools.vue"
+import AppendTools from "@/components/tile/AppendTools.vue"
+import PaintTools from "@/components/tile/PaintTools.vue"
+import SubmitTool from "@/components/tile/SubmitTool.vue"
 
 export default {
   name: "TileGame",

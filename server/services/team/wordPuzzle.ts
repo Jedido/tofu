@@ -2,7 +2,7 @@ import { Puzzle } from "./puzzle"
 import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, WordPuzzleSolution } from "./types"
 
 import fs from "fs"
-import { randomItem, shuffle, getRandomWeightedLetter, generateName } from "../../utils/util.js"
+import { randomItem, shuffle, getRandomWeightedLetter, generateName } from "../../utils/util.ts"
 
 interface WordPuzzlePI extends PanelInfo {
   words: string[],

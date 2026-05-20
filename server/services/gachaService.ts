@@ -1,13 +1,37 @@
-import GameService from "./gameService.js"
+import { TSocket } from "../utils/tsocket.ts"
+import GameService from "./gameService.ts"
 import fs from "fs"
 
 const RECRUIT_SIZE = 5
 const RATE_THRESHOLDS = [0.07, 0.21, 0.47, 1]
 const ALIGNMENT_TYPES = 4
 
+interface GachaUnit {
+  [key: string]: any
+}
+
+interface PlayerStats {
+  pity: number
+  results: string[]
+}
+
+interface PlayerSession {
+  [index: number]: number | GachaUnit
+}
+
 // Note: this could all be better implemented as REST POST/GET requests
 class GachaService extends GameService {
-  constructor(roomId) {
+  readonly startEvent: string
+  readonly recruitEvent: string
+  readonly summaryEvent: string
+  readonly statsEvent: string
+
+  sessions: Record<string, PlayerSession>
+  stats: Record<string, PlayerStats>
+  recruitPool: any
+  gachaData: Record<string, GachaUnit>
+
+  constructor(roomId: string) {
     super(roomId)
 
     // requests
@@ -33,12 +57,12 @@ class GachaService extends GameService {
     this.gachaData = JSON.parse(gachaFile.trim())
   }
 
-  startRecruit(_, socket) {
-    const cards = []
+  startRecruit(_: any, socket: TSocket) {
+    const cards: number[] = []
     for (let i = 0; i < RECRUIT_SIZE; i++) {
       cards.push(Math.floor(Math.random() * ALIGNMENT_TYPES))
     }
-    this.sessions[socket.id] = cards
+    this.sessions[socket.id] = cards as unknown as PlayerSession
     if (!(socket.id in this.stats)) {
       this.stats[socket.id] = {
         pity: 0,
@@ -48,7 +72,7 @@ class GachaService extends GameService {
     socket.emit(this.startEvent, cards)
   }
 
-  recruit(message, socket) {
+  recruit(message: { index: number }, socket: TSocket) {
     const { index } = message
     const session = this.sessions[socket.id]
     if (!session || index === null || index < 0 || index >= RECRUIT_SIZE) {
@@ -57,7 +81,7 @@ class GachaService extends GameService {
     }
     const alignment = session[index]
     // if not already recruited (if call was duplicated somehow)
-    if (typeof alignment !== Object) {
+    if (typeof alignment !== "object") {
       const stats = this.stats[socket.id]
 
       // rarity
@@ -86,7 +110,7 @@ class GachaService extends GameService {
     socket.emit(this.recruitEvent, index, session[index])
   }
 
-  endRecruit(message, socket) {
+  endRecruit(_: any, socket: TSocket) {
     const sessionResult = this.sessions[socket.id]
     if (!sessionResult) {
       return
@@ -95,7 +119,7 @@ class GachaService extends GameService {
     socket.emit(this.summaryEvent, sessionResult)
   }
 
-  getStats(message, socket) {
+  getStats(_: any, socket: TSocket) {
     const stats = this.stats[socket.id]
     if (!stats) {
       socket.emit(this.statsEvent, {
@@ -103,8 +127,8 @@ class GachaService extends GameService {
         pity: 0,
       })
     }
-    const history = []
-    for (const unitID in stats.history) {
+    const history: GachaUnit[] = []
+    for (const unitID in stats.results) {
       history.push(this.gachaData[unitID])
     }
     // sounds like this could get big...paginate or remodel

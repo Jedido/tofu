@@ -1,6 +1,6 @@
 import { Panel, PanelEnum, PuzzleEnum, Wire, WirePuzzleSolution } from "./types"
 
-import { colors, shuffle, randomItem } from "../../utils/util.js"
+import { colors, shuffle, randomItem } from "../../utils/util.ts"
 
 export class WirePuzzle {
   static wires: Wire[]

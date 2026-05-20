@@ -1,21 +1,21 @@
 import fs from "fs"
 
-function shuffle(array) {
+function shuffle<T>(array: T[]): void {
   let currentIndex = array.length
 
   // While there remain elements to shuffle...
   while (currentIndex != 0) {
     // Pick a remaining element...
-    let randomIndex = Math.floor(Math.random() * currentIndex)
+    const randomIndex = Math.floor(Math.random() * currentIndex)
     currentIndex--
 
     // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
+    ;[array[currentIndex], array[randomIndex]] = [
       array[randomIndex], array[currentIndex]]
   }
 }
 
-function randomItem(array) {
+function randomItem<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)]
 }
 
@@ -33,15 +33,15 @@ const symbols = [
 ]
 
 const letterFrequency = fs.readFileSync("./server/assets/letter_frequency.csv", "utf8")
-const letterSampler = []
+const letterSampler: [string, number][] = []
 let totalLetterFrequency = 0
 letterFrequency.trim().split("\n").forEach((line) => {
-  const [letter, frequecy] = line.split(",")
-  totalLetterFrequency += Number(frequecy)
+  const [letter, frequency] = line.split(",")
+  totalLetterFrequency += Number(frequency)
   letterSampler.push([letter, totalLetterFrequency])
 })
 
-function getRandomWeightedLetter() {
+function getRandomWeightedLetter(): string | undefined {
   const sample = Math.random() * totalLetterFrequency
   for (let i = 0; i < letterSampler.length; i++) {
     const [letter, cumulativeFrequency] = letterSampler[i]
@@ -65,7 +65,7 @@ const suffixes = [
   "ion", "ora", "ara", "ryn", "yna", "ine", "iel", "lin", "mar", "ven"
 ]
 
-function generateName() {
+function generateName(): string {
   const prefix = randomItem(prefixes)
   const root = randomItem(roots)
   const suffix = randomItem(suffixes)
@@ -73,7 +73,7 @@ function generateName() {
   return stylizeName(prefix + root + suffix)
 }
 
-function stylizeName(name) {
+function stylizeName(name: string): string {
   if (Math.random() > 0.3) {
     return name
   }

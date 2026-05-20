@@ -3,8 +3,8 @@ import { MALGetAnimeClient, MALSearchAnimeClient, Anime, FullAnime, MALGetCharac
 import { TSocket } from "../utils/tsocket"
 import { get, run } from "../databaseManager"
 
-import { randomItem } from "../utils/util.js"
-import GameService from "./gameService.js"
+import { randomItem } from "../utils/util.ts"
+import GameService from "./gameService.ts"
 
 interface Guess {
   mal_id: number,

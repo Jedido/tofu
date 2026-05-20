@@ -1,7 +1,7 @@
 import { Puzzle } from "./puzzle"
 import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, AlgebraPuzzleSolution } from "./types"
 
-import { randomItem } from "../../utils/util.js"
+import { randomItem } from "../../utils/util.ts"
 
 interface AlgebraPuzzlePI extends PanelInfo {
   n: number
