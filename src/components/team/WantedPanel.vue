@@ -1,16 +1,22 @@
 <template>
-  <Panel v-if="panel === 'k1'" :active="active" :panel-type="panel" @submit="$emit('submit')">
-    <template v-slot:title>
-      {{ state.name }} Suspects
-    </template>
-    <template v-slot:description>
+  <Panel
+    v-if="panel === 'k1'"
+    :active="active"
+    :panel-type="panel"
+    @submit="$emit('submit')"
+  >
+    <template #title> {{ state.name }} Suspects </template>
+    <template #description>
       Suspects wanted for case {{ state.name }}.
     </template>
-    <template v-slot:content>
+    <template #content>
       <div class="py-4">
         <div class="text-4xl font-serif text-center">Wanted!</div>
-        <div v-if="state.type === 'face'" class="flex justify-center gap-6 flex-wrap text-7xl text-amber-300 mt-8">
-          <div v-for="face in state.data">
+        <div
+          v-if="state.type === 'face'"
+          class="flex justify-center gap-6 flex-wrap text-7xl text-amber-300 mt-8"
+        >
+          <div v-for="(face, i) in state.data" :key="i">
             <i :class="[`bi-emoji-${face}`]"></i>
           </div>
         </div>
@@ -23,24 +29,28 @@
     :panel-type="panel"
     @submit="sendSolution"
   >
-    <template v-slot:title>
-      Case {{ state.name }} Suspects
-    </template>
-    <template v-slot:description>
+    <template #title> Case {{ state.name }} Suspects </template>
+    <template #description>
       Apprehend the wanted suspects for case {{ state.name }}.
     </template>
-    <template v-slot:content>
-      <div 
+    <template #content>
+      <div
         class="flex flex-wrap justify-center items-center h-full text-6xl gap-3 py-4 text-gray-300"
       >
-        <div 
-          v-for="(face, i) in state.faces" 
+        <div
+          v-for="(face, i) in state.faces"
+          :key="i"
           class="cursor-pointer"
           @pointerdown.stop="select(i)"
         >
-          <i :class="[`bi-emoji-${face} transition-colors`, {
-            'text-amber-300': selected[i]
-          }]"></i>
+          <i
+            :class="[
+              `bi-emoji-${face} transition-colors`,
+              {
+                'text-amber-300': selected[i],
+              },
+            ]"
+          ></i>
         </div>
       </div>
     </template>
@@ -48,24 +58,24 @@
 </template>
 
 <script>
-import Panel from '@/components/team/Panel.vue';
+import Panel from "@/components/team/Panel.vue"
 
 export default {
   name: "WantedPanel",
-  props: {
-    panel: String,
-    state: Object,
-    active: Boolean
-  },
   components: {
-    Panel
+    Panel,
+  },
+  props: {
+    panel: { type: String, required: true },
+    state: { type: Object, required: true },
+    active: Boolean,
   },
   emits: {
-    'submit': false
+    submit: false,
   },
   data() {
     return {
-      selected: Array(this.state.dice?.length || 0).fill(false)
+      selected: Array(this.state.dice?.length || 0).fill(false),
     }
   },
   methods: {
@@ -73,13 +83,12 @@ export default {
       this.selected[i] = !this.selected[i]
     },
     sendSolution() {
-      this.$emit('submit', {
-        selected: this.selected
+      this.$emit("submit", {
+        selected: this.selected,
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

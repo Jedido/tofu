@@ -1,10 +1,18 @@
 <template>
-  <div class="h-full w-full text-white flex items-center justify-between relative" @pointerdown="toggleSelection">
-    <div class="absolute tool w-full h-full top-1/2 -translate-y-1/2" :class="{
-      'opacity-40 w-4 scale-125': !toggle,
-      'grow scale-150': toggle
-    }">
-      <div class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-md">
+  <div
+    class="h-full w-full text-white flex items-center justify-between relative"
+    @pointerdown="toggleSelection"
+  >
+    <div
+      class="absolute tool w-full h-full top-1/2 -translate-y-1/2"
+      :class="{
+        'opacity-40 w-4 scale-125': !toggle,
+        'grow scale-150': toggle,
+      }"
+    >
+      <div
+        class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-md"
+      >
         <div
           v-for="direction in directions"
           :key="direction"
@@ -19,10 +27,12 @@
       class="absolute tool w-full text-4xl"
       :class="{
         'opacity-40 w-4': toggle,
-        'grow scale-125': !toggle
+        'grow scale-125': !toggle,
       }"
     >
-      <div class="absolute h-9 top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
+      <div
+        class="absolute h-9 top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2"
+      >
         <i v-if="rotation === '6'" class="bi-arrow-clockwise"></i>
         <i v-else class="bi-arrow-counterclockwise"></i>
       </div>
@@ -34,13 +44,22 @@
 export default {
   name: "MovementTools",
   props: {
-    tools: Array,
-    selected: Boolean
+    tools: { type: Array, required: true },
+    selected: Boolean,
   },
+  emits: ["update-control"],
   data() {
     return {
-      toggle: true
+      toggle: true,
     }
+  },
+  computed: {
+    directions() {
+      return this.tools.filter((tool) => tool < 6)
+    },
+    rotation() {
+      return this.tools.find((tool) => tool >= 6)
+    },
   },
   methods: {
     toggleSelection() {
@@ -52,22 +71,16 @@ export default {
       } else {
         this.$emit("update-control", { direction: parseInt(this.rotation) })
       }
-    }
-  },
-  computed: {
-    directions() {
-      return this.tools.filter(tool => tool < 6)
     },
-    rotation() {
-      return this.tools.find(tool => tool >= 6)
-    }
-  }
+  },
 }
 </script>
 
 <style scoped>
 .tool {
-  transition: transform 0.3s, opacity 0.3s;
+  transition:
+    transform 0.3s,
+    opacity 0.3s;
 }
 .arrow {
   line-height: 16px;

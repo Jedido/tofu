@@ -47,17 +47,56 @@ const gameRooms: Record<string, GameRoom> = {}
 let io: Server
 
 const wordList = [
-  'alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot', 'golf', 'hotel', 'india', 'juliet',
-  'kilo', 'lima', 'mike', 'november', 'oscar', 'papa', 'quebec', 'romeo', 'sierra', 'tango',
-  'uniform', 'victor', 'whiskey', 'xray', 'yankee', 'zulu', 'panda', 'dragon', 'eagle', 'tiger',
-  'lion', 'bear', 'shark', 'wolf', 'elephant', 'giraffe', 'monkey', 'zebra', 'horse', 'cat'
+  "alpha",
+  "bravo",
+  "charlie",
+  "delta",
+  "echo",
+  "foxtrot",
+  "golf",
+  "hotel",
+  "india",
+  "juliet",
+  "kilo",
+  "lima",
+  "mike",
+  "november",
+  "oscar",
+  "papa",
+  "quebec",
+  "romeo",
+  "sierra",
+  "tango",
+  "uniform",
+  "victor",
+  "whiskey",
+  "xray",
+  "yankee",
+  "zulu",
+  "panda",
+  "dragon",
+  "eagle",
+  "tiger",
+  "lion",
+  "bear",
+  "shark",
+  "wolf",
+  "elephant",
+  "giraffe",
+  "monkey",
+  "zebra",
+  "horse",
+  "cat",
 ]
 
 function initGameManager(server: any) {
   io = new Server(server)
   io.on("connection", (socket) => {
-    const num = `${Math.floor(Math.random() * 100)}`.padStart(2, '0')
-    const user = new TSocket(socket, `${randomItem(wordList)}-${randomItem(wordList)}-${num}`)
+    const num = `${Math.floor(Math.random() * 100)}`.padStart(2, "0")
+    const user = new TSocket(
+      socket,
+      `${randomItem(wordList)}-${randomItem(wordList)}-${num}`
+    )
     users.set(socket.id, user)
     socket.on("create-room", (gameId: string) => {
       createRoom(gameId, user)
@@ -73,20 +112,27 @@ function initGameManager(server: any) {
       const oldIgn = user.ign
       user.ign = ign
       socket.emit("set-user", user.details())
-      broadcast(user.roomId, "log", `${oldIgn} has changed their name to ${ign}`)
+      broadcast(
+        user.roomId,
+        "log",
+        `${oldIgn} has changed their name to ${ign}`
+      )
     })
-    socket.on("restore-user", ({ id, ign, iv }: { id: string; ign: string; iv?: string }) => {
-      try {
-        user.ign = ign
-        user.id = id
-        // user.id = decrypt(id, iv)
-        socket.emit("set-user", user.details())
-      } catch (e) {
-        console.log(`${user.ign} failed to execute restore-user: ${e}`)
-        console.log((e as Error).stack)
-        socket.emit("set-user", user.details())
+    socket.on(
+      "restore-user",
+      ({ id, ign, iv }: { id: string; ign: string; iv?: string }) => {
+        try {
+          user.ign = ign
+          user.id = id
+          // user.id = decrypt(id, iv)
+          socket.emit("set-user", user.details())
+        } catch (e) {
+          console.log(`${user.ign} failed to execute restore-user: ${e}`)
+          console.log((e as Error).stack)
+          socket.emit("set-user", user.details())
+        }
       }
-    })
+    )
     socket.on("create-user", () => {
       console.log(`New user ${user.id}`)
       socket.emit("set-user", user.details())
@@ -117,7 +163,7 @@ function initGameManager(server: any) {
             game: gameRooms[user.roomId].gameId,
             room: user.roomId,
             data,
-            error: "Unknown event"
+            error: "Unknown event",
           })
         } else {
           // logging
@@ -130,7 +176,7 @@ function initGameManager(server: any) {
             },
             game: gameRooms[user.roomId].gameId,
             room: user.roomId,
-            data
+            data,
           })
           await actionFn(data, user)
         }
@@ -239,8 +285,4 @@ function players(roomId: string): TSocket[] {
   return res
 }
 
-export {
-  initGameManager,
-  broadcast,
-  players,
-}
+export { initGameManager, broadcast, players }

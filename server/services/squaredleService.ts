@@ -44,10 +44,13 @@ class SquaredleService extends GameService {
     this.bonusWordEvent = "squaredle-bonus-word"
     this.guessResponseEvent = "squaredle-guess-response"
 
-    const wordList = fs.readFileSync("./server/assets/squaredle_words.txt", "utf8")
+    const wordList = fs.readFileSync(
+      "./server/assets/squaredle_words.txt",
+      "utf8"
+    )
     this.words = wordList.trim().split("\n")
     this.wordTrie = new Trie()
-    this.words.forEach(word => {
+    this.words.forEach((word) => {
       this.wordTrie.insert(word)
     })
     const dictionary = fs.readFileSync("./server/assets/zyzzyva.txt", "utf8")
@@ -69,8 +72,10 @@ class SquaredleService extends GameService {
       return
     }
     this.size = size
-    const minLargest = Math.min(size * size / 2, 10)
-    const startingWords = this.words.filter((word) => word.length > minLargest && word.length < size * size)
+    const minLargest = Math.min((size * size) / 2, 10)
+    const startingWords = this.words.filter(
+      (word) => word.length > minLargest && word.length < size * size
+    )
 
     this.revealed = new Set()
     this.bonusWords = new Set()
@@ -88,7 +93,8 @@ class SquaredleService extends GameService {
           this.startingCount[i][j] = 0
         }
       }
-      const startingWord = startingWords[Math.floor(Math.random() * startingWords.length)]
+      const startingWord =
+        startingWords[Math.floor(Math.random() * startingWords.length)]
       const ox = Math.floor(Math.random() * size)
       const oy = Math.floor(Math.random() * size)
       const path = this.findPath(ox, oy, startingWord.length, [])
@@ -105,7 +111,10 @@ class SquaredleService extends GameService {
           }
         }
       }
-    } while (!this.solve() || Array.from(this.answers.keys()).length > size * size * size);
+    } while (
+      !this.solve() ||
+      Array.from(this.answers.keys()).length > size * size * size
+    )
     const answer = Array.from(this.answers.keys())
     answer.sort()
     console.log(JSON.stringify(answer))
@@ -114,7 +123,18 @@ class SquaredleService extends GameService {
   }
 
   getAdjacents([ox, oy]: [number, number]): [number, number][] {
-    return ([[1, 1], [0, 1], [-1, 1], [1, 0], [-1, 0], [1, -1], [0, -1], [-1, -1]] as [number, number][]).filter(([nx, ny]) => {
+    return (
+      [
+        [1, 1],
+        [0, 1],
+        [-1, 1],
+        [1, 0],
+        [-1, 0],
+        [1, -1],
+        [0, -1],
+        [-1, -1],
+      ] as [number, number][]
+    ).filter(([nx, ny]) => {
       const x = ox + nx
       const y = oy + ny
       return x >= 0 && x < this.size && y >= 0 && y < this.size
@@ -130,7 +150,12 @@ class SquaredleService extends GameService {
     }
   }
 
-  findPath(x: number, y: number, k: number, path: [number, number][]): [number, number][] {
+  findPath(
+    x: number,
+    y: number,
+    k: number,
+    path: [number, number][]
+  ): [number, number][] {
     if (path.length === k) {
       return path
     }
@@ -172,7 +197,10 @@ class SquaredleService extends GameService {
       const nx = x + dx
       const ny = y + dy
       const char = this.board[nx][ny]
-      if (path.find(([i, j]) => i === nx && j === ny) || !trieNode.children[char]) {
+      if (
+        path.find(([i, j]) => i === nx && j === ny) ||
+        !trieNode.children[char]
+      ) {
         continue
       }
       path.push([nx, ny])
@@ -237,14 +265,14 @@ class SquaredleService extends GameService {
         boardInfo[x][y] = {
           letter: this.board[x][y],
           instances: this.instanceCount[x][y],
-          starts: this.startingCount[x][y]
+          starts: this.startingCount[x][y],
         }
       }
     }
     return {
       board: boardInfo,
       foundWords: Array.from(this.revealed),
-      allWords: Object.fromEntries(this.answers)
+      allWords: Object.fromEntries(this.answers),
     }
   }
 }

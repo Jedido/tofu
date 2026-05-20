@@ -1,11 +1,18 @@
 import { Puzzle } from "./puzzle"
-import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, PatternPuzzleSolution } from "./types"
+import {
+  Panel,
+  PanelInfo,
+  PanelEnum,
+  PuzzleEnum,
+  Id,
+  PatternPuzzleSolution,
+} from "./types"
 
 import { colors, symbols, randomItem } from "../../utils/util.ts"
 
 interface PatternPI extends PanelInfo {
-  color: string,
-  symbol: string,
+  color: string
+  symbol: string
   board: boolean[][]
 }
 
@@ -28,52 +35,60 @@ export class PatternPuzzle extends Puzzle {
       color = randomItem(colors)
       symbol = randomItem(symbols)
       combo = `${color}-${symbol}`
-    } while (PatternPuzzle.combos.has(combo));
+    } while (PatternPuzzle.combos.has(combo))
     PatternPuzzle.combos.add(combo)
     const filled = Math.floor(Math.random() * 3) + 4
     this.puzzleBoard = {
       color,
       symbol,
-      board: PatternPuzzle.makeBoard(filled, true)
+      board: PatternPuzzle.makeBoard(filled, true),
     }
     this.keyBoard = {
       color,
       symbol,
-      board: PatternPuzzle.makeBoard(filled, false)
+      board: PatternPuzzle.makeBoard(filled, false),
     }
   }
 
   override panels(): Panel[] {
-    return [{
-      id: this.id,
-      puzzle: PuzzleEnum.Pattern,
-      panel: PanelEnum.Puzzle,
-      state: this.puzzleBoard
-    }, {
-      id: this.id,
-      puzzle: PuzzleEnum.Pattern,
-      panel: PanelEnum.Key1,
-      state: this.keyBoard
-    }]
+    return [
+      {
+        id: this.id,
+        puzzle: PuzzleEnum.Pattern,
+        panel: PanelEnum.Puzzle,
+        state: this.puzzleBoard,
+      },
+      {
+        id: this.id,
+        puzzle: PuzzleEnum.Pattern,
+        panel: PanelEnum.Key1,
+        state: this.keyBoard,
+      },
+    ]
   }
 
   static makeBoard(num: number, skip: boolean): boolean[][] {
     const length = 3
     let remaining = length * length
     if (skip) {
-      remaining--;
-    }
-    return Array.from({ length }, () => Array.from({ length }, () => {
-      const result = remaining > 0 && Math.random() < num / remaining
       remaining--
-      if (result) {
-        num--
-      }
-      return result
-    }))
+    }
+    return Array.from({ length }, () =>
+      Array.from({ length }, () => {
+        const result = remaining > 0 && Math.random() < num / remaining
+        remaining--
+        if (result) {
+          num--
+        }
+        return result
+      })
+    )
   }
 
-  static solve({ board }: PatternPuzzleSolution, puzzleParts: Map<PanelEnum, PanelInfo>): boolean {
+  static solve(
+    { board }: PatternPuzzleSolution,
+    puzzleParts: Map<PanelEnum, PanelInfo>
+  ): boolean {
     const key = puzzleParts.get(PanelEnum.Key1)! as PatternPI
     for (let i = 0; i < board.length; i++) {
       const row = board[i]

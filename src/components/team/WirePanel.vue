@@ -1,9 +1,7 @@
 <template>
   <Panel :active="active" :panel-type="panel">
-    <template v-slot:title>
-      Bomb Disposal Guide
-    </template>
-    <template v-slot:description>
+    <template #title> Bomb Disposal Guide </template>
+    <template #description>
       <div class="h-20 flex flex-col justify-between">
         <div>
           Step {{ state.order + 1 }}: Cut the {{ wireDescription }} wire.
@@ -13,31 +11,45 @@
         </div>
       </div>
     </template>
-    <template v-slot:content>
+    <template #content>
       <div class="grid grid-cols-5 text-center mt-4">
         <div class="col-span-5 p-2 text-2xl mb-6 flex justify-center gap-2">
-          <i v-for="_ in state.order" class="bi-question text-gray-400"></i>
+          <i
+            v-for="(_, i) in state.order"
+            :key="i"
+            class="bi-question text-gray-400"
+          ></i>
           <i class="bi-scissors text-gray-800"></i>
-          <i v-for="_ in state.quota - state.order - 1" class="bi-question text-gray-400"></i>
+          <i
+            v-for="(_, i) in state.quota - state.order - 1"
+            :key="i"
+            class="bi-question text-gray-400"
+          ></i>
         </div>
         <template v-if="state.wire.stripe">
-          <div class="h-12 rounded col-start-2 border border-2 border-gray-600" :style="`background-color: ${state.wire.color};`">
-          </div>
+          <div
+            class="h-12 rounded col-start-2 border border-2 border-gray-600"
+            :style="`background-color: ${state.wire.color};`"
+          ></div>
           <div class="col-start-2 row-start-3 no-width">
             {{ state.wire.color }}
           </div>
           <div class="my-2">
             <i class="bi-plus text-gray-600 text-2xl"></i>
           </div>
-          <div class="h-12 rounded border border-2 border-gray-600" :style="`background-color: ${state.wire.stripe};`">
-          </div>
+          <div
+            class="h-12 rounded border border-2 border-gray-600"
+            :style="`background-color: ${state.wire.stripe};`"
+          ></div>
           <div class="col-start-4 row-start-3 no-width">
             {{ state.wire.stripe }}
           </div>
         </template>
         <template v-else>
-          <div class="h-16 w-16 mx-auto rounded col-start-2 col-span-3 border border-2 border-gray-600" :style="`background-color: ${state.wire.color};`">
-          </div>
+          <div
+            class="h-16 w-16 mx-auto rounded col-start-2 col-span-3 border border-2 border-gray-600"
+            :style="`background-color: ${state.wire.color};`"
+          ></div>
           <div class="col-start-3 row-start-3 no-width">
             {{ state.wire.color }}
           </div>
@@ -48,17 +60,17 @@
 </template>
 
 <script>
-import Panel from '@/components/team/Panel.vue';
+import Panel from "@/components/team/Panel.vue"
 
 export default {
   name: "DangerPanel",
-  props: {
-    panel: String,
-    state: Object,
-    active: Boolean
-  },
   components: {
-    Panel
+    Panel,
+  },
+  props: {
+    panel: { type: String, required: true },
+    state: { type: Object, required: true },
+    active: Boolean,
   },
   computed: {
     wireDescription() {
@@ -67,8 +79,8 @@ export default {
         description += `-${this.state.wire.stripe}`
       }
       return description
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -1,5 +1,12 @@
 import { Puzzle } from "./puzzle"
-import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, WantedPuzzleSolution } from "./types"
+import {
+  Panel,
+  PanelInfo,
+  PanelEnum,
+  PuzzleEnum,
+  Id,
+  WantedPuzzleSolution,
+} from "./types"
 
 import { randomItem, shuffle } from "../../utils/util.ts"
 
@@ -31,7 +38,7 @@ export class WantedPuzzle extends Puzzle {
     "sunglasses",
     "surprise",
     "tear",
-    "wink"
+    "wink",
   ]
   static names: Set<string>
   puzzle: WantedPuzzlePI
@@ -45,13 +52,13 @@ export class WantedPuzzle extends Puzzle {
     super(id)
 
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    let name = ""
+    let name
     do {
       const num = Math.floor(Math.random() * 90) + 10
       name = `${letters.charAt(Math.floor(Math.random() * 26))}-${num}`
-    } while (WantedPuzzle.names.has(name));
+    } while (WantedPuzzle.names.has(name))
 
-    const allFaces: string[] = this.faces.flatMap(f => [f, `${f}-fill`])
+    const allFaces: string[] = this.faces.flatMap((f) => [f, `${f}-fill`])
     shuffle(allFaces)
     const faces = allFaces.slice(0, 9)
     const wanted = new Set<string>()
@@ -60,38 +67,46 @@ export class WantedPuzzle extends Puzzle {
     }
     this.puzzle = {
       name,
-      faces
+      faces,
     }
     this.key = {
       name,
       type: "face",
-      data: Array.from(wanted)
+      data: Array.from(wanted),
     }
   }
 
   override panels(): Panel[] {
-    return [{
-      id: this.id,
-      puzzle: PuzzleEnum.Wanted,
-      panel: PanelEnum.Puzzle,
-      state: this.puzzle
-    }, {
-      id: this.id,
-      puzzle: PuzzleEnum.Wanted,
-      panel: PanelEnum.Key1,
-      state: this.key
-    }]
+    return [
+      {
+        id: this.id,
+        puzzle: PuzzleEnum.Wanted,
+        panel: PanelEnum.Puzzle,
+        state: this.puzzle,
+      },
+      {
+        id: this.id,
+        puzzle: PuzzleEnum.Wanted,
+        panel: PanelEnum.Key1,
+        state: this.key,
+      },
+    ]
   }
 
-  static solve({ selected }: WantedPuzzleSolution, puzzleParts: Map<PanelEnum, PanelInfo>): boolean {
+  static solve(
+    { selected }: WantedPuzzleSolution,
+    puzzleParts: Map<PanelEnum, PanelInfo>
+  ): boolean {
     const puzzle = puzzleParts.get(PanelEnum.Puzzle)! as WantedPuzzlePI
     const key = puzzleParts.get(PanelEnum.Key1)! as WantedKeyPI
-    const faces: string[] = selected.map((s, i) => {
-      if (s) {
-        return puzzle.faces[i]
-      }
-      return ""
-    }).filter(x => x)
+    const faces: string[] = selected
+      .map((s, i) => {
+        if (s) {
+          return puzzle.faces[i]
+        }
+        return ""
+      })
+      .filter((x) => x)
     switch (key.type) {
       case "face": {
         if (faces.length !== key.data.length) {
@@ -104,7 +119,8 @@ export class WantedPuzzle extends Puzzle {
         }
         return true
       }
-      default: return false
+      default:
+        return false
     }
   }
 }

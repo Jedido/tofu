@@ -86,17 +86,20 @@ class AnagramService extends GameService {
   }
 
   initPlayers(): Record<string, AnagramPlayer> {
-    return this.getPlayers().reduce((acc: Record<string, AnagramPlayer>, cur: TSocket) => {
-      acc[cur.id] = {
-        ign: cur.ign,
-        score: 0,
-        round: 0,
-        time: parseInt(this.settings.cipherTime as string),
-        submissions: [],
-        strikes: 0,
-      }
-      return acc
-    }, {})
+    return this.getPlayers().reduce(
+      (acc: Record<string, AnagramPlayer>, cur: TSocket) => {
+        acc[cur.id] = {
+          ign: cur.ign,
+          score: 0,
+          round: 0,
+          time: parseInt(this.settings.cipherTime as string),
+          submissions: [],
+          strikes: 0,
+        }
+        return acc
+      },
+      {}
+    )
   }
 
   init(settings: AnagramSettings) {
@@ -116,7 +119,7 @@ class AnagramService extends GameService {
     this.settings = settings
 
     this.players = this.initPlayers()
-    const players = Object.keys(this.players).map(id => {
+    const players = Object.keys(this.players).map((id) => {
       return { id, ign: this.players[id].ign }
     })
     this.numPlayers = players.length
@@ -233,7 +236,10 @@ class AnagramService extends GameService {
 
   // probably pass in socket
   nextCipher(ign?: string) {
-    if (this.players.coop.round === parseInt(this.settings.ciphers as unknown as string)) {
+    if (
+      this.players.coop.round ===
+      parseInt(this.settings.ciphers as unknown as string)
+    ) {
       this.endGame()
     }
     let newWord: [string, string]
@@ -295,7 +301,13 @@ class AnagramService extends GameService {
     clearTimeout(this.gameTimerId)
     clearTimeout(this.wordTimerId)
     const results = Object.entries(this.players).reduce(
-      (res: Record<string, { ign: string; score: number; submissions: string[] }>, [userId, data]) => {
+      (
+        res: Record<
+          string,
+          { ign: string; score: number; submissions: string[] }
+        >,
+        [userId, data]
+      ) => {
         res[userId] = {
           ign: data.ign,
           score: data.score,

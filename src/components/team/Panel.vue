@@ -3,22 +3,22 @@
     ref="card"
     class="relative text-gray-50 min-w-64 card"
     :class="{
-      'hover': hover && !active,
-      'drag': dragging,
-      'selectable': cardY < 120
+      hover: hover && !active,
+      drag: dragging,
+      selectable: cardY < 120,
     }"
     :style="`top:${cardY}px;`"
   >
     <div
       ref="panel"
-      class="submit-wrapper relative z-10 px-2 rounded flex flex-col justify-between w-64 h-96" 
+      class="submit-wrapper relative z-10 px-2 rounded flex flex-col justify-between w-64 h-96"
       :class="{
         'bg-cyan-800': panelType === 'p',
         'bg-gray-500': panelType === 'd',
         'bg-gray-800': panelType === 'k1' || panelType === 'k2',
         'bg-emerald-700': panelType === 'w',
-        'send': !dragging,
-        'opacity-0 pointer-events-none': status !== 'pending'
+        send: !dragging,
+        'opacity-0 pointer-events-none': status !== 'pending',
       }"
       @pointerdown.stop="start"
       @contextmenu.prevent=""
@@ -29,18 +29,18 @@
       <div
         class="bg-white h-60 w-60 relative rounded-lg mx-auto text-gray-800 overflow-hidden"
         :class="{
-          'pointer-events-none': !active
+          'pointer-events-none': !active,
         }"
       >
         <slot name="content"></slot>
       </div>
-      <div 
+      <div
         class="rounded h-24 relative mx-1 my-2"
         :class="{
           'bg-cyan-700': panelType === 'p',
           'bg-gray-400': panelType === 'd',
           'bg-gray-700': panelType === 'k1' || panelType === 'k2',
-          'bg-emerald-600': panelType === 'w'
+          'bg-emerald-600': panelType === 'w',
         }"
       >
         <div class="text-sm px-2 py-1 text-gray-50 leading-tight">
@@ -53,14 +53,20 @@
       :class="{
         'bg-cyan-400': status === 'pending',
         'bg-emerald-500': status === 'success',
-        'bg-error': status === 'failure'
+        'bg-error': status === 'failure',
       }"
       @pointerdown.stop="dismiss"
     >
-      <div ref="send" class="absolute send-icon left-0 right-0" v-show="dragging">
+      <div
+        v-show="dragging"
+        ref="send"
+        class="absolute send-icon left-0 right-0"
+      >
         <i class="bi-chevron-double-up"></i>
       </div>
-      <span class="absolute bottom-1/2 left-0 right-0 translate-y-2/4 large-icon">
+      <span
+        class="absolute bottom-1/2 left-0 right-0 translate-y-2/4 large-icon"
+      >
         <i v-if="sending && status === 'pending'" class="bi-three-dots"></i>
         <i v-else-if="status === 'failure'" class="bi-x-circle-fill"></i>
         <i v-else-if="status === 'success'" class="bi-check-circle-fill"></i>
@@ -70,23 +76,23 @@
 </template>
 
 <script>
-
 const DEFAULT_CARD_Y = 308
 export default {
   name: "Panel",
   props: {
-    socket: Object,
+    socket: { type: Object, required: true },
     active: Boolean,
-    panelType: String,
+    panelType: { type: String, required: true },
     hover: {
       type: Boolean,
-      default: false
+      default: false,
     },
     status: {
       type: String,
-      default: 'pending'
-    }
+      default: "pending",
+    },
   },
+  emits: ["select", "submit", "dismiss", "reset"],
   data() {
     return {
       dragging: false,
@@ -97,7 +103,7 @@ export default {
       cardY: DEFAULT_CARD_Y,
       startTime: 0,
       sending: false,
-      canSelect: false
+      canSelect: false,
     }
   },
   methods: {
@@ -105,7 +111,10 @@ export default {
       return e.touches ? e.touches[0] : e
     },
     start(e) {
-      if (this.sending || (this.active && (this.panelType === 'd' || this.panelType === 'k1'))) {
+      if (
+        this.sending ||
+        (this.active && (this.panelType === "d" || this.panelType === "k1"))
+      ) {
         return
       }
       const element = this.getElement(e)
@@ -114,7 +123,7 @@ export default {
       if (this.active) {
         this.startY = element.clientY
       } else {
-        const originalY = (parseInt(this.$refs.card.style.top) || 0)
+        const originalY = parseInt(this.$refs.card.style.top) || 0
         this.startY = element.clientY - originalY
         this.startX = element.clientX
         this.cardY = originalY
@@ -129,10 +138,13 @@ export default {
       if (!this.active) {
         this.$refs.card.style.left = -this.currentOffsetX + "px"
         this.cardY = -this.currentOffsetY
-        this.$refs.card.style.scale = Math.min(Math.max(1.05 - this.cardY / 100 * 0.2, 0.5), 1)
+        this.$refs.card.style.scale = Math.min(
+          Math.max(1.05 - (this.cardY / 100) * 0.2, 0.5),
+          1
+        )
       } else {
         if (this.currentOffsetY > 300) {
-        this.currentOffsetY = 300
+          this.currentOffsetY = 300
         }
         if (this.currentOffsetY < 0) {
           this.currentOffsetY = 0
@@ -158,10 +170,10 @@ export default {
         if (this.cardY < 120) {
           this.$refs.card.style.scale = null
           this.cardY = 30
-          this.$emit('select')
+          this.$emit("select")
         } else {
           this.$refs.card.style.scale = 0.5
-          this.$refs.card.style.left = '0px'
+          this.$refs.card.style.left = "0px"
         }
         this.cardY = DEFAULT_CARD_Y
       }
@@ -169,34 +181,37 @@ export default {
     submit() {
       if (!this.active) {
         this.$refs.card.style.scale = null
-        this.$emit('select')
+        this.$emit("select")
         return
       }
-      if (this.panelType === 'd') {
+      if (this.panelType === "d") {
         return
       }
       this.sending = true
-      this.$refs.panel.style.top = "-420px";
-      this.$emit('submit')
+      this.$refs.panel.style.top = "-420px"
+      this.$emit("submit")
     },
     dismiss() {
-      if (this.status === 'success') {
-        this.$emit('dismiss')
-      } else if (this.status === 'failure') {
-        this.$emit('reset')
+      if (this.status === "success") {
+        this.$emit("dismiss")
+      } else if (this.status === "failure") {
+        this.$emit("reset")
         this.sending = false
         this.currentOffsetY = 0
         this.$refs.panel.style.top = null
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style scoped>
 .card {
   scale: 0.5;
-  transition: transform 0.1s ease, scale 0.1s ease-out, top 0.3s ease-out;
+  transition:
+    transform 0.1s ease,
+    scale 0.1s ease-out,
+    top 0.3s ease-out;
   overflow-y: hidden;
   box-shadow: 0;
 }
@@ -205,7 +220,9 @@ export default {
   transform: translateY(-10px);
 }
 .drag {
-  transition: scale 0.1s, box-shadow 0.7s linear;
+  transition:
+    scale 0.1s,
+    box-shadow 0.7s linear;
   z-index: 39;
   transform: none;
 }
@@ -222,7 +239,7 @@ export default {
   animation: 1s glow alternate infinite;
 }
 .send {
-  transition: top 0.5s ease-out; 
+  transition: top 0.5s ease-out;
 }
 .submit-wrapper {
   touch-action: none;

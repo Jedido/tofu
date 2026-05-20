@@ -3,12 +3,13 @@
 ## Project setup (Windows)
 1. install Node.js
 2. If using the Youtube API, add YOUTUBE_API_KEY in your .env.local
-3. If using AI, install ollama
-4. run `npm install`
+3. run `npm install`
 
 ### Compiles and hot-reloads for development
+In two different terminals:
 ```
-npm run serve
+npm run dev:client
+npm run dev:server
 ```
 
 ### Builds and deploys production
@@ -16,18 +17,11 @@ npm run serve
 npm run prod
 ```
 
-### Starts dev server
-```
-npm run dev
-```
-
 ### Lints files
 ```
 npm run lint
 ```
-
-### Setup and Run ollama
+Auto-fix errors:
 ```
-ollama pull llama3.2
-ollama serve
+npm run lint:fix
 ```

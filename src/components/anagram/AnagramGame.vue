@@ -12,7 +12,7 @@
       <p class="font-semibold text-lg">Settings</p>
       <form
         class="grid gap-2 select-none"
-        :class="[this.md ? 'grid-cols-6' : 'grid-cols-3']"
+        :class="[md ? 'grid-cols-6' : 'grid-cols-3']"
       >
         <p class="col-span-2 ml-auto">Game Mode</p>
         <select v-model="settings.gameMode" class="border bg-amber-50">
@@ -33,25 +33,25 @@
         </select>
         <p class="col-span-3">{{ timerTypeDescription }}</p>
         <input
+          id="showAnswer"
           v-model="settings.showAnswer"
           type="checkbox"
-          id="showAnswer"
           class="col-span-3 ml-auto h-full"
         />
         <label class="col-span-3" for="showAnswer"
           >Reveal answer when it is guessed</label
         >
         <input
+          id="oneshot"
           v-model="settings.oneshot"
           type="checkbox"
-          id="oneshot"
           class="col-span-3 ml-auto h-full"
         />
         <label class="col-span-3" for="oneshot">One guess per cipher</label>
         <input
+          id="strikes"
           v-model="settings.strikes"
           type="range"
-          id="strikes"
           min="0"
           max="11"
           class="slider col-span-2 col-start-2"
@@ -63,9 +63,9 @@
           strikes</label
         >
         <input
+          id="cipherTime"
           v-model="settings.cipherTime"
           type="range"
-          id="cipherTime"
           min="3"
           max="31"
           class="slider col-span-2 col-start-2"
@@ -76,9 +76,9 @@
           seconds</label
         >
         <input
+          id="ciphers"
           v-model="settings.ciphers"
           type="range"
-          id="ciphers"
           min="0"
           max="110"
           class="slider col-span-2 col-start-2"
@@ -91,11 +91,13 @@
           }}</label
         >
 
-        <p class="mt-3" :class="[this.md ? 'col-span-6' : 'col-span-3']">Win Condition</p>
+        <p class="mt-3" :class="[md ? 'col-span-6' : 'col-span-3']">
+          Win Condition
+        </p>
         <input
+          id="score"
           v-model="settings.scoreLimit"
           type="range"
-          id="score"
           min="3"
           max="100"
           class="slider col-span-2 col-start-2"
@@ -104,9 +106,9 @@
           >Score: {{ settings.scoreLimit }} correct</label
         >
         <input
+          id="timeLimit"
           v-model="settings.timeLimit"
           type="range"
-          id="timeLimit"
           min="10"
           max="300"
           step="10"
@@ -116,17 +118,8 @@
           >Time Limit: {{ settings.timeLimit }} seconds</label
         >
         <button
-          class="
-            mt-4
-            py-4
-            focus:outline-none
-            text-amber-50
-            bg-emerald-600
-            hover:bg-emerald-500
-            active:bg-emerald-800
-            rounded
-          "
-           :class="[this.md ? 'col-span-6' : 'col-span-3']"
+          class="mt-4 py-4 focus:outline-none text-amber-50 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded"
+          :class="[md ? 'col-span-6' : 'col-span-3']"
           @click.prevent="startGame()"
         >
           Start
@@ -141,8 +134,8 @@
     >
       <TimerBar
         ref="gameTimer"
-        @timer="inputDisabled = true"
         class="text-center w-full h-2 rounded overflow-hidden"
+        @timer="inputDisabled = true"
       />
       <div :class="cipherColor">
         <p v-if="cipherAnimation" :class="['text-5xl mt-8 mb-3', shake]">
@@ -153,27 +146,18 @@
         </p>
       </div>
       <TimerBar
-        ref="wordTimer"
         v-if="settings.cipherTime > 0 || countdown !== 0"
-        @timer="handleWordTimeout()"
+        ref="wordTimer"
         class="text-center w-3/4 mb-6 h-6"
+        @timer="handleWordTimeout()"
       />
       <input
-        class="
-          px-4
-          text-lg
-          w-1/2
-          text-center
-          rounded
-          border-2 border-gray-300
-          focus:outline-none
-          disabled:bg-gray-200
-        "
-        type="text"
         v-model="answer"
-        @keyup="submitAnswer"
+        class="px-4 text-lg w-1/2 text-center rounded border-2 border-gray-300 focus:outline-none disabled:bg-gray-200"
+        type="text"
         :disabled="inputDisabled"
         focus
+        @keyup="submitAnswer"
       />
       <div class="flex flex-col w-full gap-2 py-2">
         <PlayerCard
@@ -243,6 +227,30 @@ export default {
         results: [],
       },
     }
+  },
+  computed: {
+    gameModeDescription() {
+      switch (this.settings.gameMode) {
+        case "coop":
+          return "Work together to solve each cipher"
+        case "sync":
+          return "Compete to decipher the phrase first"
+        case "rush":
+          return "Solve the ciphers as fast as you can"
+      }
+      return "???"
+    },
+    timerTypeDescription() {
+      switch (this.settings.timerType) {
+        case "normal":
+          return "Timer never changes"
+        case "adaptive":
+          return "Timer changes based on your accuracy"
+        case "faster":
+          return "Timer gets shorter with each phrase"
+      }
+      return "???"
+    },
   },
   mounted() {
     this.on("result", this.handleResult)
@@ -342,30 +350,6 @@ export default {
         // this.inputDisabled = true
       }
       // this.status = "lose"
-    },
-  },
-  computed: {
-    gameModeDescription() {
-      switch (this.settings.gameMode) {
-        case "coop":
-          return "Work together to solve each cipher"
-        case "sync":
-          return "Compete to decipher the phrase first"
-        case "rush":
-          return "Solve the ciphers as fast as you can"
-      }
-      return "???"
-    },
-    timerTypeDescription() {
-      switch (this.settings.timerType) {
-        case "normal":
-          return "Timer never changes"
-        case "adaptive":
-          return "Timer changes based on your accuracy"
-        case "faster":
-          return "Timer gets shorter with each phrase"
-      }
-      return "???"
     },
   },
 }

@@ -1,13 +1,13 @@
 import { Socket } from "socket.io"
 
-import { v4 as uuidv4 } from 'uuid';
-import { encrypt } from "./cipher";
+import { v4 as uuidv4 } from "uuid"
+// import { encrypt } from "./cipher"
 
 export class TSocket {
   socket: Socket
   ign: string
   id: string
-  roomId: string = ''
+  roomId: string = ""
 
   constructor(socket: Socket, ign: string) {
     this.socket = socket
@@ -15,13 +15,13 @@ export class TSocket {
     this.id = uuidv4()
   }
 
-  emit(ev: string, ...args: any[]) {
+  emit(ev: string, ...args: unknown[]) {
     this.socket.emit(ev, ...args)
   }
 
   leave() {
     this.socket.leave(this.roomId)
-    this.roomId = ''
+    this.roomId = ""
   }
 
   join(room: string) {
@@ -34,7 +34,7 @@ export class TSocket {
     return {
       id: this.id,
       // iv: encryption.iv,
-      ign: this.ign
+      ign: this.ign,
     }
   }
 }

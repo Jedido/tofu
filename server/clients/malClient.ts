@@ -8,7 +8,7 @@ interface MALQuery {
 const DEFAULT_MAL_RETRY_CONFIG = {
   maxRetries: 3,
   delayMs: 1000,
-  retryableStatuses: [429]
+  retryableStatuses: [429],
 }
 
 class BaseMALClient<T, V> extends BaseHttpClient<T, V> {
@@ -19,15 +19,12 @@ class BaseMALClient<T, V> extends BaseHttpClient<T, V> {
   makeQuery(input: MALQuery): Request {
     const url = `https://api.jikan.moe/v4${input.path}?`
     const params = new URLSearchParams(input.params).toString()
-    return new Request(
-      url + params,
-      {
-        method: "GET",
-      }
-    )
+    return new Request(url + params, {
+      method: "GET",
+    })
   }
 
-  convertOutFromResponse(res: string): any {
+  convertOutFromResponse(res: string): V {
     return JSON.parse(res)
   }
 }
@@ -37,7 +34,7 @@ export interface Anime {
   aired: {
     from: string
     to: string
-  },
+  }
   url: string
   images: {
     jpg: {
@@ -97,11 +94,14 @@ export interface MALGetByIdRequest {
 interface MALGetAnimeResponse {
   data: FullAnime
 }
-export class MALGetAnimeClient extends BaseMALClient<MALGetByIdRequest, MALGetAnimeResponse> {
+export class MALGetAnimeClient extends BaseMALClient<
+  MALGetByIdRequest,
+  MALGetAnimeResponse
+> {
   convertInToRequest(input: MALGetByIdRequest): Request {
     return this.makeQuery({
       path: `/anime/${input.mal_id}/full`,
-      params: {}
+      params: {},
     })
   }
 
@@ -110,11 +110,31 @@ export class MALGetAnimeClient extends BaseMALClient<MALGetByIdRequest, MALGetAn
   }
 }
 
-
 interface MALSearchAnimeRequest {
   query?: string
-  type?: "tv" | "movie" | "ova" | "special" | "ona" | "music" | "cm" | "pv" | "tv_special"
-  order_by?: "mal_id" | "title" | "start_date" | "end_date" | "episodes" | "score" | "scored_by" | "rank" | "popularity" | "members" | "favorites" | "date_added"
+  type?:
+    | "tv"
+    | "movie"
+    | "ova"
+    | "special"
+    | "ona"
+    | "music"
+    | "cm"
+    | "pv"
+    | "tv_special"
+  order_by?:
+    | "mal_id"
+    | "title"
+    | "start_date"
+    | "end_date"
+    | "episodes"
+    | "score"
+    | "scored_by"
+    | "rank"
+    | "popularity"
+    | "members"
+    | "favorites"
+    | "date_added"
   sort?: "desc" | "asc"
   limit?: number
   page?: number
@@ -122,7 +142,10 @@ interface MALSearchAnimeRequest {
 export interface MALSearchAnimeResponse {
   data: Anime[]
 }
-export class MALSearchAnimeClient extends BaseMALClient<MALSearchAnimeRequest, MALSearchAnimeResponse> {
+export class MALSearchAnimeClient extends BaseMALClient<
+  MALSearchAnimeRequest,
+  MALSearchAnimeResponse
+> {
   convertInToRequest(input: MALSearchAnimeRequest) {
     return this.makeQuery({
       path: "/anime",
@@ -133,7 +156,7 @@ export class MALSearchAnimeClient extends BaseMALClient<MALSearchAnimeRequest, M
         order_by: input.order_by || "popularity",
         limit: `${input.limit || 5}`,
         page: `${input.page || 1}`,
-      }
+      },
     })
   }
 
@@ -141,7 +164,7 @@ export class MALSearchAnimeClient extends BaseMALClient<MALSearchAnimeRequest, M
     if (!out.data) {
       return ""
     }
-    return out.data.map(anime => `${anime.mal_id}: ${anime.title}`).join(", ")
+    return out.data.map((anime) => `${anime.mal_id}: ${anime.title}`).join(", ")
   }
 }
 
@@ -150,11 +173,14 @@ interface MALGetCharactersResponse {
     character: Character
   }[]
 }
-export class MALGetCharactersClient extends BaseMALClient<MALGetByIdRequest, MALGetCharactersResponse> {
+export class MALGetCharactersClient extends BaseMALClient<
+  MALGetByIdRequest,
+  MALGetCharactersResponse
+> {
   convertInToRequest(input: MALGetByIdRequest): Request {
     return this.makeQuery({
       path: `/anime/${input.mal_id}/characters`,
-      params: {}
+      params: {},
     })
   }
 

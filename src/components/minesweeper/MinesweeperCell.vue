@@ -5,9 +5,9 @@
     @click="revealSpace()"
     @contextmenu.prevent="flagSpace()"
   >
-    <img v-if="value === mine" src="@/assets/images/mine.svg"/>
-    <img v-else-if="value === explosion" src="@/assets/images/explosion.svg"/>
-    <img v-else-if="value === flag" src="@/assets/images/flag.svg"/>
+    <img v-if="value === mine" src="@/assets/images/mine.svg" />
+    <img v-else-if="value === explosion" src="@/assets/images/explosion.svg" />
+    <img v-else-if="value === flag" src="@/assets/images/flag.svg" />
     {{ color ? value : "" }}
   </div>
 </template>
@@ -16,9 +16,10 @@
 export default {
   name: "AnagramGame",
   props: {
-    value: Number,
+    value: { type: Number, required: true },
     active: Boolean,
   },
+  emits: ["revealSpace", "flagSpace"],
   data() {
     return {
       mine: -10,
@@ -38,18 +39,6 @@ export default {
       ],
     }
   },
-  methods: {
-    revealSpace() {
-      if (this.value === this.hidden) {
-        this.$emit("revealSpace")
-      }
-    },
-    flagSpace() {
-      if (this.value === this.hidden || this.value === this.flag) {
-        this.$emit("flagSpace")
-      }
-    },
-  },
   computed: {
     type() {
       switch (this.value) {
@@ -65,6 +54,18 @@ export default {
         return this.colors[this.value - 1]
       }
       return ""
+    },
+  },
+  methods: {
+    revealSpace() {
+      if (this.value === this.hidden) {
+        this.$emit("revealSpace")
+      }
+    },
+    flagSpace() {
+      if (this.value === this.hidden || this.value === this.flag) {
+        this.$emit("flagSpace")
+      }
     },
   },
 }

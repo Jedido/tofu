@@ -1,6 +1,12 @@
 <template>
   <div class="h-80 w-80 border-4 border-emerald-400 rounded overflow-hidden">
-    <img class="m-auto max-h-full max-w-full" :style="imageStyle" :src="image" @contextmenu.prevent @dragstart.prevent />
+    <img
+      class="m-auto max-h-full max-w-full"
+      :style="imageStyle"
+      :src="image"
+      @contextmenu.prevent
+      @dragstart.prevent
+    />
   </div>
 </template>
 
@@ -8,16 +14,16 @@
 export default {
   name: "BlurImage",
   props: {
-    image: String,
+    image: { type: String, required: true },
     blur: {
       default: 40,
       type: Number,
     },
     time: {
       default: 20,
-      type: Number
+      type: Number,
     },
-    state: String
+    state: { type: String, required: true },
   },
   computed: {
     imageStyle() {
@@ -30,8 +36,8 @@ export default {
         styles.transition = "none"
       }
       return styles
-    }
-  }
+    },
+  },
 }
 </script>
 

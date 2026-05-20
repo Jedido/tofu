@@ -1,5 +1,22 @@
 import { TSocket } from "../../utils/tsocket"
-import { AddressPuzzleSolution, AlgebraPuzzleSolution, DangerPuzzleSolution, DicePuzzleSolution, GameState, Panel, PanelEnum, PanelInfo, PatternPuzzleSolution, PuzzleEnum, PuzzleSolution, RequestPuzzleSolution, Submission, WantedPuzzleSolution, WirePuzzleSolution, WordPuzzleSolution } from "./types"
+import {
+  AddressPuzzleSolution,
+  AlgebraPuzzleSolution,
+  DangerPuzzleSolution,
+  DicePuzzleSolution,
+  GameState,
+  Panel,
+  PanelEnum,
+  PanelInfo,
+  PatternPuzzleSolution,
+  PuzzleEnum,
+  PuzzleSolution,
+  RequestPuzzleSolution,
+  Submission,
+  WantedPuzzleSolution,
+  WirePuzzleSolution,
+  WordPuzzleSolution,
+} from "./types"
 import { DangerPuzzle } from "./dangerPuzzle"
 import { WirePuzzle } from "./wirePuzzle"
 import { RequestPuzzle } from "./requestPuzzle"
@@ -20,7 +37,7 @@ class TeamService extends GameService {
     "team-submit": this.submitSolution.bind(this),
     "team-cut": this.cutWire.bind(this),
     "team-next": this.prepareNextLevel.bind(this),
-    "team-state": this.syncState.bind(this)
+    "team-state": this.syncState.bind(this),
   }
   readonly countdownEvent: string = "team-countdown"
   readonly startEvent: string = "team-start"
@@ -30,13 +47,22 @@ class TeamService extends GameService {
   readonly cutEvent: string = "team-cut-success"
   readonly loseEvent: string = "team-lose"
   readonly winEvent: string = "team-win"
-  readonly puzzleTypes = [DangerPuzzle, RequestPuzzle, PatternPuzzle, DicePuzzle, WantedPuzzle, AlgebraPuzzle, WordPuzzle, AddressPuzzle]
+  readonly puzzleTypes = [
+    DangerPuzzle,
+    RequestPuzzle,
+    PatternPuzzle,
+    DicePuzzle,
+    WantedPuzzle,
+    AlgebraPuzzle,
+    WordPuzzle,
+    AddressPuzzle,
+  ]
 
   gameState: {
     level: number
     status: GameState
     players: {
-      socket: TSocket,
+      socket: TSocket
       stacks: Panel[][]
     }[]
   }
@@ -51,7 +77,7 @@ class TeamService extends GameService {
     this.gameState = {
       level: 0,
       status: GameState.Idle,
-      players: []
+      players: [],
     }
     this.puzzles = new Map()
     this.solved = new Set<number>()
@@ -61,7 +87,9 @@ class TeamService extends GameService {
 
   syncState(_: object, socket: TSocket) {
     if (this.gameState.status === GameState.Ongoing) {
-      const currentPlayer = this.gameState.players.find(player => player.socket.id === socket.id)
+      const currentPlayer = this.gameState.players.find(
+        (player) => player.socket.id === socket.id
+      )
       if (currentPlayer) {
         currentPlayer.socket = socket
         socket.emit(this.startEvent, {
@@ -72,7 +100,7 @@ class TeamService extends GameService {
           timeStart: this.timeStart,
           level: this.gameState.level,
           solved: Array.from(this.solved),
-          cut: WirePuzzle.cutWires
+          cut: WirePuzzle.cutWires,
         })
       }
     }
@@ -87,12 +115,12 @@ class TeamService extends GameService {
     this.gameState = {
       level: 0,
       status: GameState.Idle,
-      players: []
+      players: [],
     }
     this.gameState.players = this.getPlayers().map((socket: TSocket) => {
       return {
         socket,
-        stacks: []
+        stacks: [],
       }
     })
     this.prepareNextLevel({}, socket)
@@ -106,11 +134,16 @@ class TeamService extends GameService {
     this.solved = new Set<number>()
 
     this.gameState.level++
-    const numStacks: number = Math.min(Math.ceil((this.gameState.level + 1) / 3) + 1, 6)
+    const numStacks: number = Math.min(
+      Math.ceil((this.gameState.level + 1) / 3) + 1,
+      6
+    )
 
     // create puzzles
-    this.puzzles = new Map<number, Map<PanelEnum, PanelInfo>>
-    const numPuzzles: number = Math.ceil(this.gameState.players.length * Math.sqrt(this.gameState.level) * 2)
+    this.puzzles = new Map<number, Map<PanelEnum, PanelInfo>>()
+    const numPuzzles: number = Math.ceil(
+      this.gameState.players.length * Math.sqrt(this.gameState.level) * 2
+    )
     const panelsByPuzzle: Panel[][] = this.generatePuzzles(numPuzzles)
     shuffle(panelsByPuzzle)
 
@@ -127,14 +160,14 @@ class TeamService extends GameService {
     }
 
     // sort stacks by id to ensure solvability
-    stacks.forEach(stack => {
+    stacks.forEach((stack) => {
       stack.sort((a, b) => a.id - b.id)
     })
 
     // assign stacks to players
     this.timeStart = Date.now()
     const timePerPuzzle = 12 * Math.pow(0.9, this.gameState.level)
-    this.timeTotal = Math.floor(numPuzzles * timePerPuzzle * 3 / 10) * 10
+    this.timeTotal = Math.floor((numPuzzles * timePerPuzzle * 3) / 10) * 10
     this.timer = setTimeout(() => {
       this.broadcastFn(this.loseEvent, { cause: `you ran out of time` })
       this.timer = undefined
@@ -150,7 +183,7 @@ class TeamService extends GameService {
         timeStart: this.timeStart,
         level: this.gameState.level,
         solved: [],
-        cut: []
+        cut: [],
       })
     }
     this.gameState.status = GameState.Ongoing
@@ -158,16 +191,22 @@ class TeamService extends GameService {
 
   // add to a random stack based on a weighted random
   addToRandomStack(stacks: Panel[][], panel: Panel): void {
-    const validStacks: Panel[][] = stacks.filter(stack => !stack.find(p => p.id === panel.id))
+    const validStacks: Panel[][] = stacks.filter(
+      (stack) => !stack.find((p) => p.id === panel.id)
+    )
     if (validStacks.length === 0) {
-      console.error("Failed to setup the game! Something has gone terribly wrong!")
+      console.error(
+        "Failed to setup the game! Something has gone terribly wrong!"
+      )
       return
     }
     let totalWeights = 0
-    const stacksBySize: Map<number, Panel[]> = new Map(validStacks.map(stack => {
-      totalWeights += 1 / (stack.length * stack.length + 0.01)
-      return [totalWeights, stack]
-    }))
+    const stacksBySize: Map<number, Panel[]> = new Map(
+      validStacks.map((stack) => {
+        totalWeights += 1 / (stack.length * stack.length + 0.01)
+        return [totalWeights, stack]
+      })
+    )
     const r = Math.random() * totalWeights
     for (const [weight, stack] of stacksBySize) {
       if (r < weight) {
@@ -179,13 +218,16 @@ class TeamService extends GameService {
 
   generatePuzzles(numPuzzles: number): Panel[][] {
     const panelsByPuzzle: Panel[][] = []
-    this.puzzleTypes.forEach(x => x.reset())
+    this.puzzleTypes.forEach((x) => x.reset())
 
     let id = 1
     const numWires = Math.min(Math.floor(this.gameState.level / 4 + 3), 5)
     WirePuzzle.init(numWires)
-    const maxWireValue = numPuzzles * (numPuzzles + 1) / 2
-    const wireValues = Array.from({ length: numWires }, () => Math.random() * maxWireValue)
+    const maxWireValue = (numPuzzles * (numPuzzles + 1)) / 2
+    const wireValues = Array.from(
+      { length: numWires },
+      () => Math.random() * maxWireValue
+    )
     const added = new Set<number>()
     let cumulative = 0
     for (let i = 0; i < numPuzzles; i++) {
@@ -239,15 +281,24 @@ class TeamService extends GameService {
     try {
       const panelInfo = this.puzzles.get(id)!
       switch (type) {
-        case PuzzleEnum.Danger: return DangerPuzzle.solve(data as DangerPuzzleSolution, panelInfo)
-        case PuzzleEnum.Request: return RequestPuzzle.solve(data as RequestPuzzleSolution, panelInfo)
-        case PuzzleEnum.Pattern: return PatternPuzzle.solve(data as PatternPuzzleSolution, panelInfo)
-        case PuzzleEnum.Dice: return DicePuzzle.solve(data as DicePuzzleSolution, panelInfo)
-        case PuzzleEnum.Wanted: return WantedPuzzle.solve(data as WantedPuzzleSolution, panelInfo)
-        case PuzzleEnum.Algebra: return AlgebraPuzzle.solve(data as AlgebraPuzzleSolution, panelInfo)
-        case PuzzleEnum.Address: return AddressPuzzle.solve(data as AddressPuzzleSolution, panelInfo)
-        case PuzzleEnum.Word: return WordPuzzle.solve(data as WordPuzzleSolution, panelInfo)
-        case PuzzleEnum.Wire: return true
+        case PuzzleEnum.Danger:
+          return DangerPuzzle.solve(data as DangerPuzzleSolution, panelInfo)
+        case PuzzleEnum.Request:
+          return RequestPuzzle.solve(data as RequestPuzzleSolution, panelInfo)
+        case PuzzleEnum.Pattern:
+          return PatternPuzzle.solve(data as PatternPuzzleSolution, panelInfo)
+        case PuzzleEnum.Dice:
+          return DicePuzzle.solve(data as DicePuzzleSolution, panelInfo)
+        case PuzzleEnum.Wanted:
+          return WantedPuzzle.solve(data as WantedPuzzleSolution, panelInfo)
+        case PuzzleEnum.Algebra:
+          return AlgebraPuzzle.solve(data as AlgebraPuzzleSolution, panelInfo)
+        case PuzzleEnum.Address:
+          return AddressPuzzle.solve(data as AddressPuzzleSolution, panelInfo)
+        case PuzzleEnum.Word:
+          return WordPuzzle.solve(data as WordPuzzleSolution, panelInfo)
+        case PuzzleEnum.Wire:
+          return true
         default:
           console.warn(`Unknown puzzle type: ${type}`)
           return false
@@ -261,7 +312,7 @@ class TeamService extends GameService {
       return false
     }
   }
-  
+
   cutWire(solution: WirePuzzleSolution, socket: TSocket): void {
     if (WirePuzzle.isCut(solution.next)) {
       return
@@ -276,7 +327,9 @@ class TeamService extends GameService {
       }
     } else {
       this.broadcastFn(this.cutEvent, { next: solution.next, success: false })
-      this.broadcastFn(this.loseEvent, { cause: `${socket.ign} cut the wrong wire` })
+      this.broadcastFn(this.loseEvent, {
+        cause: `${socket.ign} cut the wrong wire`,
+      })
       clearTimeout(this.timer)
       this.timer = undefined
       this.gameState.status = GameState.Idle

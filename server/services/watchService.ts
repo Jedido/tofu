@@ -34,7 +34,7 @@ class WatchService extends GameService {
       "watch-next": this.nextVideo.bind(this),
       "watch-search": this.searchVideo.bind(this),
       "watch-remove": this.removeVideo.bind(this),
-      "watch-get-state": this.getState.bind(this)
+      "watch-get-state": this.getState.bind(this),
     }
     // responses
     this.queueEvent = "watch-request-queue"
@@ -53,18 +53,19 @@ class WatchService extends GameService {
     this.waitingNextVideo = null
   }
 
-  getState(_: any, socket: TSocket) {
-    const time = this.time + (this.paused ? 0 : Date.now() - this.startTime / 100)
+  getState(_: unknown, socket: TSocket) {
+    const time =
+      this.time + (this.paused ? 0 : Date.now() - this.startTime / 100)
     socket.emit(this.stateEvent, {
       videoId: this.currentVideo,
       playlist: this.playlist,
       paused: this.paused,
-      time
+      time,
     })
   }
 
   queueVideo({ video }: { video: VideoItem }, socket: TSocket) {
-    if (this.playlist.find(v => v.videoId === video.videoId)) {
+    if (this.playlist.find((v) => v.videoId === video.videoId)) {
       socket.emit("alert", "This video is already queued!")
       return
     }
@@ -79,18 +80,20 @@ class WatchService extends GameService {
 
   searchVideo({ query }: { query: string }, socket: TSocket) {
     try {
-      fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${query}&key=${process.env.YOUTUBE_API_KEY}`)
-      .then(res => res.json())
-      .then((json: any) => {
-        const results = json.items.map((video: any) => {
-          return {
-            videoId: video.id.videoId,
-            title: video.snippet.title,
-            channel: video.snippet.channelTitle
-          }
+      fetch(
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${query}&key=${process.env.YOUTUBE_API_KEY}`
+      )
+        .then((res) => res.json())
+        .then((json: any) => {
+          const results = json.items.map((video: any) => {
+            return {
+              videoId: video.id.videoId,
+              title: video.snippet.title,
+              channel: video.snippet.channelTitle,
+            }
+          })
+          socket.emit(this.searchResultsEvent, { results })
         })
-        socket.emit(this.searchResultsEvent, { results })
-      })
     } catch (e) {
       console.log(`${socket.ign} failed to execute: ${e}`)
       console.log((e as Error).stack)

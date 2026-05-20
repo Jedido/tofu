@@ -1,23 +1,30 @@
 <template>
   <div class="h-full w-full relative" @pointerdown="toggleSelection">
-    <div
-      v-if="tools.length > 1"
-      v-for="(tool, i) in tools"
-      :key="tool"
-      class="palette absolute -translate-y-1/2 left-1/2 -translate-x-1/2"
-    >
-      <div class="h-6 origin-bottom" :style="`transform: rotate(${i * degrees}deg)`">
+    <template v-if="tools.length > 1">
+      <div
+        v-for="(tool, i) in tools"
+        :key="tool"
+        class="palette absolute -translate-y-1/2 left-1/2 -translate-x-1/2"
+      >
         <div
-          class="w-4 h-4 rounded-full color"
-          :class="{
-            [tool]: true,
-            'scale-125 border': i === current,
-            'scale-50': i !== current
-          }"
-        ></div>
+          class="h-6 origin-bottom"
+          :style="`transform: rotate(${i * degrees}deg)`"
+        >
+          <div
+            class="w-4 h-4 rounded-full color"
+            :class="{
+              [tool]: true,
+              'scale-125 border': i === current,
+              'scale-50': i !== current,
+            }"
+          ></div>
+        </div>
       </div>
-    </div>
-    <div v-else class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
+    </template>
+    <div
+      v-else
+      class="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2"
+    >
       <div class="w-8 h-8 rounded-full" :class="tools[0]"></div>
     </div>
   </div>
@@ -27,13 +34,19 @@
 export default {
   name: "PaintTools",
   props: {
-    tools: Array,
-    selected: Boolean
+    tools: { type: Array, required: true },
+    selected: Boolean,
   },
+  emits: ["update-control"],
   data() {
     return {
-      current: 0
+      current: 0,
     }
+  },
+  computed: {
+    degrees() {
+      return 360 / this.tools.length
+    },
   },
   methods: {
     toggleSelection() {
@@ -41,13 +54,8 @@ export default {
         this.current = (this.current + 1) % this.tools.length
       }
       this.$emit("update-control", { color: this.tools[this.current] })
-    }
+    },
   },
-  computed: {
-    degrees() {
-      return 360 / this.tools.length
-    }
-  }
 }
 </script>
 

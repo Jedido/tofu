@@ -1,5 +1,12 @@
 import { Puzzle } from "./puzzle"
-import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, AlgebraPuzzleSolution } from "./types"
+import {
+  Panel,
+  PanelInfo,
+  PanelEnum,
+  PuzzleEnum,
+  Id,
+  AlgebraPuzzleSolution,
+} from "./types"
 
 import { randomItem } from "../../utils/util.ts"
 
@@ -30,11 +37,13 @@ export class AlgebraPuzzle extends Puzzle {
 
   static reset() {
     this.answers = new Map<string, number>()
-    for (let c of this.letters) {
+    for (const c of this.letters) {
       this.answers.set(c, Math.floor(Math.random() * 10))
     }
     this.n = 1
-    this.y = AlgebraPuzzle.letters.charAt(Math.floor(Math.random() * AlgebraPuzzle.letters.length))
+    this.y = AlgebraPuzzle.letters.charAt(
+      Math.floor(Math.random() * AlgebraPuzzle.letters.length)
+    )
   }
 
   constructor(id: Id) {
@@ -44,36 +53,45 @@ export class AlgebraPuzzle extends Puzzle {
     const curValue = AlgebraPuzzle.answers.get(curLetter)!
     const letterSet: Set<string> = new Set([curLetter])
     while (letterSet.size < 4) {
-      letterSet.add(AlgebraPuzzle.letters.charAt(Math.floor(Math.random() * AlgebraPuzzle.letters.length)))
+      letterSet.add(
+        AlgebraPuzzle.letters.charAt(
+          Math.floor(Math.random() * AlgebraPuzzle.letters.length)
+        )
+      )
     }
     letterSet.delete(curLetter)
     const nextLetters = Array.from(letterSet)
     this.puzzle = {
-      hint: AlgebraPuzzle.n === 1 ? `${curLetter} = ${curValue}` : '',
+      hint: AlgebraPuzzle.n === 1 ? `${curLetter} = ${curValue}` : "",
       n: AlgebraPuzzle.n,
-      y: randomItem(nextLetters)
+      y: randomItem(nextLetters),
     }
     this.key = {
       x: curLetter,
       n: AlgebraPuzzle.n,
-      equations: nextLetters.map(y => AlgebraPuzzle.getPuzzleParams(curValue, y))
+      equations: nextLetters.map((y) =>
+        AlgebraPuzzle.getPuzzleParams(curValue, y)
+      ),
     }
     AlgebraPuzzle.n++
     AlgebraPuzzle.y = this.puzzle.y
   }
 
   override panels(): Panel[] {
-    return [{
-      id: this.id,
-      puzzle: PuzzleEnum.Algebra,
-      panel: PanelEnum.Puzzle,
-      state: this.puzzle
-    }, {
-      id: this.id,
-      puzzle: PuzzleEnum.Algebra,
-      panel: PanelEnum.Key1,
-      state: this.key
-    }]
+    return [
+      {
+        id: this.id,
+        puzzle: PuzzleEnum.Algebra,
+        panel: PanelEnum.Puzzle,
+        state: this.puzzle,
+      },
+      {
+        id: this.id,
+        puzzle: PuzzleEnum.Algebra,
+        panel: PanelEnum.Key1,
+        state: this.key,
+      },
+    ]
   }
 
   static getPuzzleParams(from: number, y: string): PuzzleParams {
@@ -84,12 +102,15 @@ export class AlgebraPuzzle extends Puzzle {
     while (Math.abs(b) > 9) {
       m = Math.ceil(Math.random() * 4)
       n = Math.ceil(Math.random() * 4)
-      b = (n * to) - (m * from)
+      b = n * to - m * from
     }
     return { m, n, b, y }
   }
 
-  static solve({ y }: AlgebraPuzzleSolution, puzzleParts: Map<PanelEnum, PanelInfo>): boolean {
+  static solve(
+    { y }: AlgebraPuzzleSolution,
+    puzzleParts: Map<PanelEnum, PanelInfo>
+  ): boolean {
     const puzzle = puzzleParts.get(PanelEnum.Puzzle)! as AlgebraPuzzlePI
     return AlgebraPuzzle.answers.get(puzzle.y) === y
   }

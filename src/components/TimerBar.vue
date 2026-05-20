@@ -16,6 +16,7 @@ const RESET_MILLIS = 200
 
 export default {
   name: "TimerBar",
+  emits: ["timer"],
   data() {
     return {
       time: 0,

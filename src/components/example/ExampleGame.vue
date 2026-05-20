@@ -2,34 +2,26 @@
   <div id="example" class="select-none text-amber-900">
     <p class="text-center text-3xl mb-4">Send Messages</p>
     <div
-      class="
-        flex flex-col
-        items-center
-        bg-amber-100
-        rounded
-        mt-auto
-        border-4 border-amber-200
-        mx-10
-      "
+      class="flex flex-col items-center bg-amber-100 rounded mt-auto border-4 border-amber-200 mx-10"
     >
       <div class="h-80 p-4 w-full overflow-y-auto leading-4 text-sm">
-        <p v-for="[s, m] in messages" class="mb-2" :key="s + m">
+        <p v-for="[s, m] in messages" :key="s + m" class="mb-2">
           <span class="font-semibold">{{ s }}</span
           >: {{ m }}
         </p>
       </div>
       <div class="grid grid-cols-6 w-full border-t-2 border-amber-200">
         <input
+          id="input"
           v-model="message"
           type="text"
-          id="input"
           class="outline-none bg-amber-50 px-4 py-2 col-span-5"
           autocomplete="off"
           placeholder="Send a message..."
         />
         <button
           class="focus:outline-none bg-amber-200 hover:bg-amber-300 text-lg"
-          @click="this.sendMessage()"
+          @click="sendMessage()"
         >
           Send
         </button>

@@ -1,5 +1,12 @@
 import { Puzzle } from "./puzzle"
-import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, RequestPuzzleSolution } from "./types"
+import {
+  Panel,
+  PanelInfo,
+  PanelEnum,
+  PuzzleEnum,
+  Id,
+  RequestPuzzleSolution,
+} from "./types"
 import { generateName, shuffle } from "../../utils/util.ts"
 
 interface RequestPuzzlePI extends PanelInfo {
@@ -7,7 +14,7 @@ interface RequestPuzzlePI extends PanelInfo {
 }
 interface RequestKeyPI extends PanelInfo {
   requestors: {
-    name: string,
+    name: string
     sequence: number[]
   }[]
 }
@@ -28,48 +35,56 @@ export class RequestPuzzle extends Puzzle {
       let name = ""
       do {
         name = generateName()
-      } while (RequestPuzzle.names.has(name));
+      } while (RequestPuzzle.names.has(name))
       RequestPuzzle.names.add(name)
       return name
     })
     const targetName = names[0]
     shuffle(names)
     this.puzzle = {
-      name: targetName
+      name: targetName,
     }
     this.key = {
       requestors: names.map((name) => {
         return {
           name,
-          sequence: Array.from({ length: 4 }, () => Math.floor(Math.random() * 4))
+          sequence: Array.from({ length: 4 }, () =>
+            Math.floor(Math.random() * 4)
+          ),
         }
-      })
+      }),
     }
   }
 
   override panels(): Panel[] {
-    return [{
-      id: this.id,
-      puzzle: PuzzleEnum.Request,
-      panel: PanelEnum.Puzzle,
-      state: this.puzzle
-    }, {
-      id: this.id,
-      puzzle: PuzzleEnum.Request,
-      panel: PanelEnum.Key1,
-      state: this.key
-    }]
+    return [
+      {
+        id: this.id,
+        puzzle: PuzzleEnum.Request,
+        panel: PanelEnum.Puzzle,
+        state: this.puzzle,
+      },
+      {
+        id: this.id,
+        puzzle: PuzzleEnum.Request,
+        panel: PanelEnum.Key1,
+        state: this.key,
+      },
+    ]
   }
 
-  static solve({ sequence }: RequestPuzzleSolution, puzzleParts: Map<PanelEnum, PanelInfo>): boolean {
+  static solve(
+    { sequence }: RequestPuzzleSolution,
+    puzzleParts: Map<PanelEnum, PanelInfo>
+  ): boolean {
     const puzzle = puzzleParts.get(PanelEnum.Puzzle)! as RequestPuzzlePI
     const key = puzzleParts.get(PanelEnum.Key1)! as RequestKeyPI
-    const requestor = key.requestors.find(r => r.name === puzzle.name)
+    const requestor = key.requestors.find((r) => r.name === puzzle.name)
     for (let i = 0; i < sequence.length; i++) {
       if (sequence[i] !== requestor?.sequence[i]) {
-        return false;
+        return false
       }
     }
-    return true;
+    return true
   }
 }

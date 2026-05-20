@@ -76,7 +76,9 @@ class MinesweeperService extends GameService {
       board: this.revealed,
       time:
         this.gameStatus === "ongoing"
-          ? Math.round((new Date().getTime() - (this.time as Date).getTime()) / 1000)
+          ? Math.round(
+              (new Date().getTime() - (this.time as Date).getTime()) / 1000
+            )
           : this.time,
     }
   }
@@ -132,7 +134,9 @@ class MinesweeperService extends GameService {
         this.revealBoard()
         this.revealed[x][y] = BOOM
         this.gameStatus = "lose"
-        this.time = Math.round((new Date().getTime() - (this.time as Date).getTime()) / 1000)
+        this.time = Math.round(
+          (new Date().getTime() - (this.time as Date).getTime()) / 1000
+        )
         this.broadcastFn(this.boardEvent, this.getBoardState())
         this.broadcastFn(
           "log",
@@ -169,7 +173,9 @@ class MinesweeperService extends GameService {
         if (this.spaces === 0) {
           this.revealBoard()
           this.gameStatus = "win"
-          this.time = Math.round((new Date().getTime() - (this.time as Date).getTime()) / 1000)
+          this.time = Math.round(
+            (new Date().getTime() - (this.time as Date).getTime()) / 1000
+          )
           this.broadcastFn(this.boardEvent, this.getBoardState())
           this.broadcastFn(
             "log",

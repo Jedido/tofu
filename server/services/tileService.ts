@@ -22,7 +22,7 @@ enum TileType {
   WALL = 5,
   PAINT = 6,
   DELETE = 7,
-  SUBMIT = 8
+  SUBMIT = 8,
 }
 enum Direction {
   NONE = -1,
@@ -33,32 +33,32 @@ enum Direction {
   DOWN_LEFT = 4,
   DOWN_RIGHT = 5,
   ROTATE_LEFT = 6,
-  ROTATE_RIGHT = 7
+  ROTATE_RIGHT = 7,
 }
 enum ToolType {
   MOVE = "move",
   APPEND = "append",
-  PAINT = "paint"
+  PAINT = "paint",
 }
 // modifiers are applied every x orders.
-enum Modifiers {
-  SWAP_CONTROLS,    // every x orders, controls are swapped
-  SHUFFLE_MAP,      // a random non-floor tile gets moved whenever an order is submitted
-  WALL_ON_SUBMIT,   // the spot a unit is submitted becomes unusable for a while
-  EXTENSIONS_1,     // more block types
-  EXTENSIONS_2,     // even more block types
-  PRIORITY_ORDERS,  // sometimes an order has half the time to complete
-  SUBMIT_SPACE,     // adds a submit space, which must be used for submitting
-  RANDOM_FILES,     // random floor tiles periodically become unusable
-  HIDDEN_ORDERS,    // certain orders can only be seen by a single player
-  FASTER_ORDERS,    // orders come in faster (infinite)
-}
+// enum Modifiers {
+//   SWAP_CONTROLS, // every x orders, controls are swapped
+//   SHUFFLE_MAP, // a random non-floor tile gets moved whenever an order is submitted
+//   WALL_ON_SUBMIT, // the spot a unit is submitted becomes unusable for a while
+//   EXTENSIONS_1, // more block types
+//   EXTENSIONS_2, // even more block types
+//   PRIORITY_ORDERS, // sometimes an order has half the time to complete
+//   SUBMIT_SPACE, // adds a submit space, which must be used for submitting
+//   RANDOM_FILES, // random floor tiles periodically become unusable
+//   HIDDEN_ORDERS, // certain orders can only be seen by a single player
+//   FASTER_ORDERS, // orders come in faster (infinite)
+// }
 interface Block {
-  top: number;
-  left: number;
-  right: number;
-  bottom: number;
-  color: string;
+  top: number
+  left: number
+  right: number
+  bottom: number
+  color: string
 }
 interface Unit {
   id: string
@@ -67,13 +67,13 @@ interface Unit {
 }
 interface Order {
   id: string
-  block: Block;
-  time: number;
-  blockID: string;
+  block: Block
+  time: number
+  blockID: string
 }
 interface Tool {
-  type: ToolType;
-  command: string;
+  type: ToolType
+  command: string
 }
 
 function normalizedBlockID(block: Block) {
@@ -84,8 +84,8 @@ function normalizedBlockID(block: Block) {
     blockID(block),
     blockID(blockr1),
     blockID(blockr2),
-    blockID(blockr3)
-  ].reduce((a, b) => a < b ? a : b);
+    blockID(blockr3),
+  ].reduce((a, b) => (a < b ? a : b))
 }
 function getRotation(block: Block) {
   return {
@@ -93,7 +93,7 @@ function getRotation(block: Block) {
     left: block.bottom,
     right: block.top,
     bottom: block.right,
-    color: block.color
+    color: block.color,
   }
 }
 function blockID(block: Block) {
@@ -122,29 +122,44 @@ function blockID(block: Block) {
   if (block.bottom === TileType.EXTEND_DOUBLE) {
     blockArray.push([0, -2])
   }
-  if (block.top === TileType.EXTEND_DOUBLE_L || block.left === TileType.EXTEND_DOUBLE_R) {
+  if (
+    block.top === TileType.EXTEND_DOUBLE_L ||
+    block.left === TileType.EXTEND_DOUBLE_R
+  ) {
     blockArray.push([-1, 1])
   }
-  if (block.top === TileType.EXTEND_DOUBLE_R || block.right === TileType.EXTEND_DOUBLE_L) {
+  if (
+    block.top === TileType.EXTEND_DOUBLE_R ||
+    block.right === TileType.EXTEND_DOUBLE_L
+  ) {
     blockArray.push([1, 1])
   }
-  if (block.bottom === TileType.EXTEND_DOUBLE_R || block.left === TileType.EXTEND_DOUBLE_L) {
+  if (
+    block.bottom === TileType.EXTEND_DOUBLE_R ||
+    block.left === TileType.EXTEND_DOUBLE_L
+  ) {
     blockArray.push([-1, -1])
   }
-  if (block.bottom === TileType.EXTEND_DOUBLE_L || block.right === TileType.EXTEND_DOUBLE_R) {
+  if (
+    block.bottom === TileType.EXTEND_DOUBLE_L ||
+    block.right === TileType.EXTEND_DOUBLE_R
+  ) {
     blockArray.push([1, -1])
   }
   while (blockArray.some(([x, _]) => x < 0)) {
-    blockArray.forEach(coord => {
+    blockArray.forEach((coord) => {
       coord[0]++
     })
   }
   while (blockArray.some(([_, y]) => y < 0)) {
-    blockArray.forEach(coord => {
+    blockArray.forEach((coord) => {
       coord[1]++
     })
   }
-  return `${block.color}-${blockArray.sort(([x0, y0], [x1, y1]) => x0 - x1 || y0 - y1).map(([x, y]) => `${x},${y}`).join(":")}`
+  return `${block.color}-${blockArray
+    .sort(([x0, y0], [x1, y1]) => x0 - x1 || y0 - y1)
+    .map(([x, y]) => `${x},${y}`)
+    .join(":")}`
 }
 
 const colors = ["red", "orange", "yellow", "green", "blue", "purple"]
@@ -156,7 +171,7 @@ class TileService extends GameService {
     "tile-move": this.move.bind(this),
     "tile-paint": this.paint.bind(this),
     "tile-append": this.append.bind(this),
-    "tile-submit": this.submit.bind(this)
+    "tile-submit": this.submit.bind(this),
   }
   readonly loadingEvent: string = "tile-loading"
   readonly stateEvent: string = "tile-state"
@@ -219,7 +234,9 @@ class TileService extends GameService {
     this.addOrder()
   }
   async paint(target: Paint, socket: TSocket) {
-    if (!this.authorize({ type: ToolType.PAINT, command: target.color }, socket)) {
+    if (
+      !this.authorize({ type: ToolType.PAINT, command: target.color }, socket)
+    ) {
       return
     }
     const unit = this.units.get(target.unit)!
@@ -231,7 +248,12 @@ class TileService extends GameService {
   async append(target: TargetUnit, socket: TSocket) {
     const unit = this.units.get(target.unit)!
     const tileType = this.board[unit.position]
-    if (!this.authorize({ type: ToolType.APPEND, command: tileType.toString() }, socket)) {
+    if (
+      !this.authorize(
+        { type: ToolType.APPEND, command: tileType.toString() },
+        socket
+      )
+    ) {
       return
     }
     if (tileType > TileType.FLOOR && tileType < TileType.WALL) {
@@ -240,7 +262,12 @@ class TileService extends GameService {
     this.broadcastFn(this.updateUnitEvent, { unit })
   }
   async move(move: Move, socket: TSocket) {
-    if (!this.authorize({ type: ToolType.MOVE, command: move.direction.toString() }, socket)) {
+    if (
+      !this.authorize(
+        { type: ToolType.MOVE, command: move.direction.toString() },
+        socket
+      )
+    ) {
       return
     }
     const unit = this.units.get(move.unit)!
@@ -251,56 +278,58 @@ class TileService extends GameService {
     switch (move.direction) {
       case Direction.RIGHT:
         if (x === 6) {
-          return;
+          return
         }
-        newPosition += 1;
-        break;
+        newPosition += 1
+        break
       case Direction.LEFT:
         if (x === 0) {
-          return;
+          return
         }
-        newPosition -= 1;
-        break;
+        newPosition -= 1
+        break
       case Direction.UP_RIGHT:
         if (x === 6 && offset === 1) {
-          return;
+          return
         }
-        newPosition -= 7 - offset;
-        break;
+        newPosition -= 7 - offset
+        break
       case Direction.UP_LEFT:
         if (x === 0 && offset === 0) {
-          return;
+          return
         }
-        newPosition -= 8 - offset;
-        break;
+        newPosition -= 8 - offset
+        break
       case Direction.DOWN_RIGHT:
         if (x === 6 && offset === 1) {
-          return;
+          return
         }
-        newPosition += 7 + offset;
-        break;
+        newPosition += 7 + offset
+        break
       case Direction.DOWN_LEFT:
         if (x === 0 && offset === 0) {
-          return;
+          return
         }
-        newPosition += 6 + offset;
-        break;
-      case Direction.ROTATE_LEFT:
+        newPosition += 6 + offset
+        break
+      case Direction.ROTATE_LEFT: {
         const temp = unit.block.top
         unit.block.top = unit.block.right
         unit.block.right = unit.block.bottom
         unit.block.bottom = unit.block.left
         unit.block.left = temp
         this.broadcastFn(this.updateUnitEvent, { unit })
-        break;
-      case Direction.ROTATE_RIGHT:
+        break
+      }
+      case Direction.ROTATE_RIGHT: {
         const temp2 = unit.block.top
         unit.block.top = unit.block.left
         unit.block.left = unit.block.bottom
         unit.block.bottom = unit.block.right
         unit.block.right = temp2
         this.broadcastFn(this.updateUnitEvent, { unit })
-        break;
+        break
+      }
     }
     if (this.validatePosition(newPosition)) {
       unit.position = newPosition
@@ -315,11 +344,16 @@ class TileService extends GameService {
       state: this.gameState,
       board: this.board,
       units: Array.from(this.units.values()),
-      orders: Array.from(this.orders.values())
+      orders: Array.from(this.orders.values()),
     }
   }
   validatePosition(i: number) {
-    return i >= 0 && i < 49 && this.board[i] !== TileType.WALL && !Array.from(this.units.values()).some(unit => unit.position === i)
+    return (
+      i >= 0 &&
+      i < 49 &&
+      this.board[i] !== TileType.WALL &&
+      !Array.from(this.units.values()).some((unit) => unit.position === i)
+    )
   }
   submit(target: TargetUnit, _: TSocket) {
     const unit = this.units.get(target.unit)!
@@ -333,7 +367,10 @@ class TileService extends GameService {
         this.orders.delete(key)
         this.units.delete(target.unit)
         this.ordersCompleted++
-        this.broadcastFn(this.completeOrderEvent, { order: key, unit: target.unit })
+        this.broadcastFn(this.completeOrderEvent, {
+          order: key,
+          unit: target.unit,
+        })
         if (this.orders.size === 0) {
           clearTimeout(this.nextBlockTimer)
           this.addOrder()
@@ -348,11 +385,13 @@ class TileService extends GameService {
         left: 0,
         right: 0,
         bottom: 0,
-        color: "gray"
+        color: "gray",
       },
-      position: unit.position
+      position: unit.position,
     })
-    this.broadcastFn(this.updateUnitEvent, { unit: this.units.get(target.unit) })
+    this.broadcastFn(this.updateUnitEvent, {
+      unit: this.units.get(target.unit),
+    })
   }
   addOrder() {
     const number = randomItem([2, 3, 4])
@@ -363,17 +402,17 @@ class TileService extends GameService {
       left: sides[1],
       right: sides[2],
       bottom: sides[3],
-      color: randomItem(colors)
+      color: randomItem(colors),
     }
     const newOrder: Order = {
       id: this.orderCount.toString(),
       block: newOrderBlock,
       time: 90 - this.orderCount,
-      blockID: normalizedBlockID(newOrderBlock)
+      blockID: normalizedBlockID(newOrderBlock),
     }
     this.orders.set(newOrder.id, newOrder)
 
-    let position;
+    let position
     while (position === undefined || this.board[position] !== TileType.FLOOR) {
       position = Math.floor(Math.random() * 49)
     }
@@ -384,15 +423,23 @@ class TileService extends GameService {
         left: 0,
         right: 0,
         bottom: 0,
-        color: "gray"
+        color: "gray",
       },
-      position
+      position,
     }
     this.units.set(newUnit.id, newUnit)
     this.orderCount++
     this.broadcastFn(this.newOrderEvent, { order: newOrder, unit: newUnit })
-    setTimeout(() => { this.expire(newOrder.id) }, 1000 * (newOrder.time + 5))
-    this.nextBlockTimer = setTimeout(() => this.addOrder(), newOrder.time / 2 * 1000)
+    setTimeout(
+      () => {
+        this.expire(newOrder.id)
+      },
+      1000 * (newOrder.time + 5)
+    )
+    this.nextBlockTimer = setTimeout(
+      () => this.addOrder(),
+      (newOrder.time / 2) * 1000
+    )
   }
   expire(orderID: string) {
     if (this.orders.has(orderID)) {
@@ -401,15 +448,27 @@ class TileService extends GameService {
       this.units.clear()
       clearTimeout(this.nextBlockTimer)
       this.broadcastFn(this.gameOverEvent, {
-        ordersCompleted: this.ordersCompleted
+        ordersCompleted: this.ordersCompleted,
       })
     }
   }
   redistributeTools() {
-    const movements = Array.from({ length: 6 }, (_, i) => ({ type: ToolType.MOVE, command: i.toString() }))
-    const rotations = Array.from({ length: this.players.size }, (_, i) => ({ type: ToolType.MOVE, command: (i % 2 + 6).toString() }))
-    const appends = Array.from({ length: 4 }, (_, i) => ({ type: ToolType.APPEND, command: (i + 1).toString() }))
-    const paints = colors.map((color) => ({ type: ToolType.PAINT, command: color }))
+    const movements = Array.from({ length: 6 }, (_, i) => ({
+      type: ToolType.MOVE,
+      command: i.toString(),
+    }))
+    const rotations = Array.from({ length: this.players.size }, (_, i) => ({
+      type: ToolType.MOVE,
+      command: ((i % 2) + 6).toString(),
+    }))
+    const appends = Array.from({ length: 4 }, (_, i) => ({
+      type: ToolType.APPEND,
+      command: (i + 1).toString(),
+    }))
+    const paints = colors.map((color) => ({
+      type: ToolType.PAINT,
+      command: color,
+    }))
     this.distributeTools(movements)
     this.distributeTools(rotations)
     this.distributeTools(appends)
@@ -426,7 +485,9 @@ class TileService extends GameService {
   }
   authorize(action: Tool, socket: TSocket) {
     const tools = this.players.get(socket.id)!
-    return tools.find(tool => tool.type === action.type && tool.command === action.command)!!
+    return tools.find(
+      (tool) => tool.type === action.type && tool.command === action.command
+    )!
   }
 }
 TileService.prototype.id = "tile"

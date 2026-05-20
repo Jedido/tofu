@@ -1,5 +1,11 @@
 import { AnimeThemesClient } from "../clients/animeThemesClient"
-import { MALGetAnimeClient, MALSearchAnimeClient, Anime, FullAnime, MALGetCharactersClient } from "../clients/malClient"
+import {
+  MALGetAnimeClient,
+  MALSearchAnimeClient,
+  Anime,
+  FullAnime,
+  MALGetCharactersClient,
+} from "../clients/malClient"
 import { TSocket } from "../utils/tsocket"
 import { get, run } from "../databaseManager"
 
@@ -7,10 +13,10 @@ import { randomItem } from "../utils/util.ts"
 import GameService from "./gameService.ts"
 
 interface Guess {
-  mal_id: number,
-  title: string,
-  user: string,
-  correct?: boolean,
+  mal_id: number
+  title: string
+  user: string
+  correct?: boolean
   image_url?: string
 }
 
@@ -24,7 +30,7 @@ class AnidleService extends GameService {
     "anidle-start": this.startGame.bind(this),
     "anidle-guess": this.guess.bind(this),
     "anidle-autocomplete": this.autocomplete.bind(this),
-    "anidle-get-state": this.state.bind(this)
+    "anidle-get-state": this.state.bind(this),
   }
 
   readonly loadingEvent: string = "anidle-loading"
@@ -93,7 +99,7 @@ class AnidleService extends GameService {
     this.won = false
     this.settings = {
       maxPopularity: 200,
-      themeType: "ALL"
+      themeType: "ALL",
     }
   }
 
@@ -111,40 +117,55 @@ class AnidleService extends GameService {
 
     const selectedAnime = await this.findRandomAnime()
     const mal_id = selectedAnime.mal_id
-    const animeSourcePromise = this.getFullAnime(mal_id).then((animeResponse: FullAnime) => {
-      this.anime = animeResponse
-      return this.getSourceFromFullAnime(animeResponse)
-    })
+    const animeSourcePromise = this.getFullAnime(mal_id).then(
+      (animeResponse: FullAnime) => {
+        this.anime = animeResponse
+        return this.getSourceFromFullAnime(animeResponse)
+      }
+    )
     const animeThemesPromise = this.animeThemesClient.fetch({ mal_id })
-    const [animeThemesResponse, animeSourceResponse] = await Promise.all([animeThemesPromise, animeSourcePromise])
+    const [animeThemesResponse, animeSourceResponse] = await Promise.all([
+      animeThemesPromise,
+      animeSourcePromise,
+    ])
 
     this.revealedData = {
       source: "",
       correctGenres: [],
-      incorrectGenres: []
+      incorrectGenres: [],
     }
-    const availableThemes = animeThemesResponse.animethemes.map(theme => {
-      return {
-        id: theme.id,
-        title: theme.song.title,
-        link: (theme.animethemeentries.find(e => !e.spoiler) || theme.animethemeentries[0]).videos[0].audio.link,
-        type: theme.type,
-        slug: theme.slug,
-      }
-    }).filter(theme => this.settings.themeType === "ALL" || theme.type === this.settings.themeType)
+    const availableThemes = animeThemesResponse.animethemes
+      .map((theme) => {
+        return {
+          id: theme.id,
+          title: theme.song.title,
+          link: (
+            theme.animethemeentries.find((e) => !e.spoiler) ||
+            theme.animethemeentries[0]
+          ).videos[0].audio.link,
+          type: theme.type,
+          slug: theme.slug,
+        }
+      })
+      .filter(
+        (theme) =>
+          this.settings.themeType === "ALL" ||
+          theme.type === this.settings.themeType
+      )
     this.animeSource = animeSourceResponse
-    this.anime!.synopsis = this.anime!.synopsis
-      .replace("[Written by MAL Rewrite]", "")
-      .trim()
+    this.anime!.synopsis = this.anime!.synopsis.replace(
+      "[Written by MAL Rewrite]",
+      ""
+    ).trim()
     this.awaitingNext = true
     this.selectedAudio = {
       track: randomItem(availableThemes),
-      start: Math.random() * 90
+      start: Math.random() * 90,
     }
     this.broadcastFn(this.startEvent, {
       synopsis: this.anime!.synopsis,
       audioClue: this.selectedAudio,
-      revealedData: this.revealedData
+      revealedData: this.revealedData,
     })
     this.loading = false
   }
@@ -158,32 +179,38 @@ class AnidleService extends GameService {
       max = 8000
     }
     const animePopularity = Math.floor(Math.random() * (max - min + 1)) + min
-    const anime: Anime = (await this.malSearchAnimeClient.fetch({ 
-      limit: 1,
-      page: animePopularity,
-      order_by: 'popularity',
-      sort: 'asc',
-      type: 'tv'
-    })).data[0]
+    const anime: Anime = (
+      await this.malSearchAnimeClient.fetch({
+        limit: 1,
+        page: animePopularity,
+        order_by: "popularity",
+        sort: "asc",
+        type: "tv",
+      })
+    ).data[0]
     return anime
   }
 
   async getFullAnime(mal_id: number): Promise<FullAnime> {
     // updated in the last 30 days
-    const dateThreshold = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000)
-    const anime = await get("SELECT json FROM mal_anime_cache WHERE mal_id = ? AND updated_at > ? LIMIT 1", 
-      mal_id, 
+    const dateThreshold = new Date(
+      new Date().getTime() - 30 * 24 * 60 * 60 * 1000
+    )
+    const anime = await get(
+      "SELECT json FROM mal_anime_cache WHERE mal_id = ? AND updated_at > ? LIMIT 1",
+      mal_id,
       dateThreshold.toISOString()
     )
     if (anime.length > 0) {
       return JSON.parse(anime[0].json)
     }
     return this.malGetAnimeClient.fetch({ mal_id }).then(async (res) => {
-      await new Promise(resolve => setTimeout(resolve, 700))
+      await new Promise((resolve) => setTimeout(resolve, 700))
       const anime = res.data
-      await run("INSERT OR REPLACE INTO mal_anime_cache (mal_id, json, updated_at) VALUES (?, ?, ?)", 
-        mal_id, 
-        JSON.stringify(anime), 
+      await run(
+        "INSERT OR REPLACE INTO mal_anime_cache (mal_id, json, updated_at) VALUES (?, ?, ?)",
+        mal_id,
+        JSON.stringify(anime),
         new Date().toISOString()
       )
       return anime
@@ -191,7 +218,10 @@ class AnidleService extends GameService {
   }
 
   async getSourceId(mal_id: number): Promise<number> {
-    const mal_ids = await get("SELECT source_id FROM anime_sources WHERE mal_id = ?", mal_id)
+    const mal_ids = await get(
+      "SELECT source_id FROM anime_sources WHERE mal_id = ?",
+      mal_id
+    )
     if (mal_ids.length > 0) {
       return mal_ids[0].source_id
     }
@@ -206,7 +236,9 @@ class AnidleService extends GameService {
 
     const animeWithoutSources: number[] = [sourceAnime.mal_id]
     do {
-      const prequels = sourceAnime.relations.find(r => r.relation === 'Prequel')?.entry.map(e => e.mal_id) || [-1]
+      const prequels = sourceAnime.relations
+        .find((r) => r.relation === "Prequel")
+        ?.entry.map((e) => e.mal_id) || [-1]
       sourceId = Math.min(...prequels)
       if (sourceId === -1) {
         sourceId = sourceAnime.mal_id
@@ -219,32 +251,38 @@ class AnidleService extends GameService {
       } else {
         animeWithoutSources.push(sourceId)
       }
-      sourceAnime = (await this.getFullAnime(sourceId))
-    } while (sourceId !== -1);
+      sourceAnime = await this.getFullAnime(sourceId)
+    } while (sourceId !== -1)
 
     animeWithoutSources.forEach(async (id) => {
-      await run("INSERT INTO anime_sources (mal_id, source_id) VALUES (?, ?)", id, sourceId)
+      await run(
+        "INSERT INTO anime_sources (mal_id, source_id) VALUES (?, ?)",
+        id,
+        sourceId
+      )
     })
     return sourceAnime
   }
 
-  async state(_: Object, socket: TSocket) {
+  async state(_: object, socket: TSocket) {
     socket.emit(this.stateEvent, {
       loading: this.loading,
       revealedData: this.revealedData,
       synopsis: this.anime?.synopsis,
       guesses: this.guesses,
       selectedAudio: this.selectedAudio,
-      revealedSynopsis: this.revealedSynopsis
+      revealedSynopsis: this.revealedSynopsis,
     })
   }
 
   async guess({ title, mal_id }: Guess, socket: TSocket) {
     if (this.won) {
-      socket.emit(this.repeatGuessEvent, { name: this.guesses[this.guesses.length - 1].mal_id })
+      socket.emit(this.repeatGuessEvent, {
+        name: this.guesses[this.guesses.length - 1].mal_id,
+      })
       return
     }
-    const index = this.guesses.findIndex(g => g.mal_id === mal_id)
+    const index = this.guesses.findIndex((g) => g.mal_id === mal_id)
     if (index !== -1) {
       socket.emit(this.repeatGuessEvent, { name: this.guesses[index].mal_id })
       return
@@ -252,7 +290,7 @@ class AnidleService extends GameService {
     const guessResult: Guess = {
       mal_id,
       title,
-      user: socket.ign
+      user: socket.ign,
     }
     this.broadcastFn(this.guessStartEvent, guessResult)
     this.guesses.push(guessResult)
@@ -278,8 +316,8 @@ class AnidleService extends GameService {
       this.revealedData.source = source.title
     }
     // Update genres
-    anime.genres.forEach(genre => {
-      if (this.anime!.genres.find(g => g.name === genre.name)) {
+    anime.genres.forEach((genre) => {
+      if (this.anime!.genres.find((g) => g.name === genre.name)) {
         if (!this.revealedData!.correctGenres.includes(genre.name)) {
           this.revealedData!.correctGenres.push(genre.name)
         }
@@ -291,26 +329,51 @@ class AnidleService extends GameService {
     })
 
     // Update popularity range
-    const popularityRange = this.clamp(anime.popularity, this.anime.popularity, this.revealedData.popularityMin, this.revealedData.popularityMax)
+    const popularityRange = this.clamp(
+      anime.popularity,
+      this.anime.popularity,
+      this.revealedData.popularityMin,
+      this.revealedData.popularityMax
+    )
     this.revealedData.popularityMin = popularityRange.min
     this.revealedData.popularityMax = popularityRange.max
 
     // Update rank range
-    const rankRange = this.clamp(anime.rank, this.anime.rank, this.revealedData.rankMin, this.revealedData.rankMax)
+    const rankRange = this.clamp(
+      anime.rank,
+      this.anime.rank,
+      this.revealedData.rankMin,
+      this.revealedData.rankMax
+    )
     this.revealedData.rankMin = rankRange.min
     this.revealedData.rankMax = rankRange.max
 
     // Update score range
-    const scoreRange = this.clamp(anime.score, this.anime.score, this.revealedData.scoreMin, this.revealedData.scoreMax)
+    const scoreRange = this.clamp(
+      anime.score,
+      this.anime.score,
+      this.revealedData.scoreMin,
+      this.revealedData.scoreMax
+    )
     this.revealedData.scoreMin = scoreRange.min
     this.revealedData.scoreMax = scoreRange.max
 
     // Update aired range
-    const airedFromRange = this.clamp(new Date(anime.aired.from), new Date(this.anime.aired.from), this.revealedData.airedStartMin, this.revealedData.airedStartMax)
+    const airedFromRange = this.clamp(
+      new Date(anime.aired.from),
+      new Date(this.anime.aired.from),
+      this.revealedData.airedStartMin,
+      this.revealedData.airedStartMax
+    )
     this.revealedData.airedStartMin = airedFromRange.min
     this.revealedData.airedStartMax = airedFromRange.max
 
-    const airedToRange = this.clamp(new Date(anime.aired.to), new Date(this.anime.aired.to), this.revealedData.airedEndMin, this.revealedData.airedEndMax)
+    const airedToRange = this.clamp(
+      new Date(anime.aired.to),
+      new Date(this.anime.aired.to),
+      this.revealedData.airedEndMin,
+      this.revealedData.airedEndMax
+    )
     this.revealedData.airedEndMin = airedToRange.min
     this.revealedData.airedEndMax = airedToRange.max
 
@@ -320,7 +383,9 @@ class AnidleService extends GameService {
     const synopsisLength = synopsisSplit.length
     const numRevealed = Math.min(5, Math.floor(synopsisLength / 10))
     const eligible = Array.from({ length: synopsisLength }, (_, i) => i).filter(
-      i => !this.revealedSynopsis[i] && synopsisSplit[i].charAt(0) !== synopsisSplit[i].charAt(0).toUpperCase()
+      (i) =>
+        !this.revealedSynopsis[i] &&
+        synopsisSplit[i].charAt(0) !== synopsisSplit[i].charAt(0).toUpperCase()
     )
     let revealIndices = []
     if (eligible.length < numRevealed) {
@@ -334,11 +399,16 @@ class AnidleService extends GameService {
     this.broadcastFn(this.guessEvent, {
       revealedData: this.revealedData,
       guess: guessResult,
-      revealIndices: revealIndices
+      revealIndices: revealIndices,
     })
   }
 
-  clamp(value: any, target: any, min?: any, max?: any): { min?: any, max?: any } {
+  clamp(
+    value: any,
+    target: any,
+    min?: any,
+    max?: any
+  ): { min?: any; max?: any } {
     if (value > target) {
       if (!max || max > value) {
         max = value
@@ -355,7 +425,10 @@ class AnidleService extends GameService {
   }
 
   async autocomplete(query: string, socket: TSocket) {
-    const matches = await get("SELECT * FROM anime_autocomplete WHERE aka LIKE ? LIMIT 200", `%${query}%`)
+    const matches = await get(
+      "SELECT * FROM anime_autocomplete WHERE aka LIKE ? LIMIT 200",
+      `%${query}%`
+    )
     if (matches.length < 200) {
       socket.emit(this.autocompleteEvent, { options: matches, query })
     }

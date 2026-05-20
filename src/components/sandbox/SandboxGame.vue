@@ -1,6 +1,6 @@
 <template>
   <div id="sandbox" class="select-none text-gray-700">
-    <h2 class="text-2xl text-center">Sandbox</h2>    
+    <h2 class="text-2xl text-center">Sandbox</h2>
     <template v-if="mode === 'zoom'">
       <div class="text-2xl bg-white mx-6 h-100 p-3 mb-3">
         <div class="h-full flex justify-center">
@@ -22,7 +22,9 @@
           type="text"
           class="col-span-5 outline-none w-full rounded px-2 shadow"
         />
-        <label class="col-span-1 text-right">x: {{ parseFloat(x).toFixed(2) }}</label>
+        <label class="col-span-1 text-right"
+          >x: {{ parseFloat(x).toFixed(2) }}</label
+        >
         <input
           v-model="x"
           type="range"
@@ -31,7 +33,9 @@
           step="0.01"
           class="slider col-span-2"
         />
-        <label class="col-span-1 text-right">y: {{ parseFloat(y).toFixed(2) }}</label>
+        <label class="col-span-1 text-right"
+          >y: {{ parseFloat(y).toFixed(2) }}</label
+        >
         <input
           v-model="y"
           type="range"
@@ -40,7 +44,9 @@
           step="0.01"
           class="slider col-span-2"
         />
-        <label class="col-span-1 text-right">scale: {{ parseFloat(scale).toFixed(2) }}x</label>
+        <label class="col-span-1 text-right"
+          >scale: {{ parseFloat(scale).toFixed(2) }}x</label
+        >
         <input
           v-model="scale"
           type="range"
@@ -60,9 +66,24 @@
         />
       </div>
       <div class="text-emerald-50 flex gap-2">
-        <button class="mt-3 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded" @click="state = 'active'">Start</button>
-        <button class="mt-3 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded" @click="state = 'full'">Reveal</button>
-        <button class="mt-3 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded" @click="state = 'start'">Reset</button>
+        <button
+          class="mt-3 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded"
+          @click="state = 'active'"
+        >
+          Start
+        </button>
+        <button
+          class="mt-3 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded"
+          @click="state = 'full'"
+        >
+          Reveal
+        </button>
+        <button
+          class="mt-3 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded"
+          @click="state = 'start'"
+        >
+          Reset
+        </button>
       </div>
     </template>
     <template v-else-if="mode === 'blur'">
@@ -104,9 +125,24 @@
         />
       </div>
       <div class="text-emerald-50 flex gap-2">
-        <button class="mt-3 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded" @click="state = 'active'">Start</button>
-        <button class="mt-3 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded" @click="state = 'full'">Reveal</button>
-        <button class="mt-3 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded" @click="state = 'start'">Reset</button>
+        <button
+          class="mt-3 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded"
+          @click="state = 'active'"
+        >
+          Start
+        </button>
+        <button
+          class="mt-3 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded"
+          @click="state = 'full'"
+        >
+          Reveal
+        </button>
+        <button
+          class="mt-3 w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded"
+          @click="state = 'start'"
+        >
+          Reset
+        </button>
       </div>
     </template>
     <select v-model="mode" class="border bg-white p-2 text-center w-full mt-2">
@@ -117,27 +153,28 @@
 </template>
 
 <script>
-import ZoomImage from "@/components/jeopardy/ZoomImage.vue";
-import BlurImage from "@/components/jeopardy/BlurImage.vue";
+import ZoomImage from "@/components/jeopardy/ZoomImage.vue"
+import BlurImage from "@/components/jeopardy/BlurImage.vue"
 
 export default {
   name: "SandboxGame",
   components: {
     ZoomImage,
-    BlurImage
+    BlurImage,
   },
   data() {
     return {
-      mode: 'blur',
-      image: 'https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg',
+      mode: "blur",
+      image:
+        "https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg",
       blur: 10,
       x: 0.5,
       y: 0.5,
       scale: 0.1,
       time: 10,
-      state: 'start'
+      state: "start",
     }
-  }
+  },
 }
 </script>
 

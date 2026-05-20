@@ -11,7 +11,9 @@ function shuffle<T>(array: T[]): void {
 
     // And swap it with the current element.
     ;[array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]]
+      array[randomIndex],
+      array[currentIndex],
+    ]
   }
 }
 
@@ -20,26 +22,59 @@ function randomItem<T>(array: T[]): T {
 }
 
 const colors = [
-  "maroon", "salmon", "tomato", "coral", "sienna",
-  "peachpuff", "chocolate", "bisque", "peru", "moccasin",
-  "orange", "goldenrod", "gold", "olive", "chartreuse",
-  "lime", "aquamarine", "turquoise", "teal", "lavender",
-  "navy", "plum", "orchid", "violet", "crimson"
+  "maroon",
+  "salmon",
+  "tomato",
+  "coral",
+  "sienna",
+  "peachpuff",
+  "chocolate",
+  "bisque",
+  "peru",
+  "moccasin",
+  "orange",
+  "goldenrod",
+  "gold",
+  "olive",
+  "chartreuse",
+  "lime",
+  "aquamarine",
+  "turquoise",
+  "teal",
+  "lavender",
+  "navy",
+  "plum",
+  "orchid",
+  "violet",
+  "crimson",
 ]
 
 const symbols = [
-  "triangle", "circle", "star", "moon", "diamond",
-  "fire", "cloud", "heart", "hexagon"
+  "triangle",
+  "circle",
+  "star",
+  "moon",
+  "diamond",
+  "fire",
+  "cloud",
+  "heart",
+  "hexagon",
 ]
 
-const letterFrequency = fs.readFileSync("./server/assets/letter_frequency.csv", "utf8")
+const letterFrequency = fs.readFileSync(
+  "./server/assets/letter_frequency.csv",
+  "utf8"
+)
 const letterSampler: [string, number][] = []
 let totalLetterFrequency = 0
-letterFrequency.trim().split("\n").forEach((line) => {
-  const [letter, frequency] = line.split(",")
-  totalLetterFrequency += Number(frequency)
-  letterSampler.push([letter, totalLetterFrequency])
-})
+letterFrequency
+  .trim()
+  .split("\n")
+  .forEach((line) => {
+    const [letter, frequency] = line.split(",")
+    totalLetterFrequency += Number(frequency)
+    letterSampler.push([letter, totalLetterFrequency])
+  })
 
 function getRandomWeightedLetter(): string | undefined {
   const sample = Math.random() * totalLetterFrequency
@@ -51,18 +86,70 @@ function getRandomWeightedLetter(): string | undefined {
   }
 }
 
-
 const prefixes = [
-  "Al", "Be", "De", "El", "Fa", "Ga", "Jo", "Ka", "La", "Ma",
-  "Na", "Pa", "Ra", "Sa", "Ta", "Va", "Zy", "Fi", "Lu", "Or"
+  "Al",
+  "Be",
+  "De",
+  "El",
+  "Fa",
+  "Ga",
+  "Jo",
+  "Ka",
+  "La",
+  "Ma",
+  "Na",
+  "Pa",
+  "Ra",
+  "Sa",
+  "Ta",
+  "Va",
+  "Zy",
+  "Fi",
+  "Lu",
+  "Or",
 ]
 const roots = [
-  "lin", "mar", "son", "vin", "dor", "ric", "dra", "len", "thy",
-  "mal", "ven", "cel", "ren", "vra", "ton", "ris", "ver", "wyn", "jas"
+  "lin",
+  "mar",
+  "son",
+  "vin",
+  "dor",
+  "ric",
+  "dra",
+  "len",
+  "thy",
+  "mal",
+  "ven",
+  "cel",
+  "ren",
+  "vra",
+  "ton",
+  "ris",
+  "ver",
+  "wyn",
+  "jas",
 ]
 const suffixes = [
-  "ina", "ous", "ian", "lyn", "ith", "ene", "ane", "ell", "ris", "wyn",
-  "ion", "ora", "ara", "ryn", "yna", "ine", "iel", "lin", "mar", "ven"
+  "ina",
+  "ous",
+  "ian",
+  "lyn",
+  "ith",
+  "ene",
+  "ane",
+  "ell",
+  "ris",
+  "wyn",
+  "ion",
+  "ora",
+  "ara",
+  "ryn",
+  "yna",
+  "ine",
+  "iel",
+  "lin",
+  "mar",
+  "ven",
 ]
 
 function generateName(): string {
@@ -92,5 +179,5 @@ export {
   symbols,
   colors,
   getRandomWeightedLetter,
-  generateName
+  generateName,
 }

@@ -1,6 +1,9 @@
 <template>
   <div class="bg-white p-4 mt-8">
-    <form class="mb-4 flex flex-col justify-center items-center" @submit.prevent="joinRoom">
+    <form
+      class="mb-4 flex flex-col justify-center items-center"
+      @submit.prevent="joinRoom"
+    >
       <label>
         <p class="text-lg select-none">Join with a Room Code</p>
         <input
@@ -13,7 +16,12 @@
           autocomplete="off"
         />
       </label>
-      <button class="border-2 border-emerald-500 rounded hover:border-emerald-400 mt-3 mx-auto py-3 w-full" @click.prevent="joinRoom">Join</button>
+      <button
+        class="border-2 border-emerald-500 rounded hover:border-emerald-400 mt-3 mx-auto py-3 w-full"
+        @click.prevent="joinRoom"
+      >
+        Join
+      </button>
     </form>
     <h2 class="text-xl py-2">Create a Room</h2>
     <div class="grid grid-cols-3 gap-3 w-full">
@@ -28,7 +36,7 @@
 
 <script>
 import GameChoice from "@/components/GameChoice.vue"
-import socket from "@/mixins/socket";
+import socket from "@/mixins/socket"
 
 export default {
   name: "GameSelection",
@@ -65,7 +73,7 @@ export default {
       this.socket.emit("join-room", this.room)
       this.room = ""
     },
-  }
+  },
 }
 </script>
 
@@ -84,7 +92,9 @@ export default {
     )
     0 100%/100% 2px no-repeat;
   color: #2c3e50;
-  font: 5ch consolas, monospace;
+  font:
+    5ch consolas,
+    monospace;
   letter-spacing: 0.5ch;
 }
 </style>

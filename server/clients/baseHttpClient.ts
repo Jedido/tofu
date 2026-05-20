@@ -16,15 +16,15 @@ export class BaseHttpClient<In, Out> {
   }
 
   convertInToRequest(_: In): Request {
-    throw new Error(`method not implemented in ${typeof(this)}`)
+    throw new Error(`method not implemented in ${typeof this}`)
   }
 
   convertOutFromResponse(_: string, __: In): Out {
-    throw new Error(`method not implemented in ${typeof(this)}`)
+    throw new Error(`method not implemented in ${typeof this}`)
   }
 
   private async delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms))
+    return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
   async fetch(input: In): Promise<Out> {
@@ -42,7 +42,10 @@ export class BaseHttpClient<In, Out> {
 
         const res = await fetch(request)
 
-        if (!res.ok && this.retryConfig?.retryableStatuses?.includes(res.status)) {
+        if (
+          !res.ok &&
+          this.retryConfig?.retryableStatuses?.includes(res.status)
+        ) {
           throw new Error(`HTTP ${res.status}: ${res.statusText}`)
         }
 
@@ -56,7 +59,7 @@ export class BaseHttpClient<In, Out> {
           attempt: attempt + 1,
           durationms: getDurationMs(start),
           in: this.stringifyIn(input),
-          out: this.stringifyOut(out)
+          out: this.stringifyOut(out),
         })
         return out
       } catch (error) {
@@ -67,7 +70,7 @@ export class BaseHttpClient<In, Out> {
           url: request.url,
           attempt,
           error: lastError.message,
-          retry: attempt < (this.retryConfig?.maxRetries ?? 0)
+          retry: attempt < (this.retryConfig?.maxRetries ?? 0),
         })
         if (!this.retryConfig || attempt >= this.retryConfig.maxRetries) {
           break

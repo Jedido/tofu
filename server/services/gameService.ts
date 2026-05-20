@@ -19,7 +19,8 @@ class GameService {
 
   constructor(roomId: string) {
     this.getPlayers = () => players(roomId)
-    this.getPlayer = (id: string) => this.getPlayers().find(socket => socket.id === id)
+    this.getPlayer = (id: string) =>
+      this.getPlayers().find((socket) => socket.id === id)
     this.broadcastFn = (...args: any[]) => {
       broadcast(roomId, ...args)
     }

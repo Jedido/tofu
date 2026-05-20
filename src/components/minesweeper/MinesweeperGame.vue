@@ -19,46 +19,37 @@
         'grid-template-columns': `repeat(${size}, 1fr)`,
         fontSize: cellSize,
         lineHeight: cellSize,
-        height: `${this.$store.state.gameWidth}px`,
+        height: `${$store.state.gameWidth}px`,
       }"
     >
       <MinesweeperCell
         v-for="(cell, index) in board"
-        v-on:reveal-space="revealSpace(index)"
-        v-on:flag-space="flagSpace(index)"
-        class="space border border-gray-500 text-center"
         :key="index"
+        class="space border border-gray-500 text-center"
         :value="cell"
+        @reveal-space="revealSpace(index)"
+        @flag-space="flagSpace(index)"
       />
     </div>
     <div class="grid grid-cols-6 my-2 gap-3">
       <p class="col-span-2 text-right">Board size</p>
       <input
-        class="rounded text-center shadow outline-none"
         v-model="inputSize"
+        class="rounded text-center shadow outline-none"
         type="number"
         min="5"
         max="50"
       />
       <button
-        class="
-          row-span-2
-          col-span-3
-          bg-gray-200
-          rounded
-          shadow
-          hover:bg-gray-100
-          active:bg-gray-300
-          focus:outline-none
-        "
+        class="row-span-2 col-span-3 bg-gray-200 rounded shadow hover:bg-gray-100 active:bg-gray-300 focus:outline-none"
         @click="minesweeper"
       >
         New Game
       </button>
       <p class="col-span-2 text-right">Mines</p>
       <input
-        class="rounded text-center shadow outline-none"
         v-model="mines"
+        class="rounded text-center shadow outline-none"
         type="number"
         min="1"
         max="2499"
@@ -73,10 +64,10 @@ import socket from "@/mixins/socket.js"
 
 export default {
   name: "MinesweeperGame",
-  mixins: [socket],
   components: {
     MinesweeperCell,
   },
+  mixins: [socket],
   data() {
     return {
       board: [],
@@ -89,6 +80,11 @@ export default {
       revealed: 0,
       counter: null,
     }
+  },
+  computed: {
+    cellSize() {
+      return `${(this.$store.state.gameWidth - 48) / this.size - 2}px`
+    },
   },
   created() {},
   mounted() {
@@ -151,11 +147,6 @@ export default {
     },
     tick() {
       ++this.time
-    },
-  },
-  computed: {
-    cellSize() {
-      return `${(this.$store.state.gameWidth - 48) / this.size - 2}px`
     },
   },
 }

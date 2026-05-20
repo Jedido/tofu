@@ -1,24 +1,31 @@
 <template>
-  <Panel v-if="panel === 'k1'" :active="active" :panel-type="panel" @submit="$emit('submit')">
-    <template v-slot:title>
-      {{ state.city }} Map
-    </template>
-    <template v-slot:description>
-      A rough map of {{ state.city }}.
-    </template>
-    <template v-slot:content>
-      <div class="flex flex-col text-xl w-56 justify-around mx-auto text-center gap-3">
+  <Panel
+    v-if="panel === 'k1'"
+    :active="active"
+    :panel-type="panel"
+    @submit="$emit('submit')"
+  >
+    <template #title> {{ state.city }} Map </template>
+    <template #description> A rough map of {{ state.city }}. </template>
+    <template #content>
+      <div
+        class="flex flex-col text-xl w-56 justify-around mx-auto text-center gap-3"
+      >
         <div class="flex justify-around text-2xl mt-2">
           {{ state.streets[selected] }}
         </div>
         <div class="red h-20 w-56 rounded relative border-2">
           <div class="absolute top-0 left-0 right-0">N</div>
-          <div class="flex text-4xl justify-around absolute bottom-0 left-0 right-0">
-            <i v-for="(offset, i) in northern"
+          <div
+            class="flex text-4xl justify-around absolute bottom-0 left-0 right-0"
+          >
+            <i
+              v-for="(offset, i) in northern"
+              :key="i"
               class="cursor-pointer"
               :class="{
                 'bi-geo-alt-fill': selected === i,
-                'bi-geo-alt': selected !== i
+                'bi-geo-alt': selected !== i,
               }"
               :style="[`transform: translate(${offset.x}px, ${offset.y}px);`]"
               @pointerdown.stop="selected = i"
@@ -27,12 +34,16 @@
         </div>
         <div class="blue h-20 w-56 rounded relative border-2">
           <div class="absolute bottom-0 left-0 right-0">S</div>
-          <div class="flex text-4xl justify-around absolute top-0 left-0 right-0">
-            <i v-for="(offset, i) in southern" 
+          <div
+            class="flex text-4xl justify-around absolute top-0 left-0 right-0"
+          >
+            <i
+              v-for="(offset, i) in southern"
+              :key="i"
               class="cursor-pointer"
               :class="{
                 'bi-geo-alt-fill': selected === i + 4,
-                'bi-geo-alt': selected !== i + 4
+                'bi-geo-alt': selected !== i + 4,
               }"
               :style="[`transform: translate(${offset.x}px, ${offset.y}px);`]"
               @pointerdown.stop="selected = i + 4"
@@ -48,14 +59,15 @@
     :panel-type="panel"
     @submit="sendSolution"
   >
-    <template v-slot:title>
-      {{ state.city }} Post
+    <template #title> {{ state.city }} Post </template>
+    <template #description>
+      Slide the mail the northern or southern region, based on its location on
+      the map.
     </template>
-    <template v-slot:description >
-      Slide the mail the northern or southern region, based on its location on the map.
-    </template>
-    <template v-slot:content>
-      <div class="text-xl text-center flex flex-col justify-around items-center">
+    <template #content>
+      <div
+        class="text-xl text-center flex flex-col justify-around items-center"
+      >
         <div class="text-3xl py-3">
           {{ state.streets[selected] }}
         </div>
@@ -65,12 +77,14 @@
         <div class="flex w-56 justify-around text-4xl">
           <div
             v-for="(_, i) in state.streets"
+            :key="i"
             class="relative text-gray-400 z-10"
             :class="{
               'text-gray-600': selected === i,
-              'transition-transform': !dragging
+              'transition-transform': !dragging,
             }"
-            :style="[`transform: translateY(${currentOffsetY[i]}px);`]" @pointerdown.stop="(e) => start(i, e)"
+            :style="[`transform: translateY(${currentOffsetY[i]}px);`]"
+            @pointerdown.stop="(e) => start(i, e)"
           >
             <i class="bi-envelope cursor-pointer"></i>
           </div>
@@ -84,21 +98,21 @@
 </template>
 
 <script>
-import Panel from '@/components/team/Panel.vue';
+import Panel from "@/components/team/Panel.vue"
 
 const limit = 42
 export default {
   name: "AddressPanel",
-  props: {
-    panel: String,
-    state: Object,
-    active: Boolean
-  },
   components: {
-    Panel
+    Panel,
+  },
+  props: {
+    panel: { type: String, required: true },
+    state: { type: Object, required: true },
+    active: Boolean,
   },
   emits: {
-    'submit': false
+    submit: false,
   },
   data() {
     return {
@@ -107,23 +121,23 @@ export default {
       northern: Array.from({ length: 4 }, () => {
         return {
           x: Math.floor(Math.random() * 30) - 15,
-          y: -Math.floor(Math.random() * 30)
+          y: -Math.floor(Math.random() * 30),
         }
       }),
       southern: Array.from({ length: 4 }, () => {
         return {
           x: Math.floor(Math.random() * 30) - 15,
-          y: Math.floor(Math.random() * 30)
+          y: Math.floor(Math.random() * 30),
         }
       }),
       dragging: false,
-      startY: 0
+      startY: 0,
     }
   },
   methods: {
     sendSolution() {
-      this.$emit('submit', {
-        north: this.currentOffsetY.map(offset => offset < 0)
+      this.$emit("submit", {
+        north: this.currentOffsetY.map((offset) => offset < 0),
       })
     },
     getElement(e) {
@@ -140,7 +154,10 @@ export default {
     },
     drag(e) {
       const element = this.getElement(e)
-      this.currentOffsetY[this.selected] = Math.min(limit, Math.max(-limit, element.clientY - this.startY))
+      this.currentOffsetY[this.selected] = Math.min(
+        limit,
+        Math.max(-limit, element.clientY - this.startY)
+      )
     },
     stop() {
       this.dragging = false
@@ -154,7 +171,7 @@ export default {
       document.removeEventListener("pointermove", this.drag)
       document.removeEventListener("pointerup", this.stop)
     },
-  }
+  },
 }
 </script>
 

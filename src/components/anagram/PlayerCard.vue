@@ -28,11 +28,11 @@
 export default {
   name: "TimerBar",
   props: {
-    max: String,
-    score: String,
-    name: String,
-    strikes: Number,
-    maxStrikes: String,
+    max: { type: String, required: true },
+    score: { type: String, required: true },
+    name: { type: String, required: true },
+    strikes: { type: Number, required: true },
+    maxStrikes: { type: String, required: true },
   },
   computed: {
     strikeText() {

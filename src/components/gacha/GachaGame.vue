@@ -31,10 +31,10 @@ import GachaCard from "@/components/gacha/GachaCard.vue"
 
 export default {
   name: "GachaGame",
-  mixins: [socket],
   components: {
     GachaCard,
   },
+  mixins: [socket],
   data() {
     return {
       recruitQueue: [],

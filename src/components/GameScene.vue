@@ -1,0 +1,120 @@
+<template>
+  <main class="bg-amber-50" :class="{ 'px-3': md }">
+    <div
+      id="main-content"
+      class="flex justify-center align-center mx-auto"
+      :style="[
+        `scale: ${$store.state.scale}; transform: translateY(${translate}%)`,
+      ]"
+    >
+      <ExampleGame v-if="$store.state.scene === 'example'" :socket="socket" />
+      <MinesweeperGame
+        v-else-if="$store.state.scene === 'minesweeper'"
+        :socket="socket"
+      />
+      <AnagramGame
+        v-else-if="$store.state.scene === 'anagram'"
+        :socket="socket"
+      />
+      <GachaGame v-else-if="$store.state.scene === 'gacha'" :socket="socket" />
+      <WatchGame v-else-if="$store.state.scene === 'watch'" :socket="socket" />
+      <JeopardyGame
+        v-else-if="$store.state.scene === 'jeopardy'"
+        :socket="socket"
+      />
+      <SquaredleGame
+        v-else-if="$store.state.scene === 'squaredle'"
+        :socket="socket"
+        :game-width="$store.state.gameWidth"
+      />
+      <SandboxGame v-else-if="$store.state.scene === 'sandbox'" />
+      <TeamGame v-else-if="$store.state.scene === 'team'" :socket="socket" />
+      <AnidleGame
+        v-else-if="$store.state.scene === 'anidle'"
+        :socket="socket"
+      />
+      <TileGame v-else-if="$store.state.scene === 'tile'" :socket="socket" />
+      <RoomSelection v-else :socket="socket" @launch-game="launchGame" />
+    </div>
+  </main>
+</template>
+
+<script>
+import { defineAsyncComponent } from "vue"
+import RoomSelection from "@/components/RoomSelection.vue"
+import breakpoints from "@/mixins/breakpoints"
+import { Socket } from "socket.io-client"
+
+export default {
+  name: "GameScene",
+  components: {
+    RoomSelection,
+    ExampleGame: defineAsyncComponent(
+      () => import("@/components/example/ExampleGame.vue")
+    ),
+    MinesweeperGame: defineAsyncComponent(
+      () => import("@/components/minesweeper/MinesweeperGame.vue")
+    ),
+    AnagramGame: defineAsyncComponent(
+      () => import("@/components/anagram/AnagramGame.vue")
+    ),
+    GachaGame: defineAsyncComponent(
+      () => import("@/components/gacha/GachaGame.vue")
+    ),
+    WatchGame: defineAsyncComponent(
+      () => import("@/components/watch/WatchGame.vue")
+    ),
+    JeopardyGame: defineAsyncComponent(
+      () => import("@/components/jeopardy/JeopardyGame.vue")
+    ),
+    SquaredleGame: defineAsyncComponent(
+      () => import("@/components/squaredle/SquaredleGame.vue")
+    ),
+    SandboxGame: defineAsyncComponent(
+      () => import("@/components/sandbox/SandboxGame.vue")
+    ),
+    TeamGame: defineAsyncComponent(
+      () => import("@/components/team/TeamGame.vue")
+    ),
+    AnidleGame: defineAsyncComponent(
+      () => import("@/components/anidle/AnidleGame.vue")
+    ),
+    TileGame: defineAsyncComponent(
+      () => import("@/components/tile/TileGame.vue")
+    ),
+  },
+  mixins: [breakpoints],
+  props: {
+    socket: Socket,
+  },
+  data() {
+    return {
+      gameWidth: 0,
+    }
+  },
+  computed: {
+    translate() {
+      return ((this.$store.state.scale - 1) / this.$store.state.scale) * 50
+    },
+  },
+  mounted() {
+    this.socket.on("set-scene", (scene) => {
+      this.$store.commit("setScene", scene)
+    })
+  },
+  methods: {
+    launchGame(game) {
+      this.scene = game
+      this.$store.commit("setScene", game)
+      this.socket.emit("create-room", game, this.$store.state.ign)
+    },
+  },
+}
+</script>
+
+<style scoped>
+#main-content {
+  max-width: 48rem;
+  height: 100vh;
+}
+</style>

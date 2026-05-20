@@ -1,13 +1,23 @@
 <template>
   <div id="anidle" class="overflow-x-hidden">
-    <canvas class="hidden" id="text-canvas"></canvas>
+    <canvas id="text-canvas" class="hidden"></canvas>
     <div v-if="state === 'game'" class="pb-40">
-      <div class="mt-4 bg-gray-800 text-amber-50 border-2 border-gray-600 px-6 py-3 rounded-lg min-w-80">
-        <h2 class="text-2xl text-center">{{ loading ? "Finding an Anime..." : (revealed ? answer : '???') }}</h2>
+      <div
+        class="mt-4 bg-gray-800 text-amber-50 border-2 border-gray-600 px-6 py-3 rounded-lg min-w-80"
+      >
+        <h2 class="text-2xl text-center">
+          {{ loading ? "Finding an Anime..." : revealed ? answer : "???" }}
+        </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-3">
           <div class="mb-2">
             <div>
-              <div class="font-semibold mb-1">Theme{{ revealed ? `: ${audioClue.track.title} (${audioClue.track.slug})` : "" }}</div>
+              <div class="font-semibold mb-1">
+                Theme{{
+                  revealed
+                    ? `: ${audioClue.track.title} (${audioClue.track.slug})`
+                    : ""
+                }}
+              </div>
               <AudioClue
                 v-if="!loading"
                 :track="audioClue.track.link"
@@ -16,7 +26,9 @@
             </div>
             <div>
               <span class="font-semibold">Series:</span>
-              <span v-if="revealedData.source" class="ml-2 text-emerald-400">{{ revealedData.source }}</span>
+              <span v-if="revealedData.source" class="ml-2 text-emerald-400">{{
+                revealedData.source
+              }}</span>
               <span v-else class="ml-2 text-amber-500">Unknown</span>
             </div>
             <div>
@@ -56,12 +68,24 @@
             </div>
             <div>
               <span class="font-semibold">Genres:</span>
-              <div class="ml-2 grid grid-cols-2" v-if="!loading">
+              <div v-if="!loading" class="ml-2 grid grid-cols-2">
                 <ul v-if="revealedData.correctGenres.length > 0">
-                  <li class="text-emerald-400" v-for="genre in revealedData.correctGenres">✓ {{ genre }}</li>
+                  <li
+                    v-for="genre in revealedData.correctGenres"
+                    :key="genre"
+                    class="text-emerald-400"
+                  >
+                    ✓ {{ genre }}
+                  </li>
                 </ul>
                 <ul v-if="revealedData.incorrectGenres.length > 0">
-                  <li class="text-error" v-for="genre in revealedData.incorrectGenres">✗ {{ genre }}</li>
+                  <li
+                    v-for="genre in revealedData.incorrectGenres"
+                    :key="genre"
+                    class="text-error"
+                  >
+                    ✗ {{ genre }}
+                  </li>
                 </ul>
               </div>
             </div>
@@ -77,18 +101,22 @@
               />
             </p>
           </div>
-        </div>        
+        </div>
         <div class="mt-4 relative">
-          <input 
-            type="text" 
+          <input
             v-model="input"
-            @keyup.enter="guess"
+            type="text"
             placeholder="Search an Anime..."
             class="px-4 py-1 rounded bg-gray-500 focus:outline-none w-full"
             :disabled="loading"
+            @keyup.enter="guess"
           />
-          <div class="text-error text-sm ml-2" v-if="errorMessage">{{ errorMessage }}</div>
-          <ul class="absolute z-10 bg-gray-700 text-gray-200 opacity-90 w-full top-8 max-h-52 overflow-y-auto">
+          <div v-if="errorMessage" class="text-error text-sm ml-2">
+            {{ errorMessage }}
+          </div>
+          <ul
+            class="absolute z-10 bg-gray-700 text-gray-200 opacity-90 w-full top-8 max-h-52 overflow-y-auto"
+          >
             <li
               v-for="suggestion in autocompleteSuggestions"
               :key="suggestion.mal_id"
@@ -106,11 +134,21 @@
       <div class="mt-4">
         <h2 class="text-xl font-semibold mb-2">Guesses</h2>
         <ul class="flex flex-col-reverse">
-          <GuessCard v-for="(guess, index) in guesses" :key="index" v-bind="guess" class="mb-2" />
+          <GuessCard
+            v-for="(guess, index) in guesses"
+            :key="index"
+            v-bind="guess"
+            class="mb-2"
+          />
         </ul>
       </div>
-      <div class="mt-4" v-if="revealed">
-        <button @click="startGame" class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg">Start Game</button>
+      <div v-if="revealed" class="mt-4">
+        <button
+          class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg"
+          @click="startGame"
+        >
+          Start Game
+        </button>
       </div>
     </div>
     <div v-else class="bg-white my-4 py-2 px-4">
@@ -119,14 +157,28 @@
         <div class="text-lg font-semibold mb-2">Instructions</div>
         <ol class="list-decimal ml-6">
           <li>Listen to the theme song and guess the anime that it's from.</li>
-          <li>Anime data is sourced from MyAnimeList, and will be one of the top 300 most popular anime.</li>
+          <li>
+            Anime data is sourced from MyAnimeList, and will be one of the top
+            300 most popular anime.
+          </li>
           <li>Seasons are listed individually, so be specific.</li>
-          <li>If you guess incorrectly, you will get hints based on the information of the guessed anime.</li>
-          <li>Additionally, as you make more guesses, the synopsis will gradually be revealed.</li>
+          <li>
+            If you guess incorrectly, you will get hints based on the
+            information of the guessed anime.
+          </li>
+          <li>
+            Additionally, as you make more guesses, the synopsis will gradually
+            be revealed.
+          </li>
         </ol>
       </div>
       <div class="mt-4">
-        <button @click="startGame" class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg">Start Game</button>
+        <button
+          class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg"
+          @click="startGame"
+        >
+          Start Game
+        </button>
       </div>
     </div>
   </div>
@@ -150,7 +202,7 @@ export default {
     RangeHint,
     GuessCard,
     RedactedWord,
-    AutocompleteSuggestion
+    AutocompleteSuggestion,
   },
   mixins: [socket, breakpoints],
   data() {
@@ -167,8 +219,65 @@ export default {
       autocompleteOptions: [],
       autocompleteQuery: "",
       synopsis: "",
-      revealedSynopsis: []
+      revealedSynopsis: [],
     }
+  },
+  computed: {
+    autocompleteSuggestions() {
+      if (!this.autocompleteQuery) {
+        return []
+      }
+      this.errorMessage = ""
+      const suggestions = []
+      for (const option of this.autocompleteOptions) {
+        if (
+          option.aka.toLowerCase().startsWith(this.input.toLowerCase()) &&
+          !suggestions.some((s) => s.mal_id === option.mal_id)
+        ) {
+          suggestions.push({
+            title: option.aka,
+            mal_id: option.mal_id,
+          })
+        }
+      }
+      for (const option of this.autocompleteOptions) {
+        if (
+          option.aka.toLowerCase().includes(this.input.toLowerCase()) &&
+          !suggestions.some((s) => s.mal_id === option.mal_id)
+        ) {
+          suggestions.push({
+            title: option.aka,
+            mal_id: option.mal_id,
+          })
+        }
+      }
+      return suggestions
+    },
+    synopsisProps() {
+      if (this.loading) {
+        return []
+      }
+      return this.synopsis.split(" ").map((word, index) => ({
+        word: word.trim(),
+        unredact: this.revealedSynopsis[index] || this.revealed,
+      }))
+    },
+  },
+  watch: {
+    input: {
+      handler(input) {
+        if (
+          input.length > 2 &&
+          (!this.autocompleteQuery ||
+            input.toLowerCase().indexOf(this.autocompleteQuery) === -1)
+        ) {
+          this.emit("autocomplete", input)
+        } else if (input.length <= 2) {
+          this.autocompleteQuery = ""
+          this.autocompleteOptions = []
+        }
+      },
+    },
   },
   mounted() {
     this.on("loading", () => {
@@ -181,14 +290,17 @@ export default {
       this.loading = false
       this.revealed = false
       this.synopsis = synopsis
-      this.revealedSynopsis = Array.from({ length: synopsis.split(" ").length }, () => false)
+      this.revealedSynopsis = Array.from(
+        { length: synopsis.split(" ").length },
+        () => false
+      )
       this.audioClue = audioClue
       this.revealedData = revealedData
     })
     this.on("guess-start", this.guessStart)
     this.on("guess-result", this.guessResult)
     this.on("repeat-guess", this.repeatGuess)
-    this.on("autocomplete-result", ({ options, query}) => {
+    this.on("autocomplete-result", ({ options, query }) => {
       this.autocompleteOptions = options
       this.autocompleteOptions.sort((a, b) => a.aka.localeCompare(b.aka))
       this.autocompleteQuery = query
@@ -212,7 +324,7 @@ export default {
     guessResult({ revealedData, guess, revealIndices }) {
       this.revealedData = revealedData
 
-      const existingGuess = this.guesses.find(g => g.mal_id === guess.mal_id)
+      const existingGuess = this.guesses.find((g) => g.mal_id === guess.mal_id)
       if (existingGuess) {
         existingGuess.image_url = guess.image_url
         existingGuess.correct = guess.correct
@@ -235,10 +347,10 @@ export default {
       this.autocompleteOptions = []
     },
     selectAutocomplete(suggestion) {
-      this.input = ''
-      this.autocompleteQuery = ''
+      this.input = ""
+      this.autocompleteQuery = ""
       this.autocompleteOptions = []
-      this.emit('guess', { title: suggestion.title, mal_id: suggestion.mal_id })
+      this.emit("guess", { title: suggestion.title, mal_id: suggestion.mal_id })
     },
     confetti(times) {
       if (times > 0) {
@@ -246,63 +358,15 @@ export default {
           particleCount: 50,
           spread: 360,
           origin: { x: Math.random(), y: Math.random() - 0.3 },
-          startVelocity: 20
+          startVelocity: 20,
         })
         setTimeout(() => {
           this.confetti(times - 1)
         }, 250)
       }
-    }
-  },
-  computed: {
-    autocompleteSuggestions() {
-      if (!this.autocompleteQuery) {
-        return []
-      }
-      this.errorMessage = ""
-      const suggestions = []
-      for (const option of this.autocompleteOptions) {
-        if (option.aka.toLowerCase().startsWith(this.input.toLowerCase()) && !suggestions.some(s => s.mal_id === option.mal_id)) {
-          suggestions.push({
-            title: option.aka,
-            mal_id: option.mal_id
-          })
-        }
-      }
-      for (const option of this.autocompleteOptions) {
-        if (option.aka.toLowerCase().includes(this.input.toLowerCase()) && !suggestions.some(s => s.mal_id === option.mal_id)) {
-          suggestions.push({
-            title: option.aka,
-            mal_id: option.mal_id
-          })
-        }
-      }
-      return suggestions
     },
-    synopsisProps() {
-      if (this.loading) {
-        return []
-      }
-      return this.synopsis.split(" ").map((word, index) => ({
-        word: word.trim(),
-        unredact: this.revealedSynopsis[index] || this.revealed
-      }))
-    }
   },
-  watch: {
-    input: {
-      handler(input) {
-        if (input.length > 2 && (!this.autocompleteQuery || input.toLowerCase().indexOf(this.autocompleteQuery) === -1)) {
-          this.emit("autocomplete", input)
-        } else if (input.length <= 2) {
-          this.autocompleteQuery = ""
-          this.autocompleteOptions = []
-        }
-      }
-    }
-  }
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

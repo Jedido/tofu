@@ -16,11 +16,16 @@ app.use(VueAxios, axios)
   }
 */
 const methods = ["get", "post"] as const
+type AxiosRecord = Record<string, (...args: unknown[]) => Promise<unknown>>
+const axiosAny = axios as unknown as AxiosRecord
 methods.forEach((method) => {
-  ;(axios as any)[`$${method}`] = async function () {
-    const res = await (axios as any)[method](...arguments)
+  axiosAny[`$${method}`] = async (...args: unknown[]) => {
+    const res = (await axiosAny[method](...args)) as {
+      status: number
+      data: unknown
+    }
     if (res.status !== 200) {
-      console.error(`Request ${arguments} filed with ${res}`)
+      console.error(`Request failed with status ${res.status}`, args)
     }
     return res.data
   }

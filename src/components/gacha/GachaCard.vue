@@ -4,14 +4,14 @@
       <CharacterCard :character="character" class="card absolute border-4" />
       <div
         v-if="!revealed"
-        @click="revealed = true"
         :class="['card absolute reveal rounded border-4', type]"
+        @click="revealed = true"
       />
     </div>
     <button
       v-if="typeof character === 'number'"
-      @click="reveal"
       :class="[type, 'py-2 w-full h-full rounded focus:outline-none shadow-lg']"
+      @click="reveal"
     ></button>
   </div>
 </template>
@@ -27,8 +27,9 @@ export default {
     CharacterCard,
   },
   props: {
-    character: [Object, Number],
+    character: { type: [Object, Number], required: true },
   },
+  emits: ["recruit"],
   data() {
     return {
       type: TYPE_NAME[this.character],

@@ -5,23 +5,23 @@ export enum PuzzleEnum {
   Danger = "d",
   Wanted = "f",
   Dice = "m",
-  Pattern = 'p',
-  Request = 'r',
-  Address = 's',
+  Pattern = "p",
+  Request = "r",
+  Address = "s",
   Wire = "w",
   Algebra = "x",
 }
 
 export enum GameState {
   Ongoing = "ongoing",
-  Idle = "idle"
+  Idle = "idle",
 }
 
 export enum PanelEnum {
   Puzzle = "p",
-  Wire="w",
+  Wire = "w",
   Key1 = "k1",
-  Key2 = "k2"
+  Key2 = "k2",
 }
 
 export type Panel = {
@@ -32,22 +32,22 @@ export type Panel = {
 }
 
 export type Wire = {
-  index: number,
-  color: string,
-  stripe: string,
+  index: number
+  color: string
+  stripe: string
   y: number
 }
 
-export type PanelInfo = {}
+export type PanelInfo = object
 
 export interface Submission {
-  type: PuzzleEnum,
-  id: Id,
-  data: PuzzleSolution,
+  type: PuzzleEnum
+  id: Id
+  data: PuzzleSolution
   stack: number
 }
 
-export interface PuzzleSolution {}
+export type PuzzleSolution = object
 export interface DangerPuzzleSolution extends PuzzleSolution {
   x: number
   y: number

@@ -6,27 +6,29 @@
 </template>
 
 <script>
-  export default {
-    name: "Square",
-    props: {
-      color: {
-        type: String,
-        default: "gray"
-      },
-      draggable: {
-        type: Boolean,
-        default: false
-      }
-    }
-  }
+export default {
+  name: "TileSquare",
+  props: {
+    color: {
+      type: String,
+      default: "gray",
+    },
+    draggable: {
+      type: Boolean,
+      default: false,
+    },
+  },
+}
 </script>
-  
+
 <style scoped>
-.square { 
+.square {
   border-radius: 2px;
 }
 .square:not(.fade) {
-  box-shadow: inset 1px 1px 0px 0px rgba(255, 255, 255, 0.4), inset -1px -1px 0px 0px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    inset 1px 1px 0px 0px rgba(255, 255, 255, 0.4),
+    inset -1px -1px 0px 0px rgba(0, 0, 0, 0.4);
 }
 .black {
   background-color: #606060;

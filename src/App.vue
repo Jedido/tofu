@@ -1,28 +1,25 @@
 <template>
   <div id="content" class="h-screen overflow-y-hidden relative">
     <div id="scroll" class="overflow-y-auto h-full">
-      <Header id="header" :socket="socket" />
-      <Scene id="scene" :socket="socket" />
+      <AppHeader id="header" :socket="socket" />
+      <GameScene id="scene" :socket="socket" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import type { Socket } from 'socket.io-client'
+import { defineComponent } from "vue"
+import type { Socket } from "socket.io-client"
 import io from "socket.io-client"
-import Header from "@/components/Header.vue"
-import Scene from "@/components/Scene.vue"
-import 'bootstrap-icons/font/bootstrap-icons.css'
-
-;(globalThis as any).__VUE_PROD_DEVTOOLS__ = false
-;(globalThis as any).__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = false
+import AppHeader from "@/components/AppHeader.vue"
+import GameScene from "@/components/GameScene.vue"
+import "bootstrap-icons/font/bootstrap-icons.css"
 
 export default defineComponent({
   name: "App",
   components: {
-    Header,
-    Scene,
+    AppHeader,
+    GameScene,
   },
   data() {
     return {
@@ -62,9 +59,15 @@ export default defineComponent({
       this.socket!.emit("create-room", game, this.$store.state.ign)
     },
     resizeGame() {
-      this.$store.commit("setGameWidth", document.getElementById("content")!.clientWidth)
-      this.$store.commit("setScreenWidth", document.getElementById("content")!.clientWidth)
-    }
+      this.$store.commit(
+        "setGameWidth",
+        document.getElementById("content")!.clientWidth
+      )
+      this.$store.commit(
+        "setScreenWidth",
+        document.getElementById("content")!.clientWidth
+      )
+    },
   },
 })
 </script>
@@ -92,7 +95,8 @@ export default defineComponent({
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
-html, body {
+html,
+body {
   overscroll-behavior: none;
 }
 </style>

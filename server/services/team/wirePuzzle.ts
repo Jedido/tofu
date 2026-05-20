@@ -38,7 +38,7 @@ export class WirePuzzle {
         index: i,
         color,
         stripe,
-        y: positions[i]
+        y: positions[i],
       })
     }
     shuffle(this.order)
@@ -46,16 +46,18 @@ export class WirePuzzle {
 
   // Allow for any id
   static getPanel(i: number, id: number): Panel[] {
-    return [{
-      id,
-      puzzle: PuzzleEnum.Wire,
-      panel: PanelEnum.Wire,
-      state: {
-        wire: this.wires[this.order[i]],
-        order: i,
-        quota: this.quota
-      }
-    }]
+    return [
+      {
+        id,
+        puzzle: PuzzleEnum.Wire,
+        panel: PanelEnum.Wire,
+        state: {
+          wire: this.wires[this.order[i]],
+          order: i,
+          quota: this.quota,
+        },
+      },
+    ]
   }
 
   static cut({ next }: WirePuzzleSolution) {

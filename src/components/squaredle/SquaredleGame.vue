@@ -1,13 +1,22 @@
 <template>
-  <div id="squaredle" class="select-none text-amber-900 text-center flex flex-col">
+  <div
+    id="squaredle"
+    class="select-none text-amber-900 text-center flex flex-col"
+  >
     <p class="text-3xl mb-4">Squaredle</p>
-    <div class="flex justify-between mb-2 mx-auto px-4" :style="`width:${boardWidth}px;`">
-      <span class="text-xl">{{ this.foundWords.length }} / {{ Object.keys(this.allWords).length }} words</span>
+    <div
+      class="flex justify-between mb-2 mx-auto px-4"
+      :style="`width:${boardWidth}px;`"
+    >
+      <span class="text-xl"
+        >{{ foundWords.length }} /
+        {{ Object.keys(allWords).length }} words</span
+      >
       <span v-if="lastGuess" class="text-l">
         <span v-if="guessType === 'valid'">✔️</span>
         <span v-if="guessType === 'bonus'">✨</span>
         <span v-if="guessType === 'invalid'">❌</span>
-        {{ this.lastGuess }}
+        {{ lastGuess }}
       </span>
     </div>
     <div
@@ -22,50 +31,65 @@
         lineHeight: `${cellSize * 1.2}px`,
         height: `${boardWidth - 24}px`,
         width: `${boardWidth - 24}px`,
-        gap: `${cellSize / 10}px`
+        gap: `${cellSize / 10}px`,
       }"
     >
       <button
         v-for="(cell, index) in board"
+        :key="index"
         class="relative border-2 rounded"
-        :class="[highlightedIndexes.includes(index) ? 'bg-amber-900 text-amber-200 border-amber-200' : (cell.instances ? 'bg-amber-200 hover:bg-amber-300 border-amber-300' : 'bg-gray-300 border-gray-400 text-gray-400')]"
+        :class="[
+          highlightedIndexes.includes(index)
+            ? 'bg-amber-900 text-amber-200 border-amber-200'
+            : cell.instances
+              ? 'bg-amber-200 hover:bg-amber-300 border-amber-300'
+              : 'bg-gray-300 border-gray-400 text-gray-400',
+        ]"
       >
         {{ cell.letter }}
-        <p v-if="cell.starts && completionRate > 0.3" class="absolute bottom-0 left-0 text-emerald-500" :style="{ fontSize: `${cellSize / 2}px`, lineHeight: `${cellSize / 2}px`, marginLeft: `${cellSize / 10}px` }">
+        <p
+          v-if="cell.starts && completionRate > 0.3"
+          class="absolute bottom-0 left-0 text-emerald-500"
+          :style="{
+            fontSize: `${cellSize / 2}px`,
+            lineHeight: `${cellSize / 2}px`,
+            marginLeft: `${cellSize / 10}px`,
+          }"
+        >
           {{ cell.starts }}
         </p>
-        <p v-if="cell.instances && completionRate > 0.45" class="absolute bottom-0 right-0 text-gray-400" :style="{ fontSize: `${cellSize / 2}px`, lineHeight: `${cellSize / 2}px`, marginRight: `${cellSize / 10}px` }">
+        <p
+          v-if="cell.instances && completionRate > 0.45"
+          class="absolute bottom-0 right-0 text-gray-400"
+          :style="{
+            fontSize: `${cellSize / 2}px`,
+            lineHeight: `${cellSize / 2}px`,
+            marginRight: `${cellSize / 10}px`,
+          }"
+        >
           {{ cell.instances }}
         </p>
       </button>
     </div>
     <input
-      class="
-        my-4
-        mx-auto
-        px-4
-        text-lg
-        w-4/6
-        text-center
-        rounded
-        border-2 border-gray-300
-        focus:outline-none
-        disabled:bg-gray-200
-        uppercase
-      "
-      type="text"
       v-model="answer"
-      @keypress="updateAnswer"
-      @keydown="inputKeydown"
+      class="my-4 mx-auto px-4 text-lg w-4/6 text-center rounded border-2 border-gray-300 focus:outline-none disabled:bg-gray-200 uppercase"
+      type="text"
       focus
       :disabled="!size"
+      @keypress="updateAnswer"
+      @keydown="inputKeydown"
     />
     <div v-if="board.length > 0" class="p-4 rounded bg-white text-left">
       <p class="text-xl text-center">Word Bank</p>
-      <div v-for="([len, list]) in Object.entries(wordsByLength)" class="mb-2">
+      <div
+        v-for="[len, list] in Object.entries(wordsByLength)"
+        :key="len"
+        class="mb-2"
+      >
         <div class="font-bold">{{ len }}-letter words:</div>
         <div class="grid grid-cols-4">
-          <template v-for="word in list">
+          <template v-for="word in list" :key="word">
             <div v-if="foundWords.includes(word)">{{ word }}</div>
             <div v-else-if="completionRate > 0.6">{{ obscure(word) }}</div>
           </template>
@@ -76,23 +100,26 @@
       </div>
       <p class="text-xl text-center">Bonus Words</p>
       <div class="grid grid-cols-4">
-        <p v-for="word in bonusWords">{{ word }}</p>
+        <p v-for="word in bonusWords" :key="word">{{ word }}</p>
       </div>
     </div>
     <div class="grid grid-cols-6 p-3 my-2 gap-2">
-        <div class="col-span-4 flex flex-col py-2">
-          <div>Board Size: {{ boardSize }}</div>
-          <input
-            v-model="boardSize"
-            type="range"
-            min="3"
-            max="9"
-            class="slider"
-          />
-        </div>
-        <button class="bg-emerald-600 border-2 border-emerald-800 text-amber-50 rounded col-span-2" @click="emit('init', { size: boardSize })">
-          New Game
-        </button>
+      <div class="col-span-4 flex flex-col py-2">
+        <div>Board Size: {{ boardSize }}</div>
+        <input
+          v-model="boardSize"
+          type="range"
+          min="3"
+          max="9"
+          class="slider"
+        />
+      </div>
+      <button
+        class="bg-emerald-600 border-2 border-emerald-800 text-amber-50 rounded col-span-2"
+        @click="emit('init', { size: boardSize })"
+      >
+        New Game
+      </button>
     </div>
   </div>
 </template>
@@ -104,7 +131,7 @@ export default {
   name: "SquaredleGame",
   mixins: [socket],
   props: {
-    gameWidth: Number,
+    gameWidth: { type: Number, required: true },
   },
   data() {
     return {
@@ -118,8 +145,19 @@ export default {
       size: 4,
       answer: "",
       lastGuess: "",
-      guessType: ""
+      guessType: "",
     }
+  },
+  computed: {
+    boardWidth() {
+      return Math.max(Math.min(this.gameWidth, 600), 300)
+    },
+    cellSize() {
+      return (this.boardWidth / 2 - 48) / this.size - 4
+    },
+    completionRate() {
+      return this.foundWords.length / Object.keys(this.allWords).length
+    },
   },
   mounted() {
     this.on("board", ({ board, foundWords, allWords }) => {
@@ -208,11 +246,18 @@ export default {
           stack.push([x, y, word.toUpperCase(), []])
         }
       }
-      let found = false
+      const found = false
       while (!found && stack.length > 0) {
         const [x, y, charsLeft, seen] = stack.pop()
         const index = this.boardIndex(x, y)
-        if (x < 0 || x >= this.size || y < 0 || y >= this.size || seen.includes(index) || charsLeft.charAt(0) !== this.board[index].letter) {
+        if (
+          x < 0 ||
+          x >= this.size ||
+          y < 0 ||
+          y >= this.size ||
+          seen.includes(index) ||
+          charsLeft.charAt(0) !== this.board[index].letter
+        ) {
           continue
         }
         seen.push(index)
@@ -250,7 +295,7 @@ export default {
         }
       }
       if (count === 0) {
-        return ''
+        return ""
       }
       if (count === 1) {
         return "(Only 1 word left!)"
@@ -259,19 +304,8 @@ export default {
     },
     boardIndex(x, y) {
       return x * this.size + y
-    }
+    },
   },
-  computed: {
-    boardWidth() {
-      return Math.max(Math.min(this.gameWidth, 600), 300)
-    },
-    cellSize() {
-      return (this.boardWidth / 2 - 48) / this.size - 4
-    },
-    completionRate() {
-      return this.foundWords.length / Object.keys(this.allWords).length
-    }
-  }
 }
 </script>
 

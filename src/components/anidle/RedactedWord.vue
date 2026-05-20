@@ -2,7 +2,7 @@
   <span
     class="text-white inline-block redacted-word"
     :class="{
-      'bg-white': !unredact
+      'bg-white': !unredact,
     }"
     :style="{ width: `${wordLength}px` }"
   >
@@ -14,12 +14,12 @@
 export default {
   name: "RedactedWord",
   props: {
-    word: String,
+    word: { type: String, required: true },
     unredact: Boolean,
   },
   data() {
     return {
-      wordLength: 0
+      wordLength: 0,
     }
   },
   mounted() {
@@ -27,7 +27,7 @@ export default {
     const computedStyle = window.getComputedStyle(this.$el)
     canvas.font = `${computedStyle.fontSize} ${computedStyle.fontFamily}`
     this.wordLength = canvas.measureText(this.word).width
-  }
+  },
 }
 </script>
 

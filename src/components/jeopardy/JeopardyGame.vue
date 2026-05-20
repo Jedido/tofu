@@ -1,34 +1,14 @@
 <template>
   <div id="jeopardy" class="select-none text-gray-700 w-full">
-    <div class="grid grid-cols-6 gap-3 w-80 mx-auto" v-if="status === 'menu'">
+    <div v-if="status === 'menu'" class="grid grid-cols-6 gap-3 w-80 mx-auto">
       <button
-        class="
-          mt-2
-          py-3
-          focus:outline-none
-          text-amber-50
-          bg-emerald-600
-          hover:bg-emerald-500
-          active:bg-emerald-800
-          rounded
-          col-span-3
-        "
+        class="mt-2 py-3 focus:outline-none text-amber-50 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded col-span-3"
         @click.prevent="emit('set-host')"
       >
         Host
       </button>
       <button
-        class="
-          mt-2
-          py-3
-          focus:outline-none
-          text-amber-50
-          bg-emerald-600
-          hover:bg-emerald-500
-          active:bg-emerald-800
-          rounded
-          col-span-3
-        "
+        class="mt-2 py-3 focus:outline-none text-amber-50 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded col-span-3"
         @click.prevent="emit('set-player')"
       >
         Contestant
@@ -42,32 +22,31 @@
       <div class="col-span-3">
         Contestants
         <ul>
-          <li v-for="player in players">
+          <li v-for="player in players" :key="player.ign">
             {{ player.ign }}
           </li>
         </ul>
       </div>
-      
+
       <form v-if="hosting" class="col-span-6 flex flex-col">
         <p class="mb-2">Questions</p>
-        <textarea type="text" class="font-mono text-sm" rows="24" cols="30" v-model="questionsJson">
+        <textarea
+          v-model="questionsJson"
+          type="text"
+          class="font-mono text-sm"
+          rows="24"
+          cols="30"
+        >
         </textarea>
         <label>
-          <input type="checkbox" v-model="local">
+          <input v-model="local" type="checkbox" />
           <span>Local Game?</span>
         </label>
         <button
-          class="
-            mt-4
-            py-4
-            focus:outline-none
-            text-amber-50
-            bg-emerald-600
-            hover:bg-emerald-500
-            active:bg-emerald-800
-            rounded
+          class="mt-4 py-4 focus:outline-none text-amber-50 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded"
+          @click.prevent="
+            emit('start-game', { local: local, jeopardy: questionsJson })
           "
-          @click.prevent="emit('start-game', { local: local, jeopardy: questionsJson })"
         >
           Start Game
         </button>
@@ -75,11 +54,20 @@
     </div>
     <div v-else>
       <template v-if="hosting || !local">
-        <div v-if="status === 'categories'" class="grid gap-2 mt-1 grid-flow-col h-100" :style="[jeopardyGridStyle]">
-          <template v-for="category in categories">
-            <h2 class="font-bold font-mono text-center my-auto leading-tight overflow-auto">{{ category.name }}</h2>
+        <div
+          v-if="status === 'categories'"
+          class="grid gap-2 mt-1 grid-flow-col h-100"
+          :style="[jeopardyGridStyle]"
+        >
+          <template v-for="category in categories" :key="category.name">
+            <h2
+              class="font-bold font-mono text-center my-auto leading-tight overflow-auto"
+            >
+              {{ category.name }}
+            </h2>
             <JeopardyButton
               v-for="question in category.questions"
+              :key="question.points"
               :class="[question.completed ? 'bg-gray-300' : 'bg-emerald-600']"
               @click.prevent="openQuestion(category.name, question.points)"
             >
@@ -91,36 +79,69 @@
           v-else-if="status === 'question'"
           class="text-2xl bg-white mx-6 h-100 p-3"
         >
-          <JeopardyQuestion :question="question" :level="level" :preload="hosting" :buzzer="buzzer" />
+          <JeopardyQuestion
+            :question="question"
+            :level="level"
+            :preload="hosting"
+            :buzzer="buzzer"
+          />
         </div>
       </template>
       <div v-if="hosting" class="w-full grid grid-cols-6 gap-2 mt-2">
         <template v-if="status === 'categories'">
-          <JeopardyButton class="col-span-6" @click.prevent="emit('next-round')">
+          <JeopardyButton
+            class="col-span-6"
+            @click.prevent="emit('next-round')"
+          >
             Next Round
           </JeopardyButton>
         </template>
         <template v-else>
-          <JeopardyButton class="col-span-2" @click.prevent="emit('question-reset')">
+          <JeopardyButton
+            class="col-span-2"
+            @click.prevent="emit('question-reset')"
+          >
             Reset
           </JeopardyButton>
-          <JeopardyButton v-if="buzzer" class="col-span-2" @click.prevent="emit('clear-buzzer')">
+          <JeopardyButton
+            v-if="buzzer"
+            class="col-span-2"
+            @click.prevent="emit('clear-buzzer')"
+          >
             Unhide
           </JeopardyButton>
-          <JeopardyButton v-else class="col-span-2" @click.prevent="emit('question-next')">
+          <JeopardyButton
+            v-else
+            class="col-span-2"
+            @click.prevent="emit('question-next')"
+          >
             Next
           </JeopardyButton>
-          <JeopardyButton v-if="level !== 0" class="col-span-2" @click.prevent="emit('show-answer')" >
+          <JeopardyButton
+            v-if="level !== 0"
+            class="col-span-2"
+            @click.prevent="emit('show-answer')"
+          >
             Show Answer
           </JeopardyButton>
-          <JeopardyButton v-else class="col-span-2" @click.prevent="emit('display-categories')">
+          <JeopardyButton
+            v-else
+            class="col-span-2"
+            @click.prevent="emit('display-categories')"
+          >
             Categories
           </JeopardyButton>
         </template>
-        <JeopardyButton class="col-span-3" @click.prevent="emit('show-submission', { show: !showSubmission })">
+        <JeopardyButton
+          class="col-span-3"
+          @click.prevent="emit('show-submission', { show: !showSubmission })"
+        >
           {{ showSubmission ? "Stop Submissions" : "Accept Submissions" }}
         </JeopardyButton>
-        <JeopardyButton class="col-span-3" @click.prevent="emit('get-submissions')">
+        <JeopardyButton
+          class="col-span-3"
+          @click.prevent="emit('get-submissions')"
+        >
           Show Submissions
         </JeopardyButton>
       </div>
@@ -128,23 +149,14 @@
         <div v-if="showSubmission" class="my-2 flex flex-col">
           <p class="mx-auto text-lg">Submission</p>
           <input
-            type="text" 
-            class="
-              mx-auto
-              py-2
-              px-4
-              text-lg
-              w-1/2
-              text-center
-              rounded
-              border-2 border-gray-300
-              focus:outline-none
-              disabled:bg-gray-200
-            "
-            v-model="submission" 
+            v-model="submission"
+            type="text"
+            class="mx-auto py-2 px-4 text-lg w-1/2 text-center rounded border-2 border-gray-300 focus:outline-none disabled:bg-gray-200"
             @keyup="submitAnswer"
           />
-          <p v-if="lastSubmission" class="mx-auto">Your Response: {{ lastSubmission }}</p>
+          <p v-if="lastSubmission" class="mx-auto">
+            Your Response: {{ lastSubmission }}
+          </p>
         </div>
         <JeopardyButton v-else class="mt-2 min-w-40" @click.prevent="buzz()">
           Buzz
@@ -154,41 +166,24 @@
       <div v-if="hosting" class="flex justify-center gap-2 my-1">
         <p>Points:</p>
         <input
-          type="text"
-          v-model="points"
-          class="
-            text-center
-            border-2 border-gray-300
-            focus:outline-none
-          "
           id="score-input"
+          v-model="points"
+          type="text"
+          class="text-center border-2 border-gray-300 focus:outline-none"
         />
       </div>
       <div class="flex justify-around">
-        <div v-for="player in players" class="text-center">
+        <div v-for="player in players" :key="player.ign" class="text-center">
           <div class="text-lg">{{ player.ign }}: {{ player.points }}</div>
           <form v-if="hosting" class="flex flex-col justify-between gap-2">
             <button
-              class="
-                p-2
-                text-amber-50
-                bg-emerald-600
-                hover:bg-emerald-500
-                active:bg-emerald-800
-                rounded
-              "
+              class="p-2 text-amber-50 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-800 rounded"
               @click.prevent="addPoints(player, points)"
             >
               Add
             </button>
             <button
-              class="
-                p-2
-                bg-amber-300
-                hover:bg-amber-200
-                active:bg-amber-400
-                rounded
-              "
+              class="p-2 bg-amber-300 hover:bg-amber-200 active:bg-amber-400 rounded"
               @click.prevent="addPoints(player, -points)"
             >
               Remove
@@ -199,7 +194,7 @@
     </div>
   </div>
 </template>
-  
+
 <script>
 import { debounce } from "lodash"
 import socket from "@/mixins/socket.js"
@@ -208,11 +203,11 @@ import JeopardyButton from "@/components/jeopardy/JeopardyButton.vue"
 
 export default {
   name: "JeopardyGame",
-  mixins: [socket],
   components: {
     JeopardyQuestion,
-    JeopardyButton
+    JeopardyButton,
   },
+  mixins: [socket],
   data() {
     return {
       status: "menu",
@@ -228,7 +223,7 @@ export default {
       showSubmission: false,
       submission: "",
       lastSubmission: "",
-      local: false
+      local: false,
     }
   },
   mounted() {
@@ -257,7 +252,10 @@ export default {
     })
     this.on("buzzer", (player) => {
       this.buzzer = player
-      if (!this.buzzer && this.question.type === "zoom" || this.question.type === "blur") {
+      if (
+        (!this.buzzer && this.question.type === "zoom") ||
+        this.question.type === "blur"
+      ) {
         this.level = 1
       }
     })
@@ -274,7 +272,7 @@ export default {
   methods: {
     addPoints(player, points) {
       if (this.hosting) {
-        this.emit("add-points", { id: player.id, points})
+        this.emit("add-points", { id: player.id, points })
       }
     },
     openQuestion(category, points) {
@@ -282,7 +280,7 @@ export default {
         this.emit("display-question", { category, points })
       }
     },
-    buzz: debounce(function() {
+    buzz: debounce(function () {
       this.emit("buzz")
     }, 100),
     submitAnswer(e) {
@@ -291,16 +289,16 @@ export default {
         this.lastSubmission = this.submission
         this.submission = ""
       }
-    }
+    },
   },
   computed: {
     jeopardyGridStyle() {
       return {
         "grid-template-columns": `repeat(${this.categories.length},minmax(0,1fr))`,
-        "grid-template-rows": `auto repeat(${this.categories[0].questions.length},minmax(0,1fr))`
+        "grid-template-rows": `auto repeat(${this.categories[0].questions.length},minmax(0,1fr))`,
       }
-    } 
-  }
+    },
+  },
 }
 </script>
 

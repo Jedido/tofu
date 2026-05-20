@@ -1,29 +1,33 @@
 <template>
-  <div id="watch" class="select-none text-amber-900 overflow-x-hidden" :class="{
-    'absolute left-1/2 -translate-x-2/4': theaterMode
-  }">
-    <h1 v-if="this.md && !this.theaterMode" class="text-center text-3xl mb-4">Watch Together!</h1>
+  <div
+    id="watch"
+    class="select-none text-amber-900 overflow-x-hidden"
+    :class="{
+      'absolute left-1/2 -translate-x-2/4': theaterMode,
+    }"
+  >
+    <h1 v-if="md && !theaterMode" class="text-center text-3xl mb-4">
+      Watch Together!
+    </h1>
     <div
-      class="
-        flex flex-col
-        items-center
-        bg-amber-100
-        rounded
-        mt-auto
-        mx-auto
-        w-fit
-      "
+      class="flex flex-col items-center bg-amber-100 rounded mt-auto mx-auto w-fit"
     >
-      <div v-if="!this.youtube" :style="{
-        width: `${videoWidth}px`,
-        height: `${videoHeight}px`
-      }"></div>
+      <div
+        v-if="!youtube"
+        :style="{
+          width: `${videoWidth}px`,
+          height: `${videoHeight}px`,
+        }"
+      ></div>
       <div id="youtube"></div>
-      <form class="grid grid-cols-6 w-full border-2 border-amber-200 border-box" @submit.prevent="submit()">
+      <form
+        class="grid grid-cols-6 w-full border-2 border-amber-200 border-box"
+        @submit.prevent="submit()"
+      >
         <input
+          id="input"
           v-model="url"
           type="text"
-          id="input"
           class="outline-none bg-amber-50 px-4 py-2 col-span-3"
           autocomplete="off"
           placeholder="Enter a youtube URL or query..."
@@ -37,66 +41,76 @@
         </button>
         <button
           class="focus:outline-none bg-amber-200 hover:bg-amber-300 text-lg disabled:bg-gray-300"
-          @click.prevent="sync()"
           :disabled="!isReady"
+          @click.prevent="sync()"
         >
           Sync
         </button>
         <button
           class="focus:outline-none bg-amber-200 hover:bg-amber-300 text-lg disabled:bg-gray-300"
-          @click.prevent="theaterMode = !theaterMode"
           :disabled="!isReady"
+          @click.prevent="theaterMode = !theaterMode"
         >
-           {{ theaterMode ? "Default" : "Theater" }}
+          {{ theaterMode ? "Default" : "Theater" }}
         </button>
       </form>
     </div>
     <div class="flex flex-col gap-2 mx-auto">
       <div class="text-xl mt-4 flex justify-center gap-8">
-        <h3 class="cursor-pointer" :class="{ 'underline': !showResults }" @click="showResults = false">Playlist</h3>
-        <h3 class="cursor-pointer" :class="{ 'underline': showResults }" @click="showResults = true">Search</h3>
-      </div>
-      <div
-        v-if="!showResults"
-        v-for="(video, index) in playlist"
-        class="relative w-fit mx-auto"
-      >
-        <VideoCard
-          v-bind="video"
-          @click="start(video)"
-        />
-        <button class="
-          delete-button
-          absolute
-          h-6 w-6 rounded
-          border-error border-2 border-box
-          text-error hover:bg-error hover:text-white"
-          @click="remove(index)"
+        <h3
+          class="cursor-pointer"
+          :class="{ underline: !showResults }"
+          @click="showResults = false"
         >
-          ✖
-        </button>
+          Playlist
+        </h3>
+        <h3
+          class="cursor-pointer"
+          :class="{ underline: showResults }"
+          @click="showResults = true"
+        >
+          Search
+        </h3>
       </div>
-      <VideoCard
-        v-else
-        v-for="result in searchResults"
-        v-bind="result" 
-        @click="queue(result)"
-      />
+      <template v-if="!showResults">
+        <div
+          v-for="(video, index) in playlist"
+          :key="index"
+          class="relative w-fit mx-auto"
+        >
+          <VideoCard v-bind="video" @click="start(video)" />
+          <button
+            class="delete-button absolute h-6 w-6 rounded border-error border-2 border-box text-error hover:bg-error hover:text-white"
+            @click="remove(index)"
+          >
+            ✖
+          </button>
+        </div>
+      </template>
+      <template v-else>
+        <VideoCard
+          v-for="(result, i) in searchResults"
+          :key="i"
+          v-bind="result"
+          @click="queue(result)"
+        />
+      </template>
     </div>
   </div>
 </template>
 
 <script>
+/* global YT */
 import socket from "@/mixins/socket.js"
 import breakpoints from "@/mixins/breakpoints.js"
 import VideoCard from "@/components/watch/VideoCard.vue"
 
 export default {
   name: "WatchGame",
-  mixins: [socket, breakpoints],
   components: {
-    VideoCard
+    VideoCard,
   },
+  mixins: [socket, breakpoints],
   data() {
     return {
       youtube: null,
@@ -108,19 +122,40 @@ export default {
       playlist: [],
       paused: true,
       time: 0,
-      theaterMode: false
+      theaterMode: false,
     }
   },
+  computed: {
+    videoWidth() {
+      if (this.theaterMode) {
+        return this.$store.state.screenWidth
+      } else if (this.md) {
+        return 640
+      } else {
+        return this.$store.state.gameWidth
+      }
+    },
+    videoHeight() {
+      return (this.videoWidth * 9) / 16
+    },
+  },
+  watch: {
+    videoWidth(newVal) {
+      if (this.youtube) {
+        this.youtube.setSize(newVal, this.videoHeight)
+      }
+    },
+  },
   mounted() {
-    let scripts = Array
-      .from(document.querySelectorAll('script'))
-      .map(scr => scr.src);
+    const scripts = Array.from(document.querySelectorAll("script")).map(
+      (scr) => scr.src
+    )
 
-    if (!scripts.includes('https://www.youtube.com/iframe_api')) {
-      var tag = document.createElement('script');
-      tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    if (!scripts.includes("https://www.youtube.com/iframe_api")) {
+      var tag = document.createElement("script")
+      tag.src = "https://www.youtube.com/iframe_api"
+      var firstScriptTag = document.getElementsByTagName("script")[0]
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
       window.onYouTubeIframeAPIReady = this.setupYoutube
     } else {
       this.setupYoutube()
@@ -170,16 +205,16 @@ export default {
   },
   methods: {
     setupYoutube() {
-      this.youtube = new YT.Player('youtube', {
+      this.youtube = new YT.Player("youtube", {
         width: this.videoWidth,
         height: this.videoHeight,
-        videoId: '',
+        videoId: "",
         playerVars: {
-          "playsinline": 1
+          playsinline: 1,
         },
         events: {
           onReady: this.ready,
-          onStateChange: this.stateChange
+          onStateChange: this.stateChange,
         },
       })
     },
@@ -190,13 +225,15 @@ export default {
       if (URL.canParse(this.url)) {
         const parsedURL = URL.parse(this.url)
         const id = parsedURL.searchParams.get("v")
-        fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch%3Fv=${id}&format=json`)
-          .then(res => res.json())
-          .then(json => {
+        fetch(
+          `https://www.youtube.com/oembed?url=https://www.youtube.com/watch%3Fv=${id}&format=json`
+        )
+          .then((res) => res.json())
+          .then((json) => {
             this.queue({
               title: json.title,
               channel: json.author_name,
-              videoId: id
+              videoId: id,
             })
           })
         this.url = ""
@@ -211,7 +248,7 @@ export default {
     sync() {
       this.emit("sync", {
         time: this.youtube.getCurrentTime(),
-        pause: this.youtube.getPlayerState() === 2
+        pause: this.youtube.getPlayerState() === 2,
       })
     },
     stateChange(event) {
@@ -222,7 +259,7 @@ export default {
         this.paused = true
         this.emit("sync", {
           time: this.youtube.getCurrentTime(),
-          pause: true
+          pause: true,
         })
       } else if (event.data === 0) {
         this.emit("next", { videoId: this.currentlyPlaying })
@@ -241,29 +278,8 @@ export default {
     },
     remove(index) {
       this.emit("remove", { index })
-    }
-  },
-  computed: {
-    videoWidth() {
-      if (this.theaterMode) {
-        return this.$store.state.screenWidth
-      } else if (this.md) {
-        return 640
-      } else {
-        return this.$store.state.gameWidth
-      }
     },
-    videoHeight() {
-      return this.videoWidth * 9 / 16
-    }
   },
-  watch: {
-    videoWidth(newVal, _) {
-      if (this.youtube) {
-        this.youtube.setSize(newVal, this.videoHeight)
-      }
-    }
-  }
 }
 </script>
 

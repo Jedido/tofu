@@ -1,25 +1,25 @@
-import { createGenerator } from "ts-json-schema-generator";
+import { createGenerator } from "ts-json-schema-generator"
 
-const schemas = new Map<string, Object>()
+const schemas = new Map<string, object>()
 
 export class JsonSchema {
-  jsonSchema: Object
+  jsonSchema: object
 
   constructor(className: string) {
     if (schemas.has(className)) {
-      this.jsonSchema = schemas.get(className)!!
+      this.jsonSchema = schemas.get(className)!
     } else {
       const config = {
         path: "./server/assets/schemas.ts",
         tsconfig: "./tsconfig.json",
-        type: className
+        type: className,
       }
       const generator = createGenerator(config)
       this.jsonSchema = generator.createSchema(config.type)
     }
   }
 
-  getJsonSchema(): Object {
+  getJsonSchema(): object {
     return this.jsonSchema
   }
 }

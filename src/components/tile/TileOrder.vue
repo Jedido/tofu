@@ -13,51 +13,51 @@
 </template>
 
 <script>
-import Block from "@/components/tile/Block.vue"
+import Block from "@/components/tile/TileBlock.vue"
 
 export default {
   name: "TileOrder",
   components: {
-    Block
+    Block,
   },
   props: {
-    time: Number,
-    top: Number,
-    left: Number,
-    right: Number,
-    bottom: Number,
-    color: String
+    time: { type: Number, required: true },
+    top: { type: Number, required: true },
+    left: { type: Number, required: true },
+    right: { type: Number, required: true },
+    bottom: { type: Number, required: true },
+    color: { type: String, required: true },
   },
   data() {
     return {
-      progress: 0
+      progress: 0,
     }
-  },
-  mounted() {
-    const interval = setInterval(() => {
-      this.progress++;
-      if (this.progress >= this.time) {
-        clearInterval(interval);
-      }
-    }, 1000);
   },
   computed: {
     angle() {
-      return this.progress * 360 / this.time;
-    }
-  }
+      return (this.progress * 360) / this.time
+    },
+  },
+  mounted() {
+    const interval = setInterval(() => {
+      this.progress++
+      if (this.progress >= this.time) {
+        clearInterval(interval)
+      }
+    }, 1000)
+  },
 }
 </script>
-  
+
 <style scoped>
 .order {
-  grid-template-columns: auto 16px;;
+  grid-template-columns: auto 16px;
 }
 .timer {
   border-radius: 50%;
   background: conic-gradient(
-    #ddd 0deg, 
-    #ddd calc(var(--progress) * 1deg), 
+    #ddd 0deg,
+    #ddd calc(var(--progress) * 1deg),
     #82d9ff calc(var(--progress) * 1deg)
   );
 }

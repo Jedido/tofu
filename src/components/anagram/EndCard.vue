@@ -56,8 +56,9 @@
 export default {
   name: "EndCard",
   props: {
-    stats: Object,
+    stats: { type: Object, required: true },
   },
+  emits: ["playAgain"],
   methods: {
     getSubmission(user, round) {
       const submissions = this.stats.results[user].submissions

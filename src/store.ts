@@ -25,7 +25,7 @@ export const store = createStore<State>({
       ign: "",
       gameWidth: 0,
       screenWidth: 0,
-      scale: 1
+      scale: 1,
     }
   },
   mutations: {

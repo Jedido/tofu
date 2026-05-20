@@ -1,8 +1,9 @@
-import type { Socket } from 'socket.io-client'
+import { defineComponent } from "vue"
+import type { Socket } from "socket.io-client"
 
-export default {
+export default defineComponent({
   props: {
-    socket: Object as () => Socket,
+    socket: { type: Object as () => Socket, required: true },
   },
   data() {
     return {
@@ -10,18 +11,18 @@ export default {
     }
   },
   unmounted() {
-    ;(this as any).listeners.forEach((e: string) => {
-      ;(this as any).socket.off(e)
+    this.listeners.forEach((e: string) => {
+      this.socket.off(e)
     })
   },
   methods: {
-    emit(type: string, data?: any) {
-      ;(this as any).socket.emit("action", `${(this as any).$store.state.scene}-${type}`, data)
+    emit(type: string, data?: unknown) {
+      this.socket.emit("action", `${this.$store.state.scene}-${type}`, data)
     },
-    on(event: string, fn: (...args: any[]) => void) {
-      const eventName = `${(this as any).$store.state.scene}-${event}`
-      ;(this as any).listeners.push(eventName)
-      ;(this as any).socket.on(eventName, fn)
+    on(event: string, fn: (...args: unknown[]) => void) {
+      const eventName = `${this.$store.state.scene}-${event}`
+      this.listeners.push(eventName)
+      this.socket.on(eventName, fn)
     },
   },
-}
+})

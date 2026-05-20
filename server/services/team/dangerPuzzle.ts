@@ -1,5 +1,12 @@
 import { Puzzle } from "./puzzle"
-import { DangerPuzzleSolution, Panel, PanelInfo, PanelEnum, PuzzleEnum, Id } from "./types"
+import {
+  DangerPuzzleSolution,
+  Panel,
+  PanelInfo,
+  PanelEnum,
+  PuzzleEnum,
+  Id,
+} from "./types"
 
 interface DangerPuzzlePI extends PanelInfo {
   name: string
@@ -14,25 +21,26 @@ interface DangerKeyPI extends PanelInfo {
 
 export class DangerPuzzle extends Puzzle {
   static names: Set<string>
-  readonly shapes: Array<boolean[][]> = [[
-    [true, true],
-    [true, false]
-  ], [
-    [true, true],
-    [false, true]
-  ], [
-    [true, false],
-    [true, true]
-  ], [
-    [false, true],
-    [true, true]
-  ], [
-    [true, true, true]
-  ], [
-    [true],
-    [true],
-    [true]
-  ]]
+  readonly shapes: Array<boolean[][]> = [
+    [
+      [true, true],
+      [true, false],
+    ],
+    [
+      [true, true],
+      [false, true],
+    ],
+    [
+      [true, false],
+      [true, true],
+    ],
+    [
+      [false, true],
+      [true, true],
+    ],
+    [[true, true, true]],
+    [[true], [true], [true]],
+  ]
 
   puzzleBoard: DangerPuzzlePI
   key: DangerKeyPI
@@ -43,7 +51,8 @@ export class DangerPuzzle extends Puzzle {
 
   constructor(id: Id) {
     super(id)
-    const targetShape = this.shapes[Math.floor(Math.random() * this.shapes.length)]
+    const targetShape =
+      this.shapes[Math.floor(Math.random() * this.shapes.length)]
     const width = 4
     const height = 4
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -51,11 +60,13 @@ export class DangerPuzzle extends Puzzle {
     do {
       const num = Math.floor(Math.random() * 90) + 10
       name = `${letters.charAt(Math.floor(Math.random() * 26))}-${num}`
-    } while (DangerPuzzle.names.has(name));
+    } while (DangerPuzzle.names.has(name))
     function makeBoard() {
       const ox = Math.floor(Math.random() * (width - targetShape[0].length + 1))
       const oy = Math.floor(Math.random() * (height - targetShape.length + 1))
-      const board = Array.from({ length: height }, () => Array(width).fill(false))
+      const board = Array.from({ length: height }, () =>
+        Array(width).fill(false)
+      )
       for (let i = 0; i < targetShape.length; i++) {
         for (let j = 0; j < targetShape[i].length; j++) {
           board[oy + i][ox + j] = targetShape[i][j]
@@ -90,25 +101,31 @@ export class DangerPuzzle extends Puzzle {
       name,
       board: keyInfo.board,
       rows,
-      cols
+      cols,
     }
   }
 
   override panels(): Panel[] {
-    return [{
-      id: this.id,
-      puzzle: PuzzleEnum.Danger,
-      panel: PanelEnum.Puzzle,
-      state: this.puzzleBoard
-    }, {
-      id: this.id,
-      puzzle: PuzzleEnum.Danger,
-      panel: PanelEnum.Key1,
-      state: this.key
-    }]
+    return [
+      {
+        id: this.id,
+        puzzle: PuzzleEnum.Danger,
+        panel: PanelEnum.Puzzle,
+        state: this.puzzleBoard,
+      },
+      {
+        id: this.id,
+        puzzle: PuzzleEnum.Danger,
+        panel: PanelEnum.Key1,
+        state: this.key,
+      },
+    ]
   }
 
-  static solve({ x, y }: DangerPuzzleSolution, puzzleParts: Map<PanelEnum, PanelInfo>): boolean {
+  static solve(
+    { x, y }: DangerPuzzleSolution,
+    puzzleParts: Map<PanelEnum, PanelInfo>
+  ): boolean {
     const puzzle = puzzleParts.get(PanelEnum.Puzzle)! as DangerPuzzlePI
     const key = puzzleParts.get(PanelEnum.Key1)! as DangerKeyPI
     const rows = Array.from(key.rows)
@@ -121,7 +138,13 @@ export class DangerPuzzle extends Puzzle {
           cols[j]--
         }
         if (row[j]) {
-          if ((i + y >= 0 && i + y < puzzle.board.length && j + x >= 0 && j + x < puzzle.board[0].length) || key.board[i + y][j + x]) {
+          if (
+            (i + y >= 0 &&
+              i + y < puzzle.board.length &&
+              j + x >= 0 &&
+              j + x < puzzle.board[0].length) ||
+            key.board[i + y][j + x]
+          ) {
             rows[i + y]--
             cols[j + x]--
           } else {
@@ -130,6 +153,6 @@ export class DangerPuzzle extends Puzzle {
         }
       }
     }
-    return rows.every(x => !x) && cols.every(x => !x)
+    return rows.every((x) => !x) && cols.every((x) => !x)
   }
 }

@@ -1,8 +1,18 @@
 <template>
   <div class="relative z-10">
-    <div class="w-full h-full flex justify-center items-center" :class="className">
+    <div
+      class="w-full h-full flex justify-center items-center"
+      :class="className"
+    >
       <template v-if="type > 0 && type < 5">
-        <Block class="opacity-50" :top="0" :left="0" :right="0" :bottom="type" color="fade" />
+        <Block
+          class="opacity-50"
+          :top="0"
+          :left="0"
+          :right="0"
+          :bottom="type"
+          color="fade"
+        />
       </template>
       <template v-if="type === 6">
         <i class="bi-brush-fill text-xl gray opacity-50" :color="color"></i>
@@ -12,29 +22,36 @@
 </template>
 
 <script>
-import Block from "@/components/tile/Block.vue"
-const tileType = ["floor", "extend-single", "extend-double", "extend-double-r", "extend-double-l", "wall", "paint"]
+import Block from "@/components/tile/TileBlock.vue"
+const tileType = [
+  "floor",
+  "extend-single",
+  "extend-double",
+  "extend-double-r",
+  "extend-double-l",
+  "wall",
+  "paint",
+]
 
 export default {
   name: "HexCell",
   components: {
-    Block
+    Block,
   },
   props: {
-    type: Number,
+    type: { type: Number, required: true },
     color: {
       default: "#000000",
-
-    }
+    },
   },
   computed: {
     className() {
       return tileType[this.type]
-    }
-  }
+    },
+  },
 }
 </script>
-  
+
 <style scoped>
 .hex-center {
   position: absolute;
