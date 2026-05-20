@@ -9,7 +9,6 @@ import JeopardyService from "./services/jeopardyService.ts"
 import SquaredleService from "./services/squaredleService.ts"
 import TeamService from "./services/team/teamService.ts"
 import SandboxService from "./services/sandboxService.ts"
-import RPGService from "./services/rpg/rpgService.ts"
 import AnidleService from "./services/anidleService.ts"
 import TileService from "./services/tileService.ts"
 
@@ -32,7 +31,6 @@ const games: Record<string, GameServiceConstructor> = [
   SquaredleService,
   TeamService,
   SandboxService,
-  RPGService,
   AnidleService,
   TileService,
 ].reduce((acc: Record<string, GameServiceConstructor>, cur) => {
@@ -75,7 +73,7 @@ function initGameManager(server: any) {
       const oldIgn = user.ign
       user.ign = ign
       socket.emit("set-user", user.details())
-      broadcast(user.socket.roomId, "log", `${oldIgn} has changed their name to ${ign}`)
+      broadcast(user.roomId, "log", `${oldIgn} has changed their name to ${ign}`)
     })
     socket.on("restore-user", ({ id, ign, iv }: { id: string; ign: string; iv?: string }) => {
       try {

@@ -27,37 +27,3 @@ export class JsonSchema {
 export interface AnidleNames {
   properNouns: string[]
 }
-
-export interface RPGInit {
-  title: string
-  premise: string
-  classes: string[]
-}
-
-export interface RPGEntity {
-  name: string
-  description: string
-  hp: number
-}
-
-export interface RPGAttack {
-  name: string
-  damage: number
-}
-
-export interface RPGPercent {
-  percentage: number
-}
-
-export interface RPGEnemyAction {
-  percentage: number
-  action: string
-}
-
-export interface RPGActionResult {
-  description: string
-  result: {
-    name: string
-    damage: number
-  }[]
-}

@@ -41,10 +41,6 @@
         v-else-if="this.$store.state.scene === 'team'"
         :socket="socket"
       />
-      <RPGGame
-        v-else-if="this.$store.state.scene === 'rpg'"
-        :socket="socket"
-      />
       <AnidleGame
         v-else-if="this.$store.state.scene === 'anidle'"
         :socket="socket"
@@ -91,7 +87,6 @@ export default {
     SquaredleGame: defineAsyncComponent(() => import("@/components/squaredle/SquaredleGame.vue")),
     SandboxGame: defineAsyncComponent(() => import("@/components/sandbox/SandboxGame.vue")),
     TeamGame: defineAsyncComponent(() => import("@/components/team/TeamGame.vue")),
-    RPGGame: defineAsyncComponent(() => import("@/components/rpg/RPGGame.vue")),
     AnidleGame: defineAsyncComponent(() => import("@/components/anidle/AnidleGame.vue")),
     TileGame: defineAsyncComponent(() => import("@/components/tile/TileGame.vue")),
   },
