@@ -1,7 +1,7 @@
 import { Puzzle } from "./puzzle"
 import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, WantedPuzzleSolution } from "./types"
 
-const { randomItem, shuffle } = require("../../utils/util.js")
+import { randomItem, shuffle } from "../../utils/util.js"
 
 interface WantedPuzzlePI extends PanelInfo {
   name: string

@@ -1,4 +1,4 @@
-const GameService = require("./gameService.js")
+import GameService from "./gameService.js"
 
 const BOMB = -10
 const FLAG = -20
@@ -183,4 +183,4 @@ class MinesweeperService extends GameService {
 }
 MinesweeperService.prototype.id = "minesweeper"
 
-module.exports = MinesweeperService
+export default MinesweeperService

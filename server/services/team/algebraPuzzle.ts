@@ -1,7 +1,7 @@
 import { Puzzle } from "./puzzle"
 import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, AlgebraPuzzleSolution } from "./types"
 
-const { randomItem } = require("../../utils/util.js")
+import { randomItem } from "../../utils/util.js"
 
 interface AlgebraPuzzlePI extends PanelInfo {
   n: number

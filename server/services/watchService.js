@@ -1,4 +1,4 @@
-const GameService = require("./gameService.js")
+import GameService from "./gameService.js"
 
 class WatchService extends GameService {
   constructor(roomId) {
@@ -122,4 +122,4 @@ class WatchService extends GameService {
 }
 WatchService.prototype.id = "watch"
 
-module.exports = WatchService
+export default WatchService

@@ -1,4 +1,4 @@
-const GameService = require("./gameService.js")
+import GameService from "./gameService.js"
 
 class SandboxService extends GameService {
   constructor(roomId) {
@@ -7,4 +7,4 @@ class SandboxService extends GameService {
 }
 SandboxService.prototype.id = "sandbox"
 
-module.exports = SandboxService
+export default SandboxService

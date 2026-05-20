@@ -1,25 +1,26 @@
-const express = require("express")
-const bodyParser = require("body-parser")
-const cors = require("cors")
-const http = require("http")
+import express from "express"
+import bodyParser from "body-parser"
+import cors from "cors"
+import http from "http"
+import { join } from "path"
 
-const { initGameManager } = require("./gameManager.js")
-const { initDatabaseManager } = require("./databaseManager.ts")
-const loggingMiddleware = require("./middleware/loggingMiddleware.js")
+import { initGameManager } from "./gameManager.js"
+import { initDatabaseManager } from "./databaseManager.ts"
+import loggingMiddleware from "./middleware/loggingMiddleware.js"
 
 const app = express()
 const server = http.createServer(app)
-let port = 8080
+let port = 3001
 process.argv.forEach(function (val) {
   if (val === "prod") {
     port = 8638
   }
 })
 
-const path = require('path').join(__dirname, "/../dist/index.html")
+const path = join(import.meta.dirname, "/../dist/index.html")
 
 // Site Request Handling
-app.use(express.static(__dirname + "/../dist/"))
+app.use(express.static(import.meta.dirname + "/../dist/"))
 app.use(bodyParser.json())
 app.use(cors())
 app.use(loggingMiddleware)

@@ -1,6 +1,7 @@
+import { broadcast, players } from "../gameManager.js"
+
 class GameService {
   constructor(roomId) {
-    const { broadcast, players } = require("../gameManager.js")
     this.getPlayers = () => players(roomId)
     this.getPlayer = (id) => this.getPlayers().find(socket => socket.id === id)
     this.broadcastFn = (...args) => {
@@ -17,4 +18,4 @@ class GameService {
   }
 }
 
-module.exports = GameService
+export default GameService

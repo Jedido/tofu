@@ -1,8 +1,8 @@
 import { Puzzle } from "./puzzle"
 import { Panel, PanelInfo, PanelEnum, PuzzleEnum, Id, WordPuzzleSolution } from "./types"
 
-const fs = require("fs")
-const { randomItem, shuffle, getRandomWeightedLetter, generateName } = require("../../utils/util.js")
+import fs from "fs"
+import { randomItem, shuffle, getRandomWeightedLetter, generateName } from "../../utils/util.js"
 
 interface WordPuzzlePI extends PanelInfo {
   words: string[],

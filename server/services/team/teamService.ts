@@ -10,8 +10,8 @@ import { AlgebraPuzzle } from "./algebraPuzzle"
 import { AddressPuzzle } from "./addressPuzzle"
 import { WordPuzzle } from "./wordPuzzle"
 
-const GameService = require("../gameService.js")
-const { randomItem, shuffle } = require("../../utils/util.js")
+import GameService from "../gameService.js"
+import { randomItem, shuffle } from "../../utils/util.js"
 const RESULT_DELAY = 3000
 
 class TeamService extends GameService {
@@ -285,4 +285,4 @@ class TeamService extends GameService {
 }
 TeamService.prototype.id = "team"
 
-module.exports = TeamService
+export default TeamService

@@ -1,6 +1,6 @@
 import { Panel, PanelEnum, PuzzleEnum, Wire, WirePuzzleSolution } from "./types"
 
-const { colors, shuffle, randomItem } = require("../../utils/util.js")
+import { colors, shuffle, randomItem } from "../../utils/util.js"
 
 export class WirePuzzle {
   static wires: Wire[]

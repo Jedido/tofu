@@ -1,4 +1,4 @@
-const { getDurationMs } = require("../utils/timing")
+import { getDurationMs } from "../utils/timing.ts"
 
 interface RetryConfig {
   maxRetries: number
@@ -30,10 +30,10 @@ export class BaseHttpClient<In, Out> {
   async fetch(input: In): Promise<Out> {
     const start = process.hrtime()
     const request = this.convertInToRequest(input)
-    
+
     let attempt = 0
     let lastError: Error | null = null
-    
+
     while (attempt <= (this.retryConfig?.maxRetries ?? 0)) {
       try {
         if (attempt > 0) {
@@ -41,7 +41,7 @@ export class BaseHttpClient<In, Out> {
         }
 
         const res = await fetch(request)
-        
+
         if (!res.ok && this.retryConfig?.retryableStatuses?.includes(res.status)) {
           throw new Error(`HTTP ${res.status}: ${res.statusText}`)
         }

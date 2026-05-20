@@ -1,9 +1,4 @@
-
-import dotenv from 'dotenv'
 import crypto from "crypto"
-
-dotenv.config({ path: `.env.local` })
-dotenv.config()
 
 const secretKey = process.env.CIPHER_SECRET || (() => {
   console.warn("CIPHER_SECRET was not configured in the environment! Generating a random key...")

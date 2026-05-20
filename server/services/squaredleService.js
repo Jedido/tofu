@@ -1,8 +1,7 @@
-const fs = require("fs")
-
-const GameService = require("./gameService.js")
-const Trie = require("../utils/trie.js")
-const { getRandomWeightedLetter } = require("../utils/util.js")
+import fs from "fs"
+import GameService from "./gameService.js"
+import Trie from "../utils/trie.js"
+import { getRandomWeightedLetter } from "../utils/util.js"
 
 class SquaredleService extends GameService {
   constructor(roomId) {
@@ -223,4 +222,4 @@ class SquaredleService extends GameService {
 }
 SquaredleService.prototype.id = "squaredle"
 
-module.exports = SquaredleService
+export default SquaredleService

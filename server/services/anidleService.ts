@@ -3,8 +3,8 @@ import { MALGetAnimeClient, MALSearchAnimeClient, Anime, FullAnime, MALGetCharac
 import { TSocket } from "../utils/tsocket"
 import { get, run } from "../databaseManager"
 
-const { randomItem } = require("../utils/util")
-const GameService = require("./gameService.js")
+import { randomItem } from "../utils/util.js"
+import GameService from "./gameService.js"
 
 interface Guess {
   mal_id: number,
@@ -363,4 +363,4 @@ class AnidleService extends GameService {
 }
 AnidleService.prototype.id = "anidle"
 
-module.exports = AnidleService
+export default AnidleService

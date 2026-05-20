@@ -1,4 +1,4 @@
-const fs = require("fs")
+import fs from "fs"
 
 function shuffle(array) {
   let currentIndex = array.length
@@ -86,7 +86,7 @@ function stylizeName(name) {
   return name.charAt(0).toUpperCase() + name.slice(1) // Ensure the first letter is capitalized
 }
 
-module.exports = {
+export {
   shuffle,
   randomItem,
   symbols,

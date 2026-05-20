@@ -1,5 +1,4 @@
-const GameService = require("./gameService.js")
-const fs = require("fs")
+import GameService from "./gameService.js"
 
 class JeopardyService extends GameService {
   constructor(roomId) {
@@ -248,4 +247,4 @@ class JeopardyService extends GameService {
 }
 JeopardyService.prototype.id = "jeopardy"
 
-module.exports = JeopardyService
+export default JeopardyService

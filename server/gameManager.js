@@ -1,25 +1,20 @@
-const dotenv = require('dotenv')
-const { Server } = require("socket.io")
+import { Server } from "socket.io"
 
-const ExampleService = require("./services/exampleService.js")
-const AnagramService = require("./services/anagramService.js")
-const MinesweeperService = require("./services/minesweeperService.js")
-const GachaService = require("./services/gachaService.js")
-const WatchService = require("./services/watchService.js")
-const JeopardyService = require("./services/jeopardyService.js")
-const SquaredleService = require("./services/squaredleService.js")
-const TeamService = require("./services/team/teamService.ts")
-const SandboxService = require("./services/sandboxService.js")
-const RPGService = require("./services/rpg/rpgService.ts")
-const AnidleService = require("./services/anidleService.ts")
-const TileService = require("./services/tileService.ts")
+import ExampleService from "./services/exampleService.js"
+import AnagramService from "./services/anagramService.js"
+import MinesweeperService from "./services/minesweeperService.js"
+import GachaService from "./services/gachaService.js"
+import WatchService from "./services/watchService.js"
+import JeopardyService from "./services/jeopardyService.js"
+import SquaredleService from "./services/squaredleService.js"
+import TeamService from "./services/team/teamService.ts"
+import SandboxService from "./services/sandboxService.js"
+import RPGService from "./services/rpg/rpgService.ts"
+import AnidleService from "./services/anidleService.ts"
+import TileService from "./services/tileService.ts"
 
-const { TSocket } = require("./utils/tsocket.ts")
-const { decrypt } = require("./utils/cipher.ts")
-const { randomItem } = require("./utils/util.js")
-
-dotenv.config({ path: `.env.local` })
-dotenv.config()
+import { TSocket } from "./utils/tsocket.ts"
+import { randomItem } from "./utils/util.js"
 
 const users = new Map()
 
@@ -44,7 +39,7 @@ const gameRooms = {}
 let io
 
 const wordList = [
-  'alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot', 'golf', 'hotel', 'india', 'juliet', 
+  'alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot', 'golf', 'hotel', 'india', 'juliet',
   'kilo', 'lima', 'mike', 'november', 'oscar', 'papa', 'quebec', 'romeo', 'sierra', 'tango',
   'uniform', 'victor', 'whiskey', 'xray', 'yankee', 'zulu', 'panda', 'dragon', 'eagle', 'tiger',
   'lion', 'bear', 'shark', 'wolf', 'elephant', 'giraffe', 'monkey', 'zebra', 'horse', 'cat'
@@ -233,7 +228,8 @@ function players(roomId) {
   })
   return res
 }
-module.exports = {
+
+export {
   initGameManager,
   broadcast,
   players,

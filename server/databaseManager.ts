@@ -1,11 +1,6 @@
-const dotenv = require('dotenv')
-
-dotenv.config({ path: `.env.local` })
-dotenv.config()
-
 import fs from "fs"
 import { Database, Statement } from 'sqlite3'
-const { getDurationMs } = require("./utils/timing")
+import { getDurationMs } from "./utils/timing.ts"
 
 const dbFile = "./server/tofu.db"
 const db: Database = new Database(dbFile)
@@ -25,7 +20,7 @@ export async function run(sql: string, ...args: any[]): Promise<{ lastID: number
             sql, args
           },
           out: err
-        })    
+        })
         reject(err)
       } else {
         // console.log({
@@ -64,7 +59,7 @@ export async function get(sql: string, ...args: any[]): Promise<any> {
             sql, args
           },
           out: err
-        })    
+        })
         reject(err)
       } else {
         // console.log({
@@ -76,7 +71,7 @@ export async function get(sql: string, ...args: any[]): Promise<any> {
         //     sql, args
         //   },
         //   out: `${rows?.length || 0} rows`
-        // })    
+        // })
         resolve(rows)
       }
     })

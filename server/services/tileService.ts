@@ -1,7 +1,7 @@
 import { TSocket } from "../utils/tsocket"
 
-const GameService = require("./gameService.js")
-const { randomItem, shuffle } = require("../utils/util.js")
+import GameService from "./gameService.js"
+import { randomItem, shuffle } from "../utils/util.js"
 
 interface TargetUnit {
   unit: string
@@ -431,4 +431,4 @@ class TileService extends GameService {
 }
 TileService.prototype.id = "tile"
 
-module.exports = TileService
+export default TileService

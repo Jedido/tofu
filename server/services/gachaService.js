@@ -1,6 +1,6 @@
-const GameService = require("./gameService.js")
+import GameService from "./gameService.js"
+import fs from "fs"
 
-const fs = require("fs")
 const RECRUIT_SIZE = 5
 const RATE_THRESHOLDS = [0.07, 0.21, 0.47, 1]
 const ALIGNMENT_TYPES = 4
@@ -116,4 +116,4 @@ class GachaService extends GameService {
 }
 GachaService.prototype.id = "gacha"
 
-module.exports = GachaService
+export default GachaService

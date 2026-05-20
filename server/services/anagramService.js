@@ -1,6 +1,6 @@
-const GameService = require("./gameService.js")
+import GameService from "./gameService.js"
+import fs from "fs"
 
-const fs = require("fs")
 const MS_TO_S = 1000
 const NEXT_WORD_DELAY = 400
 
@@ -304,4 +304,4 @@ class AnagramService extends GameService {
 }
 AnagramService.prototype.id = "anagram"
 
-module.exports = AnagramService
+export default AnagramService

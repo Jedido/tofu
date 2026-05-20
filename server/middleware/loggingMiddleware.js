@@ -1,4 +1,4 @@
-const { getDurationMs } = require("../utils/timing")
+import { getDurationMs } from "../utils/timing.ts"
 
 const loggingMiddleware = (req, res, next) => {
   const start = process.hrtime()
@@ -22,4 +22,4 @@ const loggingMiddleware = (req, res, next) => {
   next()
 }
 
-module.exports = loggingMiddleware
+export default loggingMiddleware

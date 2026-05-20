@@ -2,7 +2,7 @@ import { JsonSchema, RPGActionResult, RPGEnemyAction, RPGEntity, RPGInit, RPGAtt
 import { AIClient } from "../../clients/aiClient"
 import { TSocket } from "../../utils/tsocket"
 
-const GameService = require("../gameService.js")
+import GameService from "../gameService.js"
 
 interface RPGPlayer {
   socket: TSocket
@@ -251,4 +251,4 @@ class RPGService extends GameService {
 }
 RPGService.prototype.id = "rpg"
 
-module.exports = RPGService
+export default RPGService
