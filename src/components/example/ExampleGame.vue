@@ -47,8 +47,8 @@ export default {
   },
   mounted() {
     console.log("example game has been mounted")
-    this.on("receive-message", (sender, message) => {
-      this.messages.push([sender, message])
+    this.on("receive-message", ({ ign, message }) => {
+      this.messages.push([ign, message])
     })
   },
   unmounted() {

@@ -4,7 +4,6 @@ import { services } from "./services/registry.ts"
 import AnagramService from "./services/anagramService.ts"
 import MinesweeperService from "./services/minesweeperService.ts"
 import GachaService from "./services/gachaService.ts"
-import WatchService from "./services/watchService.ts"
 import JeopardyService from "./services/jeopardyService.ts"
 import SquaredleService from "./services/squaredleService.ts"
 import TeamService from "./services/team/teamService.ts"
@@ -26,7 +25,6 @@ const games: Record<string, GameServiceConstructor> = [
   MinesweeperService,
   AnagramService,
   GachaService,
-  WatchService,
   JeopardyService,
   SquaredleService,
   TeamService,
