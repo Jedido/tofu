@@ -117,7 +117,7 @@ class JeopardyService extends GameService {
     this.broadcastPlayerUpdate()
   }
 
-  joinAsPlayer(_: any, socket: TSocket) {
+  joinAsPlayer(_: unknown, socket: TSocket) {
     if (!this.players.find((player) => player.id === socket.id)) {
       this.players.push(this.buildPlayerInfo(socket))
       if (this.host.id === socket.id) {
@@ -131,7 +131,7 @@ class JeopardyService extends GameService {
     }
   }
 
-  joinAsHost(_: any, socket: TSocket) {
+  joinAsHost(_: unknown, socket: TSocket) {
     if (!this.host.id) {
       this.host = this.buildPlayerInfo(socket)
       const playerIndex = this.players.findIndex(
@@ -182,7 +182,7 @@ class JeopardyService extends GameService {
     this.broadcastPlayerUpdate()
   }
 
-  displayCategories(_: any, socket: TSocket) {
+  displayCategories(_: unknown, socket: TSocket) {
     if (this.host.id !== socket.id) {
       return
     }
@@ -200,7 +200,7 @@ class JeopardyService extends GameService {
     this.broadcastFn(this.showCategories, categories)
   }
 
-  nextRound(_: any, socket: TSocket) {
+  nextRound(_: unknown, socket: TSocket) {
     if (this.host.id !== socket.id) {
       return
     }
@@ -256,7 +256,7 @@ class JeopardyService extends GameService {
     this.submissions[socket.id].unshift(submission)
   }
 
-  revealSubmissions(_: any, socket: TSocket) {
+  revealSubmissions(_: unknown, socket: TSocket) {
     if (this.host.id !== socket.id) {
       return
     }
@@ -267,14 +267,14 @@ class JeopardyService extends GameService {
     })
   }
 
-  resetQuestion(_: any, socket: TSocket) {
+  resetQuestion(_: unknown, socket: TSocket) {
     if (this.host.id === socket.id) {
       this.questionState = 1
       this.broadcastFn(this.setQuestionState, this.questionState)
     }
   }
 
-  clearBuzzer(_: any, socket: TSocket) {
+  clearBuzzer(_: unknown, socket: TSocket) {
     if (this.host.id === socket.id) {
       this.activePlayer = ""
       this.questionState = 1
@@ -283,21 +283,21 @@ class JeopardyService extends GameService {
     }
   }
 
-  continueQuestion(_: any, socket: TSocket) {
+  continueQuestion(_: unknown, socket: TSocket) {
     if (this.host.id === socket.id) {
       this.questionState++
       this.broadcastFn(this.setQuestionState, this.questionState)
     }
   }
 
-  showAnswer(_: any, socket: TSocket) {
+  showAnswer(_: unknown, socket: TSocket) {
     if (this.host.id === socket.id) {
       this.questionState = 0
       this.broadcastFn(this.setQuestionState, this.questionState)
     }
   }
 
-  broadcastBuzzer(_: any, socket: TSocket) {
+  broadcastBuzzer(_: unknown, socket: TSocket) {
     if (!this.activePlayer) {
       const player = this.players.findIndex((player) => player.id === socket.id)
       if (player > -1) {

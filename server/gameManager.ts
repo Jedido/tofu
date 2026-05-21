@@ -1,6 +1,6 @@
 import { Server } from "socket.io"
 
-import ExampleService from "./services/exampleService.ts"
+import { services } from "./services/registry.ts"
 import AnagramService from "./services/anagramService.ts"
 import MinesweeperService from "./services/minesweeperService.ts"
 import GachaService from "./services/gachaService.ts"
@@ -22,9 +22,9 @@ type GameServiceConstructor = new (roomId: string) => GameService
 const users = new Map<string, TSocket>()
 
 const games: Record<string, GameServiceConstructor> = [
+  ...services,
   MinesweeperService,
   AnagramService,
-  ExampleService,
   GachaService,
   WatchService,
   JeopardyService,
@@ -145,7 +145,7 @@ function initGameManager(server: any) {
         broadcast(user.roomId, "log-message", { ign: user.ign, msg })
       }
     })
-    socket.on("action", async (type: string, data: any) => {
+    socket.on("action", async (type: string, data: unknown) => {
       try {
         if (!hasRoom(user.roomId)) {
           console.log(`Unknown room ${user.roomId}`)
@@ -257,15 +257,13 @@ function removeGame(roomId: string) {
   console.log(`deleting room ${roomId} since all players have left`)
   try {
     const gameRoom = gameRooms[roomId].game
-    if (gameRoom.actions && gameRoom.actions["shutdown"]) {
-      gameRoom.actions["shutdown"](undefined, undefined as any)
-    }
+    gameRoom.shutdown()
     delete gameRooms[roomId]
   } catch (e) {
     console.log((e as Error).stack)
   }
 }
-function broadcast(roomId: string, type: string, ...params: any[]) {
+function broadcast(roomId: string, type: string, ...params: unknown[]) {
   if (!hasRoom(roomId)) {
     return
   }

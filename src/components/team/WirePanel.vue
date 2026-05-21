@@ -28,7 +28,7 @@
         </div>
         <template v-if="state.wire.stripe">
           <div
-            class="h-12 rounded col-start-2 border border-2 border-gray-600"
+            class="h-12 rounded col-start-2 border-2 border-gray-600"
             :style="`background-color: ${state.wire.color};`"
           ></div>
           <div class="col-start-2 row-start-3 no-width">
@@ -38,7 +38,7 @@
             <i class="bi-plus text-gray-600 text-2xl"></i>
           </div>
           <div
-            class="h-12 rounded border border-2 border-gray-600"
+            class="h-12 rounded border-2 border-gray-600"
             :style="`background-color: ${state.wire.stripe};`"
           ></div>
           <div class="col-start-4 row-start-3 no-width">
@@ -47,7 +47,7 @@
         </template>
         <template v-else>
           <div
-            class="h-16 w-16 mx-auto rounded col-start-2 col-span-3 border border-2 border-gray-600"
+            class="h-16 w-16 mx-auto rounded col-start-2 col-span-3 border-2 border-gray-600"
             :style="`background-color: ${state.wire.color};`"
           ></div>
           <div class="col-start-3 row-start-3 no-width">

@@ -2,8 +2,7 @@ import {
   MALSearchAnimeClient,
   MALSearchAnimeResponse,
 } from "../clients/malClient"
-import fs from "fs"
-import { initDatabaseManager, run, get } from "../databaseManager"
+import { initDatabaseManager, run } from "../databaseManager"
 
 const client = new MALSearchAnimeClient()
 

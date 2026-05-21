@@ -34,10 +34,7 @@ export class DicePuzzle extends Puzzle {
   constructor(id: Id) {
     super(id)
 
-    let color = ""
-    let sum = 0
-    let count = 0
-    let combo = ""
+    let color, sum, count, combo
     do {
       color = randomItem(colors)
       count = Math.ceil(Math.random() * 6)

@@ -28,9 +28,7 @@ export class PatternPuzzle extends Puzzle {
   constructor(id: Id) {
     super(id)
 
-    let color = ""
-    let symbol = ""
-    let combo = ""
+    let color, symbol, combo
     do {
       color = randomItem(colors)
       symbol = randomItem(symbols)
