@@ -99,8 +99,7 @@ export default class extends MinesweeperServiceBase {
         spacesLeft--
       }
     }
-    this.broadcastFn(
-      "log",
+    this.sendLog(
       `${sender.ign} started a new game (bombs=${bombs}, size=${size})`
     )
     this.sendBoard(this.getBoardState())
@@ -108,7 +107,7 @@ export default class extends MinesweeperServiceBase {
 
   revealAction({ x, y }: CoordData, sender: TSocket) {
     if (this.revealed[x][y] !== FLAG) {
-      this.broadcastFn("log", `${sender.ign} revealed (${x}, ${y})`)
+      this.sendLog(`${sender.ign} revealed (${x}, ${y})`)
       if (this.field[x][y] === BOMB) {
         this.revealBoard()
         this.revealed[x][y] = BOOM
@@ -117,8 +116,7 @@ export default class extends MinesweeperServiceBase {
           (new Date().getTime() - (this.time as Date).getTime()) / 1000
         )
         this.sendBoard(this.getBoardState())
-        this.broadcastFn(
-          "log",
+        this.sendLog(
           `${sender.ign} blew everyone up after ${this.time} seconds.`
         )
       } else {
@@ -156,8 +154,7 @@ export default class extends MinesweeperServiceBase {
             (new Date().getTime() - (this.time as Date).getTime()) / 1000
           )
           this.sendBoard(this.getBoardState())
-          this.broadcastFn(
-            "log",
+          this.sendLog(
             `${sender.ign} revealed the last space after ${this.time} seconds.`
           )
         } else if (this.field[x][y] === 0) {

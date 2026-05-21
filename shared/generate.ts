@@ -1,16 +1,17 @@
 /**
  * Usage:
- *   bun server/scripts/generate.ts                  → regenerate all bases + registry
- *   bun server/scripts/generate.ts <name>           → scaffold service + regenerate all
- *   bun server/scripts/generate.ts <name> --force   → force overwrite service + regenerate all
+ *   bun shared/generate.ts         → regenerate all bases + registry
+ *   bun shared/generate.ts <name>  → regenerate base + scaffold service (if missing)
+ *
+ * To regenerate a service stub, delete the file first — it won't be overwritten.
  */
 import { Project, SyntaxKind, VariableDeclarationKind } from "ts-morph"
-import { readdirSync, writeFileSync, existsSync, mkdirSync } from "fs"
+import { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync } from "fs"
 import { resolve } from "path"
 
-const ROOT = resolve(import.meta.dir, "..")
-const SPECS_DIR = resolve(ROOT, "specs")
-const SERVICES_DIR = resolve(ROOT, "services")
+const SPECS_DIR = resolve(import.meta.dir, "specs")
+const SERVICES_DIR = resolve(import.meta.dir, "..", "server", "services")
+const REGISTRY_FILE = resolve(import.meta.dir, "..", "server", "registry.ts")
 
 // ── Interfaces ───────────────────────────────────────────────────────────────
 interface TypeDecl {
@@ -175,15 +176,19 @@ export function generateBase(spec: SpecInfo, specName: string): string {
     extends: "GameService",
   })
 
-  klass.addConstructor({
-    parameters: [{ name: "roomId", type: "string" }],
-    statements: [
-      "super(roomId)",
-      ...actionEntries.map(
-        (a) =>
-          `this.actions["${a.fullKey}"] = (data, socket) => this.${a.methodName}(this.parseDataAs(${a.typeName}, data), socket)`
-      ),
+  const switchBody = actionEntries.length
+    ? `switch (action) {\n${actionEntries.map((a) => `      case "${a.fullKey}": this.${a.methodName}(this.parseDataAs(${a.typeName}, data), socket); break`).join("\n")}\n    }`
+    : ""
+  klass.addMethod({
+    name: "dispatch",
+    hasOverrideKeyword: true,
+    parameters: [
+      { name: "action", type: "string" },
+      { name: "data", type: "unknown" },
+      { name: "socket", type: "TSocket" },
     ],
+    returnType: "void",
+    statements: switchBody ? [switchBody] : [],
   })
 
   for (const a of actionEntries) {
@@ -216,13 +221,13 @@ export function generateBase(spec: SpecInfo, specName: string): string {
 
   const header =
     `/* eslint-disable */\n` +
-    `// AUTO-GENERATED from server/specs/${specName}Spec.ts — do not edit.\n` +
-    `// Run \`npm run generate -- ${serviceName} --force\` to regenerate.\n`
+    `// AUTO-GENERATED from shared/specs/${specName}Spec.ts — do not edit.\n` +
+    `// Run \`npm run generate -- ${serviceName}\` to regenerate.\n`
   return header + file.getFullText()
 }
 
 // ── Process one spec (parse once, generate base + scaffold service) ──────────
-function processSpec(spec: SpecInfo, specName: string, force: boolean) {
+function processSpec(spec: SpecInfo, specName: string) {
   const { serviceName, actions } = spec
 
   const serviceDir = resolve(SERVICES_DIR, toCamelCase(serviceName))
@@ -236,10 +241,8 @@ function processSpec(spec: SpecInfo, specName: string, force: boolean) {
     serviceDir,
     toCamelCase(serviceName) + "Service.ts"
   )
-  if (existsSync(serviceFile) && !force) {
-    console.log(
-      `${serviceFile} already exists — skipping (use --force to overwrite)`
-    )
+  if (existsSync(serviceFile)) {
+    console.log(`${serviceFile} already exists — skipping (delete it to regenerate)`)
     return
   }
   const className = toPascalCase(serviceName) + "ServiceBase"
@@ -259,7 +262,7 @@ function processSpec(spec: SpecInfo, specName: string, force: boolean) {
     `import { ${allImports} } from "./${baseFileName(serviceName)}"\n` +
       `\nexport default class extends ${className} {\n${stubs}\n}\n`
   )
-  console.log(`${force ? "Regenerated" : "Created"} ${serviceFile}`)
+  console.log(`Created ${serviceFile}`)
 }
 
 // ── Regenerate registry (filesystem scan, no spec parsing) ───────────────────
@@ -279,22 +282,26 @@ export function regenerateRegistry() {
         `${baseName}Service.ts`
       )
       if (!existsSync(baseFile) || !existsSync(serviceFile)) return []
+      const baseContent = readFileSync(baseFile, "utf-8")
+      const idMatch = baseContent.match(/\.prototype\.id = "([^"]+)"/)
+      const serviceId = idMatch ? idMatch[1] : baseName
       return [
         {
           importName:
             baseName.charAt(0).toUpperCase() + baseName.slice(1) + "Service",
           fileName: `${baseName}/${baseName}Service.ts`,
+          serviceId,
         },
       ]
     })
 
   const imports = services
-    .map((s) => `import ${s.importName} from "./${s.fileName}"`)
+    .map((s) => `import ${s.importName} from "./services/${s.fileName}"`)
     .join("\n")
-  const list = services.map((s) => `  ${s.importName},`).join("\n")
+  const entries = services.map((s) => `  "${s.serviceId}": ${s.importName},`).join("\n")
   writeFileSync(
-    resolve(SERVICES_DIR, "registry.ts"),
-    `/* eslint-disable */\n// AUTO-GENERATED — do not edit manually.\n// Run \`npm run generate\` to rebuild.\n${imports}\n\nexport const services = [\n${list}\n] as const\n`
+    REGISTRY_FILE,
+    `/* eslint-disable */\n// AUTO-GENERATED — do not edit manually.\n// Run \`npm run generate\` to rebuild.\nimport type GameService from "./services/gameService.ts"\n${imports}\n\ntype GameServiceConstructor = new (roomId: string) => GameService\n\nexport const games: Record<string, GameServiceConstructor> = {\n${entries}\n}\n`
   )
   console.log(
     `Registry: ${services.length} service(s) — ${services.map((s) => s.importName).join(", ")}`
@@ -302,7 +309,7 @@ export function regenerateRegistry() {
 }
 
 // ── Main entry point ─────────────────────────────────────────────────────────
-export function generate(serviceArg?: string, force = false) {
+export function generate(serviceArg?: string) {
   const specFiles = serviceArg
     ? [`${serviceArg}Spec.ts`]
     : readdirSync(SPECS_DIR).filter((f) => f.endsWith("Spec.ts"))
@@ -311,7 +318,7 @@ export function generate(serviceArg?: string, force = false) {
     const specPath = resolve(SPECS_DIR, file)
     if (!existsSync(specPath)) {
       console.error(`Spec not found: ${specPath}`)
-      console.error(`Create server/specs/${file} first.`)
+      console.error(`Create shared/specs/${file} first.`)
       process.exit(1)
     }
     const specName = file.replace("Spec.ts", "")
@@ -322,13 +329,13 @@ export function generate(serviceArg?: string, force = false) {
       console.warn(`Skipping ${file}: ${e}`)
       continue
     }
-    processSpec(spec, specName, force)
+    processSpec(spec, specName)
   }
 
   regenerateRegistry()
 }
 
 if (import.meta.main) {
-  const [, , serviceArg, ...flags] = process.argv
-  generate(serviceArg, flags.includes("--force"))
+  const [, , serviceArg] = process.argv
+  generate(serviceArg)
 }

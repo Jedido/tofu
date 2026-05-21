@@ -12,9 +12,9 @@
     "server": "bun server/server.ts",
     "prod": "npm run build && bun server/server.ts prod",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.cjs server/",
-    "generate": "bun server/scripts/generate.ts",
-    "create-service": "bun server/scripts/generate.ts",
-    "regenerate-registry": "bun server/scripts/generate.ts"
+    "generate": "bun shared/generate.ts",
+    "create-service": "bun shared/generate.ts",
+    "regenerate-registry": "bun shared/generate.ts"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",

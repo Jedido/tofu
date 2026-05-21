@@ -115,11 +115,11 @@ export default class extends SquaredleServiceBase {
       }
       this.revealed.add(word)
       this.sendRevealWord(word)
-      this.broadcastFn("log", `${socket.ign} found a word: ${word}`)
+      this.sendLog(`${socket.ign} found a word: ${word}`)
       this.sendGuessResponse({ word, result: "valid" }, socket)
     } else if (this.dictionary.includes(word)) {
       this.sendGuessResponse({ word, result: "bonus" }, socket)
-      this.broadcastFn("log", `${socket.ign} found a bonus word: ${word}`)
+      this.sendLog(`${socket.ign} found a bonus word: ${word}`)
       this.sendBonusWord(word)
     } else {
       this.sendGuessResponse({ word, result: "invalid" }, socket)

@@ -1,6 +1,6 @@
 /* eslint-disable */
-// AUTO-GENERATED from server/specs/watchSpec.ts — do not edit.
-// Run `npm run generate -- watch --force` to regenerate.
+// AUTO-GENERATED from shared/specs/watchSpec.ts — do not edit.
+// Run `npm run generate -- watch` to regenerate.
 import { z } from "zod";
 import type { TSocket } from "../../utils/tsocket.ts";
 import GameService from "../gameService.ts";
@@ -58,15 +58,16 @@ const StateData = z.object({
 export type StateData = z.infer<typeof StateData>;
 
 export abstract class WatchServiceBase extends GameService {
-  constructor(roomId: string) {
-    super(roomId)
-    this.actions["watch-queue"] = (data, socket) => this.queueVideoAction(this.parseDataAs(QueueVideoData, data), socket)
-    this.actions["watch-start"] = (data, socket) => this.startVideoAction(this.parseDataAs(VideoIdData, data), socket)
-    this.actions["watch-sync"] = (data, socket) => this.syncVideoAction(this.parseDataAs(SyncData, data), socket)
-    this.actions["watch-next"] = (data, socket) => this.nextVideoAction(this.parseDataAs(VideoIdData, data), socket)
-    this.actions["watch-search"] = (data, socket) => this.searchVideoAction(this.parseDataAs(SearchVideoData, data), socket)
-    this.actions["watch-remove"] = (data, socket) => this.removeVideoAction(this.parseDataAs(RemoveVideoData, data), socket)
-    this.actions["watch-get-state"] = (data, socket) => this.getStateAction(this.parseDataAs(GetStateData, data), socket)
+  override dispatch(action: string, data: unknown, socket: TSocket): void {
+    switch (action) {
+      case "watch-queue": this.queueVideoAction(this.parseDataAs(QueueVideoData, data), socket); break
+      case "watch-start": this.startVideoAction(this.parseDataAs(VideoIdData, data), socket); break
+      case "watch-sync": this.syncVideoAction(this.parseDataAs(SyncData, data), socket); break
+      case "watch-next": this.nextVideoAction(this.parseDataAs(VideoIdData, data), socket); break
+      case "watch-search": this.searchVideoAction(this.parseDataAs(SearchVideoData, data), socket); break
+      case "watch-remove": this.removeVideoAction(this.parseDataAs(RemoveVideoData, data), socket); break
+      case "watch-get-state": this.getStateAction(this.parseDataAs(GetStateData, data), socket); break
+    }
   }
 
   abstract queueVideoAction(data: QueueVideoData, sender: TSocket): void;

@@ -47,7 +47,7 @@ export default class extends WatchServiceBase {
       return
     }
     this.playlist.push(video)
-    this.broadcastFn("log", `${sender.ign} queued a video: ${video.title}`)
+    this.sendLog(`${sender.ign} queued a video: ${video.title}`)
     this.sendRequestQueue({ video })
     if (!this.currentVideo) this.doStart(video.videoId)
   }

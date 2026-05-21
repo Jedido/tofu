@@ -1,6 +1,6 @@
 /* eslint-disable */
-// AUTO-GENERATED from server/specs/anagramSpec.ts — do not edit.
-// Run `npm run generate -- anagram --force` to regenerate.
+// AUTO-GENERATED from shared/specs/anagramSpec.ts — do not edit.
+// Run `npm run generate -- anagram` to regenerate.
 import { z } from "zod";
 import type { TSocket } from "../../utils/tsocket.ts";
 import GameService from "../gameService.ts";
@@ -77,10 +77,11 @@ const EndData = z.object({
 export type EndData = z.infer<typeof EndData>;
 
 export abstract class AnagramServiceBase extends GameService {
-  constructor(roomId: string) {
-    super(roomId)
-    this.actions["anagram-init"] = (data, socket) => this.initAction(this.parseDataAs(SettingsData, data), socket)
-    this.actions["anagram-submit"] = (data, socket) => this.submitAction(this.parseDataAs(SubmitData, data), socket)
+  override dispatch(action: string, data: unknown, socket: TSocket): void {
+    switch (action) {
+      case "anagram-init": this.initAction(this.parseDataAs(SettingsData, data), socket); break
+      case "anagram-submit": this.submitAction(this.parseDataAs(SubmitData, data), socket); break
+    }
   }
 
   abstract initAction(data: SettingsData, sender: TSocket): void;

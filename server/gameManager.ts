@@ -1,28 +1,14 @@
 import { Server } from "socket.io"
+import { Server as HttpServer } from "http"
 
-import { services } from "./services/registry.ts"
-import JeopardyService from "./services/jeopardyService.ts"
-import TeamService from "./services/team/teamService.ts"
-import TileService from "./services/tileService.ts"
+import { games } from "./registry.ts"
 
 import { TSocket } from "./utils/tsocket.ts"
 import { randomItem } from "./utils/util.ts"
 
 import type GameService from "./services/gameService.ts"
 
-type GameServiceConstructor = new (roomId: string) => GameService
-
 const users = new Map<string, TSocket>()
-
-const games: Record<string, GameServiceConstructor> = [
-  ...services,
-  JeopardyService,
-  TeamService,
-  TileService,
-].reduce((acc: Record<string, GameServiceConstructor>, cur) => {
-  acc[(cur as any).prototype.id] = cur
-  return acc
-}, {})
 
 interface GameRoom {
   game: GameService
@@ -75,7 +61,7 @@ const wordList = [
   "cat",
 ]
 
-function initGameManager(server: any) {
+function initGameManager(server: HttpServer) {
   io = new Server(server)
   io.on("connection", (socket) => {
     const num = `${Math.floor(Math.random() * 100)}`.padStart(2, "0")
@@ -131,41 +117,21 @@ function initGameManager(server: any) {
         broadcast(user.roomId, "log-message", { ign: user.ign, msg })
       }
     })
-    socket.on("action", async (type: string, data: unknown) => {
+    socket.on("action", (type: string, data: unknown) => {
       try {
         if (!hasRoom(user.roomId)) {
           console.log(`Unknown room ${user.roomId}`)
           return
         }
-        const actionFn = gameRooms[user.roomId].game.actions[type]
-        if (!actionFn) {
-          console.log({
-            cat: "socket",
-            type,
-            user: {
-              ign: user.ign,
-              id: user.id,
-            },
-            game: gameRooms[user.roomId].gameId,
-            room: user.roomId,
-            data,
-            error: "Unknown event",
-          })
-        } else {
-          // logging
-          console.log({
-            cat: "socket",
-            type,
-            user: {
-              ign: user.ign,
-              id: user.id,
-            },
-            game: gameRooms[user.roomId].gameId,
-            room: user.roomId,
-            data,
-          })
-          await actionFn(data, user)
-        }
+        console.log({
+          cat: "socket",
+          type,
+          user: { ign: user.ign, id: user.id },
+          game: gameRooms[user.roomId].gameId,
+          room: user.roomId,
+          data,
+        })
+        gameRooms[user.roomId].game.dispatch(type, data, user)
       } catch (e) {
         console.log(`${user.ign} failed to execute ${type}: ${e}`)
         console.log((e as Error).stack)
@@ -179,7 +145,7 @@ function initGameManager(server: any) {
           removeGame(roomId)
         }
       }, 30000)
-      leaveRoom(roomId, socket as any)
+      leaveRoom(roomId, user)
       users.delete(user.socket.id)
     })
   })

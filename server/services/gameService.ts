@@ -2,11 +2,8 @@ import { z, ZodType } from "zod"
 import { TSocket } from "../utils/tsocket.ts"
 import { broadcast, players } from "../gameManager.ts"
 
-type ActionHandler = (data: any, socket: TSocket) => void | Promise<void>
-
-class GameService {
+abstract class GameService {
   id: string = ""
-  actions: Record<string, ActionHandler> = {}
 
   // Fields used by subclasses
   currentActor?: number
@@ -34,15 +31,15 @@ class GameService {
     }
   }
 
-  broadcastFn(...args: any[]): void {
-    broadcast(this.roomId, ...args)
+  sendLog(message: string, recipient?: TSocket): void {
+    this.send("log", message, recipient)
   }
 
   join(socket: TSocket) {
-    this.broadcastFn("log", `${socket.ign} has joined the room.`)
+    this.sendLog(`${socket.ign} has joined the room.`)
   }
 
-  leave(socket: TSocket) {
+  leave(socket: TSocket): void {
     broadcast(this.roomId, "log", `${socket.ign} has left the room.`)
   }
 
@@ -51,6 +48,8 @@ class GameService {
   }
 
   shutdown() {}
+
+  abstract dispatch(action: string, data: unknown, socket: TSocket): void
 }
 GameService.prototype.id = "game"
 

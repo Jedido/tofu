@@ -1,6 +1,6 @@
 /* eslint-disable */
-// AUTO-GENERATED from server/specs/exampleSpec.ts — do not edit.
-// Run `npm run generate -- example --force` to regenerate.
+// AUTO-GENERATED from shared/specs/exampleSpec.ts — do not edit.
+// Run `npm run generate -- example` to regenerate.
 import { z } from "zod";
 import type { TSocket } from "../../utils/tsocket.ts";
 import GameService from "../gameService.ts";
@@ -19,9 +19,10 @@ const ReceiveMessageData = z.object({
 export type ReceiveMessageData = z.infer<typeof ReceiveMessageData>;
 
 export abstract class ExampleServiceBase extends GameService {
-  constructor(roomId: string) {
-    super(roomId)
-    this.actions["example-send-message"] = (data, socket) => this.sendMessageAction(this.parseDataAs(SendMessageData, data), socket)
+  override dispatch(action: string, data: unknown, socket: TSocket): void {
+    switch (action) {
+      case "example-send-message": this.sendMessageAction(this.parseDataAs(SendMessageData, data), socket); break
+    }
   }
 
   abstract sendMessageAction(data: SendMessageData, sender: TSocket): void;

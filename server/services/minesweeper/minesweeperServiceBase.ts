@@ -1,6 +1,6 @@
 /* eslint-disable */
-// AUTO-GENERATED from server/specs/minesweeperSpec.ts — do not edit.
-// Run `npm run generate -- minesweeper --force` to regenerate.
+// AUTO-GENERATED from shared/specs/minesweeperSpec.ts — do not edit.
+// Run `npm run generate -- minesweeper` to regenerate.
 import { z } from "zod";
 import type { TSocket } from "../../utils/tsocket.ts";
 import GameService from "../gameService.ts";
@@ -41,12 +41,13 @@ const UpdateSpaceData = z.object({
 export type UpdateSpaceData = z.infer<typeof UpdateSpaceData>;
 
 export abstract class MinesweeperServiceBase extends GameService {
-  constructor(roomId: string) {
-    super(roomId)
-    this.actions["minesweeper-get-board"] = (data, socket) => this.getBoardAction(this.parseDataAs(GetBoardData, data), socket)
-    this.actions["minesweeper-init"] = (data, socket) => this.initAction(this.parseDataAs(InitData, data), socket)
-    this.actions["minesweeper-reveal"] = (data, socket) => this.revealAction(this.parseDataAs(CoordData, data), socket)
-    this.actions["minesweeper-flag"] = (data, socket) => this.flagAction(this.parseDataAs(CoordData, data), socket)
+  override dispatch(action: string, data: unknown, socket: TSocket): void {
+    switch (action) {
+      case "minesweeper-get-board": this.getBoardAction(this.parseDataAs(GetBoardData, data), socket); break
+      case "minesweeper-init": this.initAction(this.parseDataAs(InitData, data), socket); break
+      case "minesweeper-reveal": this.revealAction(this.parseDataAs(CoordData, data), socket); break
+      case "minesweeper-flag": this.flagAction(this.parseDataAs(CoordData, data), socket); break
+    }
   }
 
   abstract getBoardAction(data: GetBoardData, sender: TSocket): void;

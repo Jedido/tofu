@@ -1,6 +1,6 @@
 /* eslint-disable */
-// AUTO-GENERATED from server/specs/anidleSpec.ts — do not edit.
-// Run `npm run generate -- anidle --force` to regenerate.
+// AUTO-GENERATED from shared/specs/anidleSpec.ts — do not edit.
+// Run `npm run generate -- anidle` to regenerate.
 import { z } from "zod";
 import type { TSocket } from "../../utils/tsocket.ts";
 import GameService from "../gameService.ts";
@@ -95,12 +95,13 @@ const WinData = z.object({ title: z.string() });
 export type WinData = z.infer<typeof WinData>;
 
 export abstract class AnidleServiceBase extends GameService {
-  constructor(roomId: string) {
-    super(roomId)
-    this.actions["anidle-start"] = (data, socket) => this.startAction(this.parseDataAs(StartData, data), socket)
-    this.actions["anidle-guess"] = (data, socket) => this.guessAction(this.parseDataAs(GuessData, data), socket)
-    this.actions["anidle-autocomplete"] = (data, socket) => this.autocompleteAction(this.parseDataAs(QueryData, data), socket)
-    this.actions["anidle-get-state"] = (data, socket) => this.getStateAction(this.parseDataAs(NoData, data), socket)
+  override dispatch(action: string, data: unknown, socket: TSocket): void {
+    switch (action) {
+      case "anidle-start": this.startAction(this.parseDataAs(StartData, data), socket); break
+      case "anidle-guess": this.guessAction(this.parseDataAs(GuessData, data), socket); break
+      case "anidle-autocomplete": this.autocompleteAction(this.parseDataAs(QueryData, data), socket); break
+      case "anidle-get-state": this.getStateAction(this.parseDataAs(NoData, data), socket); break
+    }
   }
 
   abstract startAction(data: StartData, sender: TSocket): void;

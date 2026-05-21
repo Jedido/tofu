@@ -1,6 +1,6 @@
 /* eslint-disable */
-// AUTO-GENERATED from server/specs/gachaSpec.ts — do not edit.
-// Run `npm run generate -- gacha --force` to regenerate.
+// AUTO-GENERATED from shared/specs/gachaSpec.ts — do not edit.
+// Run `npm run generate -- gacha` to regenerate.
 import { z } from "zod";
 import type { TSocket } from "../../utils/tsocket.ts";
 import GameService from "../gameService.ts";
@@ -42,12 +42,13 @@ const StatsData = z.object({
 export type StatsData = z.infer<typeof StatsData>;
 
 export abstract class GachaServiceBase extends GameService {
-  constructor(roomId: string) {
-    super(roomId)
-    this.actions["gacha-start-recruit"] = (data, socket) => this.startRecruitAction(this.parseDataAs(NoData, data), socket)
-    this.actions["gacha-recruit"] = (data, socket) => this.recruitAction(this.parseDataAs(RecruitData, data), socket)
-    this.actions["gacha-end-recruit"] = (data, socket) => this.endRecruitAction(this.parseDataAs(NoData, data), socket)
-    this.actions["gacha-get-stats"] = (data, socket) => this.getStatsAction(this.parseDataAs(NoData, data), socket)
+  override dispatch(action: string, data: unknown, socket: TSocket): void {
+    switch (action) {
+      case "gacha-start-recruit": this.startRecruitAction(this.parseDataAs(NoData, data), socket); break
+      case "gacha-recruit": this.recruitAction(this.parseDataAs(RecruitData, data), socket); break
+      case "gacha-end-recruit": this.endRecruitAction(this.parseDataAs(NoData, data), socket); break
+      case "gacha-get-stats": this.getStatsAction(this.parseDataAs(NoData, data), socket); break
+    }
   }
 
   abstract startRecruitAction(data: NoData, sender: TSocket): void;

@@ -1,6 +1,6 @@
 /* eslint-disable */
-// AUTO-GENERATED from server/specs/squaredleSpec.ts — do not edit.
-// Run `npm run generate -- squaredle --force` to regenerate.
+// AUTO-GENERATED from shared/specs/squaredleSpec.ts — do not edit.
+// Run `npm run generate -- squaredle` to regenerate.
 import { z } from "zod";
 import type { TSocket } from "../../utils/tsocket.ts";
 import GameService from "../gameService.ts";
@@ -51,11 +51,12 @@ const GuessResponseData = z.object({
 export type GuessResponseData = z.infer<typeof GuessResponseData>;
 
 export abstract class SquaredleServiceBase extends GameService {
-  constructor(roomId: string) {
-    super(roomId)
-    this.actions["squaredle-init"] = (data, socket) => this.initAction(this.parseDataAs(InitData, data), socket)
-    this.actions["squaredle-submit"] = (data, socket) => this.submitAction(this.parseDataAs(SubmitData, data), socket)
-    this.actions["squaredle-get"] = (data, socket) => this.getAction(this.parseDataAs(GetData, data), socket)
+  override dispatch(action: string, data: unknown, socket: TSocket): void {
+    switch (action) {
+      case "squaredle-init": this.initAction(this.parseDataAs(InitData, data), socket); break
+      case "squaredle-submit": this.submitAction(this.parseDataAs(SubmitData, data), socket); break
+      case "squaredle-get": this.getAction(this.parseDataAs(GetData, data), socket); break
+    }
   }
 
   abstract initAction(data: InitData, sender: TSocket): void;
