@@ -307,7 +307,7 @@ export default {
         this.answer = ""
       }
     },
-    handleResult(answer, failure = false) {
+    handleResult({ answer, timeout }) {
       if (!answer) {
         if (!this.shake) {
           this.shake = "shake"
@@ -320,24 +320,24 @@ export default {
         }
       } else {
         this.cipher = answer
-        this.cipherColor = failure ? "text-error" : "text-emerald-400"
+        this.cipherColor = timeout ? "text-error" : "text-emerald-400"
         this.$refs.wordTimer.reset()
       }
     },
-    updatePlayer(player, score, strikes) {
-      this.players[player].score = `${score}`
-      this.players[player].strikes = strikes
+    updatePlayer({ playerId, score, strikes }) {
+      this.players[playerId].score = `${score}`
+      this.players[playerId].strikes = strikes
     },
     endGame(data) {
       this.status = "end"
       this.endGameStats = data
     },
-    handleCipher(cipher, time = 10000) {
+    handleCipher({ scrambled, time }) {
       this.cipherColor = ""
       this.countdown = 0
       this.inputDisabled = false
       this.$refs.wordTimer.set(time)
-      this.cipher = cipher
+      this.cipher = scrambled
     },
     handleWordTimeout() {
       if (this.countdown > 0) {

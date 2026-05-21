@@ -23,7 +23,6 @@ const users = new Map<string, TSocket>()
 const games: Record<string, GameServiceConstructor> = [
   ...services,
   MinesweeperService,
-  AnagramService,
   GachaService,
   JeopardyService,
   SquaredleService,

@@ -212,6 +212,8 @@ export function generateBase(spec: SpecInfo, specName: string): string {
 
   file.addStatements(`${className}.prototype.id = "${serviceName}"`)
 
+  file.formatText({ indentSize: 2, tabSize: 2 })
+
   const header =
     `/* eslint-disable */\n` +
     `// AUTO-GENERATED from server/specs/${specName}Spec.ts — do not edit.\n` +
