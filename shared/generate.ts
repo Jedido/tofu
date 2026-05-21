@@ -6,7 +6,13 @@
  * To regenerate a service stub, delete the file first — it won't be overwritten.
  */
 import { Project, SyntaxKind, VariableDeclarationKind } from "ts-morph"
-import { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync } from "fs"
+import {
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+  existsSync,
+  mkdirSync,
+} from "fs"
 import { resolve } from "path"
 
 const SPECS_DIR = resolve(import.meta.dir, "specs")
@@ -242,7 +248,9 @@ function processSpec(spec: SpecInfo, specName: string) {
     toCamelCase(serviceName) + "Service.ts"
   )
   if (existsSync(serviceFile)) {
-    console.log(`${serviceFile} already exists — skipping (delete it to regenerate)`)
+    console.log(
+      `${serviceFile} already exists — skipping (delete it to regenerate)`
+    )
     return
   }
   const className = toPascalCase(serviceName) + "ServiceBase"
@@ -298,7 +306,9 @@ export function regenerateRegistry() {
   const imports = services
     .map((s) => `import ${s.importName} from "./services/${s.fileName}"`)
     .join("\n")
-  const entries = services.map((s) => `  "${s.serviceId}": ${s.importName},`).join("\n")
+  const entries = services
+    .map((s) => `  "${s.serviceId}": ${s.importName},`)
+    .join("\n")
   writeFileSync(
     REGISTRY_FILE,
     `/* eslint-disable */\n// AUTO-GENERATED — do not edit manually.\n// Run \`npm run generate\` to rebuild.\nimport type GameService from "./services/gameService.ts"\n${imports}\n\ntype GameServiceConstructor = new (roomId: string) => GameService\n\nexport const games: Record<string, GameServiceConstructor> = {\n${entries}\n}\n`

@@ -148,11 +148,11 @@ export default class extends AnidleServiceBase {
 
     if (!this.revealedData || !this.anime || !this.animeSource) return
 
+    const correct = mal_id === this.anime.mal_id
     let anime: FullAnime
     let source: FullAnime
-    if (mal_id === this.anime.mal_id) {
+    if (correct) {
       this.won = true
-      this.sendWin({ title: this.anime.title })
       anime = this.anime
       source = this.animeSource
     } else {
@@ -221,7 +221,7 @@ export default class extends AnidleServiceBase {
     this.revealedData.airedEndMax = airedToRange.max
 
     guessResult.image_url = anime.images.jpg.image_url
-    guessResult.correct = mal_id === this.anime.mal_id
+    guessResult.correct = correct
     const synopsisSplit = this.anime.synopsis.split(" ")
     const synopsisLength = synopsisSplit.length
     const numRevealed = Math.min(5, Math.floor(synopsisLength / 10))
@@ -244,6 +244,9 @@ export default class extends AnidleServiceBase {
       guess: guessResult,
       revealIndices,
     })
+    if (correct) {
+      this.sendWin({ title: this.anime.title })
+    }
   }
 
   async autocompleteAction(data: QueryData, socket: TSocket) {

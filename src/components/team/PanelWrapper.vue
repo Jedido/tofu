@@ -78,7 +78,7 @@
 <script>
 const DEFAULT_CARD_Y = 308
 export default {
-  name: "Panel",
+  name: "PanelWrapper",
   props: {
     socket: { type: Object, required: true },
     active: Boolean,

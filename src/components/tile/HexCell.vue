@@ -41,6 +41,7 @@ export default {
   props: {
     type: { type: Number, required: true },
     color: {
+      type: String,
       default: "#000000",
     },
   },

@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "lint": "eslint src/ server/",
-    "lint:fix": "eslint --fix src/ server/",
+    "lint": "eslint src/ server/ shared/",
+    "lint:fix": "eslint --fix src/ server/ shared/",
     "dev:client": "vite",
     "dev:server": "bun --watch server/server.ts",
     "server": "bun server/server.ts",

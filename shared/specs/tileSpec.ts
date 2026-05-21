@@ -31,8 +31,17 @@ export const AppendAction: Action = { action: "append", data: UnitData }
 export const SubmitAction: Action = { action: "submit", data: UnitData }
 
 export const StateEvent: Message = { event: "state", data: StateData }
-export const UpdateUnitEvent: Message = { event: "update-unit", data: UpdateUnitData }
-export const CompleteOrderEvent: Message = { event: "complete-order", data: CompleteOrderData }
+export const UpdateUnitEvent: Message = {
+  event: "update-unit",
+  data: UpdateUnitData,
+}
+export const CompleteOrderEvent: Message = {
+  event: "complete-order",
+  data: CompleteOrderData,
+}
 export const NewOrderEvent: Message = { event: "new-order", data: NewOrderData }
-export const GrantToolsEvent: Message = { event: "grant-tools", data: GrantToolsData }
+export const GrantToolsEvent: Message = {
+  event: "grant-tools",
+  data: GrantToolsData,
+}
 export const GameOverEvent: Message = { event: "game-over", data: GameOverData }

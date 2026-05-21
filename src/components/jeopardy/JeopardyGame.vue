@@ -66,10 +66,10 @@
               {{ category.name }}
             </h2>
             <JeopardyButton
-              v-for="question in category.questions"
-              :key="question.points"
-              :class="[question.completed ? 'bg-gray-300' : 'bg-emerald-600']"
-              @click.prevent="openQuestion(category.name, question.points)"
+              v-for="q in category.questions"
+              :key="q.points"
+              :class="[q.completed ? 'bg-gray-300' : 'bg-emerald-600']"
+              @click.prevent="openQuestion(category.name, q.points)"
             >
               {{ question.points }}
             </JeopardyButton>
@@ -226,6 +226,14 @@ export default {
       local: false,
     }
   },
+  computed: {
+    jeopardyGridStyle() {
+      return {
+        "grid-template-columns": `repeat(${this.categories.length},minmax(0,1fr))`,
+        "grid-template-rows": `auto repeat(${this.categories[0].questions.length},minmax(0,1fr))`,
+      }
+    },
+  },
   mounted() {
     this.on("update-players", (players) => {
       this.players = players
@@ -288,14 +296,6 @@ export default {
         this.emit("submit", { submission: this.submission })
         this.lastSubmission = this.submission
         this.submission = ""
-      }
-    },
-  },
-  computed: {
-    jeopardyGridStyle() {
-      return {
-        "grid-template-columns": `repeat(${this.categories.length},minmax(0,1fr))`,
-        "grid-template-rows": `auto repeat(${this.categories[0].questions.length},minmax(0,1fr))`,
       }
     },
   },

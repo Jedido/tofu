@@ -32,7 +32,7 @@ export class RequestPuzzle extends Puzzle {
   constructor(id: Id) {
     super(id)
     const names = Array.from({ length: 4 }, () => {
-      let name = ""
+      let name
       do {
         name = generateName()
       } while (RequestPuzzle.names.has(name))

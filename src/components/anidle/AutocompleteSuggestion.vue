@@ -1,5 +1,14 @@
 <template>
-  <span v-html="boldInput"></span>
+  <span>
+    {{ suggestion.substring(0, matchIndex) }}
+    <template v-if="matchIndex !== -1">
+      <b>
+        {{
+          suggestion.substring(matchIndex, matchIndex + currentInput.length)
+        }}</b
+      >{{ suggestion.substring(matchIndex + currentInput.length) }}
+    </template>
+  </span>
 </template>
 
 <script>
@@ -10,20 +19,10 @@ export default {
     currentInput: { type: String, required: true },
   },
   computed: {
-    boldInput() {
-      const index = this.suggestion
+    matchIndex() {
+      return this.suggestion
         .toLowerCase()
         .indexOf(this.currentInput.toLowerCase())
-      if (index === -1) {
-        return this.suggestion
-      }
-      return (
-        this.suggestion.substring(0, index) +
-        "<b>" +
-        this.suggestion.substring(index, index + this.currentInput.length) +
-        "</b>" +
-        this.suggestion.substring(index + this.currentInput.length)
-      )
     },
   },
 }

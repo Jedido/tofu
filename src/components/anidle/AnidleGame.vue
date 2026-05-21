@@ -1,5 +1,5 @@
 <template>
-  <div id="anidle" class="overflow-x-hidden">
+  <div id="anidle">
     <canvas id="text-canvas" class="hidden"></canvas>
     <div v-if="state === 'game'" class="pb-40">
       <div
@@ -131,13 +131,13 @@
           </ul>
         </div>
       </div>
-      <div class="mt-4">
+      <div class="mt-4 overflow-y-auto px-4 max-h-96">
         <h2 class="text-xl font-semibold mb-2">Guesses</h2>
         <ul class="flex flex-col-reverse">
           <GuessCard
-            v-for="(guess, index) in guesses"
+            v-for="(g, index) in guesses"
             :key="index"
-            v-bind="guess"
+            v-bind="g"
             class="mb-2"
           />
         </ul>
@@ -147,7 +147,7 @@
           class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg"
           @click="startGame"
         >
-          Start Game
+          New Game
         </button>
       </div>
     </div>
@@ -227,6 +227,7 @@ export default {
       if (!this.autocompleteQuery) {
         return []
       }
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.errorMessage = ""
       const suggestions = []
       for (const option of this.autocompleteOptions) {
@@ -319,7 +320,7 @@ export default {
       this.errorMessage = `${name} has already been guessed!`
     },
     guessStart(guess) {
-      this.guesses.push(guess)
+      this.guesses.push({ ...guess, correct: null, image_url: null })
     },
     guessResult({ revealedData, guess, revealIndices }) {
       this.revealedData = revealedData

@@ -41,6 +41,7 @@ export default {
   props: {
     title: { type: String, required: true },
     user: { type: String, required: true },
+    // eslint-disable-next-line vue/prop-name-casing
     image_url: { type: String, required: true },
     correct: { type: Boolean, required: true },
   },

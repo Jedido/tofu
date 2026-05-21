@@ -1,5 +1,5 @@
 <template>
-  <Panel
+  <PanelWrapper
     v-if="panel === 'k1'"
     :active="active"
     :panel-type="panel"
@@ -22,8 +22,8 @@
         </div>
       </div>
     </template>
-  </Panel>
-  <Panel
+  </PanelWrapper>
+  <PanelWrapper
     v-else-if="panel === 'p'"
     :active="active"
     :panel-type="panel"
@@ -54,16 +54,16 @@
         </div>
       </div>
     </template>
-  </Panel>
+  </PanelWrapper>
 </template>
 
 <script>
-import Panel from "@/components/team/Panel.vue"
+import PanelWrapper from "@/components/team/PanelWrapper.vue"
 
 export default {
   name: "WantedPanel",
   components: {
-    Panel,
+    PanelWrapper,
   },
   props: {
     panel: { type: String, required: true },

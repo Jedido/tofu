@@ -118,7 +118,7 @@ export default {
       if (this.editIgn) {
         this.editIgn = false
         this.socket.emit("set-ign", this.ign)
-        const user = localStorage.setItem("user", JSON.stringify(user))
+        const user = JSON.parse(localStorage.getItem("user") || "{}")
         user.ign = this.ign
         localStorage.setItem("user", JSON.stringify(user))
       } else {

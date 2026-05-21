@@ -15,7 +15,15 @@ interface GameRoom {
   gameId: string
 }
 
+interface Session {
+  roomId: string
+  ign: string
+  user: TSocket
+  timeoutId: ReturnType<typeof setTimeout>
+}
+
 const gameRooms: Record<string, GameRoom> = {}
+const sessions = new Map<string, Session>()
 let io: Server
 
 const wordList = [
@@ -90,21 +98,29 @@ function initGameManager(server: HttpServer) {
         `${oldIgn} has changed their name to ${ign}`
       )
     })
-    socket.on(
-      "restore-user",
-      ({ id, ign, iv }: { id: string; ign: string; iv?: string }) => {
-        try {
-          user.ign = ign
+    socket.on("restore-user", ({ id, ign }: { id: string; ign: string }) => {
+      try {
+        const session = sessions.get(id)
+        if (session) {
+          clearTimeout(session.timeoutId)
+          sessions.delete(id)
           user.id = id
-          // user.id = decrypt(id, iv)
+          user.ign = session.ign
           socket.emit("set-user", user.details())
-        } catch (e) {
-          console.log(`${user.ign} failed to execute restore-user: ${e}`)
-          console.log((e as Error).stack)
+          if (session.roomId) {
+            joinRoom(session.roomId, user)
+          }
+        } else {
+          user.id = id
+          user.ign = ign
           socket.emit("set-user", user.details())
         }
+      } catch (e) {
+        console.log(`${user.ign} failed to execute restore-user: ${e}`)
+        console.log((e as Error).stack)
+        socket.emit("set-user", user.details())
       }
-    )
+    })
     socket.on("create-user", () => {
       console.log(`New user ${user.id}`)
       socket.emit("set-user", user.details())
@@ -138,15 +154,16 @@ function initGameManager(server: HttpServer) {
       }
     })
     socket.on("disconnect", () => {
-      const roomId = user.roomId
-      console.log(`Lost connection to ${user.id} (${user.ign})`)
-      setTimeout(() => {
-        if (roomId && !io.sockets.adapter.rooms.get(roomId)) {
-          removeGame(roomId)
-        }
-      }, 30000)
-      leaveRoom(roomId, user)
+      const { roomId } = user
+      const userId = user.id
+      console.log(`Lost connection to ${userId} (${user.ign})`)
       users.delete(user.socket.id)
+      if (!roomId) return
+      const timeoutId = setTimeout(() => {
+        sessions.delete(userId)
+        leaveRoom(roomId, user)
+      }, 300000)
+      sessions.set(userId, { roomId, ign: user.ign, user, timeoutId })
     })
   })
 }
@@ -180,6 +197,7 @@ function joinRoom(roomId: string, socket: TSocket) {
     socket.emit("set-scene", "select")
     return
   }
+  if (socket.roomId === roomId) return
   const gameId = gameRooms[roomId].gameId
   socket.emit("set-room", roomId)
   socket.emit("set-scene", gameId)

@@ -648,12 +648,8 @@ export default {
     },
     selectStack(i) {
       if (this.selectedStack !== i) {
-        let position = this.order[i]
         const oldPosition = this.order[this.selectedStack]
         document.getElementById(`panel${this.selectedStack}`).style.left = "0px"
-        if (i > oldPosition) {
-          position--
-        }
         const panel = document.getElementById(`panel${i}`)
         this.order[this.selectedStack] = this.order[i]
         this.order[i] = oldPosition

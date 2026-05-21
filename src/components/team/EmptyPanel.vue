@@ -1,5 +1,5 @@
 <template>
-  <Panel panel-type="d">
+  <PanelWrapper panel-type="d">
     <template #title> Null </template>
     <template #content>
       <div class="text-center text-gray-200">
@@ -7,16 +7,16 @@
       </div>
     </template>
     <template #description> No data. Work on something else. </template>
-  </Panel>
+  </PanelWrapper>
 </template>
 
 <script>
-import Panel from "@/components/team/Panel.vue"
+import PanelWrapper from "@/components/team/PanelWrapper.vue"
 
 export default {
   name: "EmptyPanel",
   components: {
-    Panel,
+    PanelWrapper,
   },
 }
 </script>

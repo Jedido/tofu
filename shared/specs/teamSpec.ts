@@ -13,7 +13,10 @@ export const SubmissionData: DataType = z.object({
 export const WireCutData: DataType = z.object({ next: z.number() })
 
 export const StartEventData: DataType = z.unknown()
-export const FailData: DataType = z.object({ id: z.number(), stack: z.number() })
+export const FailData: DataType = z.object({
+  id: z.number(),
+  stack: z.number(),
+})
 export const SolveData: DataType = z.object({ id: z.number() })
 export const CutSuccessData: DataType = z.object({
   next: z.number(),
@@ -31,6 +34,9 @@ export const StateAction: Action = { action: "state", data: NoData }
 export const StartEvent: Message = { event: "start", data: StartEventData }
 export const FailEvent: Message = { event: "fail", data: FailData }
 export const SolveEvent: Message = { event: "solve", data: SolveData }
-export const CutSuccessEvent: Message = { event: "cut-success", data: CutSuccessData }
+export const CutSuccessEvent: Message = {
+  event: "cut-success",
+  data: CutSuccessData,
+}
 export const LoseEvent: Message = { event: "lose", data: LoseData }
 export const WinEvent: Message = { event: "win", data: WinData }

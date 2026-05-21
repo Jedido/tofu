@@ -1,5 +1,5 @@
 <template>
-  <Panel :active="active" :panel-type="panel">
+  <PanelWrapper :active="active" :panel-type="panel">
     <template #title> Bomb Disposal Guide </template>
     <template #description>
       <div class="h-20 flex flex-col justify-between">
@@ -56,16 +56,16 @@
         </template>
       </div>
     </template>
-  </Panel>
+  </PanelWrapper>
 </template>
 
 <script>
-import Panel from "@/components/team/Panel.vue"
+import PanelWrapper from "@/components/team/PanelWrapper.vue"
 
 export default {
   name: "DangerPanel",
   components: {
-    Panel,
+    PanelWrapper,
   },
   props: {
     panel: { type: String, required: true },

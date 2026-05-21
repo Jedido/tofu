@@ -83,7 +83,10 @@ export default class extends JeopardyServiceBase {
       this.sendSetLocal(this.localGame)
       this.displayCategoriesAction(null, socket)
     } catch (error) {
-      socket.emit("log", `An error occurred while trying to start the game: ${error}`)
+      socket.emit(
+        "log",
+        `An error occurred while trying to start the game: ${error}`
+      )
     }
   }
 
@@ -101,7 +104,9 @@ export default class extends JeopardyServiceBase {
   setHostAction(_data: unknown, socket: TSocket) {
     if (!this.host.id) {
       this.host = this.buildPlayerInfo(socket)
-      const playerIndex = this.players.findIndex((player) => player.id === socket.id)
+      const playerIndex = this.players.findIndex(
+        (player) => player.id === socket.id
+      )
       if (playerIndex >= 0) {
         this.players.splice(playerIndex, 1)
         this.broadcastPlayerUpdate()
@@ -133,10 +138,15 @@ export default class extends JeopardyServiceBase {
     this.sendShowCategories(categories)
   }
 
-  displayQuestionAction({ category, points }: DisplayQuestionData, socket: TSocket) {
+  displayQuestionAction(
+    { category, points }: DisplayQuestionData,
+    socket: TSocket
+  ) {
     if (this.host.id !== socket.id) return
     const index = this.categories.findIndex((c) => c.name === category)
-    const question = this.categories[index].questions.find((q) => q.points === points)!
+    const question = this.categories[index].questions.find(
+      (q) => q.points === points
+    )!
     question.completed = true
     this.activePlayer = ""
     this.questionState = 1
