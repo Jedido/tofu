@@ -243,9 +243,11 @@ function processSpec(spec: SpecInfo, specName: string, force: boolean) {
     return
   }
   const className = toPascalCase(serviceName) + "ServiceBase"
-  const typeImports = [...new Set(actions.map((a) => a.typeName))]
-    .map((t) => `type ${t}`)
-    .join(", ")
+  const typeImportParts = [...new Set(actions.map((a) => a.typeName))].map(
+    (t) => `type ${t}`
+  )
+  if (actions.length > 0) typeImportParts.push("type TSocket")
+  const allImports = [className, ...typeImportParts].join(", ")
   const stubs = actions
     .map((a) => {
       const method = a.constName.charAt(0).toLowerCase() + a.constName.slice(1)
@@ -254,7 +256,7 @@ function processSpec(spec: SpecInfo, specName: string, force: boolean) {
     .join("\n\n")
   writeFileSync(
     serviceFile,
-    `import { ${className}, ${typeImports}, type TSocket } from "./${baseFileName(serviceName)}"\n` +
+    `import { ${allImports} } from "./${baseFileName(serviceName)}"\n` +
       `\nexport default class extends ${className} {\n${stubs}\n}\n`
   )
   console.log(`${force ? "Regenerated" : "Created"} ${serviceFile}`)

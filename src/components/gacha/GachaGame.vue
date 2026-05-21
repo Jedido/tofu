@@ -47,7 +47,7 @@ export default {
       this.recruitQueue = cards
       this.state = 1
     })
-    this.on("recruit-result", (index, character) => {
+    this.on("recruit-result", ({ index, character }) => {
       this.recruitQueue[index] = character
     })
     this.on("summary", (sessionResult) => {

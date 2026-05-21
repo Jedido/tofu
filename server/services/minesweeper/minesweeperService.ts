@@ -1,5 +1,11 @@
-import { TSocket } from "../utils/tsocket.ts"
-import GameService from "./gameService.ts"
+import {
+  MinesweeperServiceBase,
+  type GetBoardData,
+  type InitData,
+  type CoordData,
+  type BoardData,
+  type TSocket,
+} from "./minesweeperServiceBase.ts"
 
 const BOMB = -10
 const FLAG = -20
@@ -7,41 +13,15 @@ const HIDDEN = -30
 const BLANK = -40
 const BOOM = -50
 
-class MinesweeperService extends GameService {
-  readonly boardEvent: string
-  readonly updateSpaceEvent: string
+export default class extends MinesweeperServiceBase {
+  field: number[][] = []
+  revealed: number[][] = []
+  gameStatus = ""
+  spaces = 0
+  numBombs = 100
+  time: Date | number = 0
 
-  field: number[][]
-  revealed: number[][]
-  gameStatus: string
-  spaces: number
-  numBombs: number
-  time: Date | number
-
-  constructor(roomId: string) {
-    super(roomId)
-
-    // requests
-    this.actions = {
-      "minesweeper-get-board": this.getBoard.bind(this),
-      "minesweeper-init": this.init.bind(this),
-      "minesweeper-reveal": this.reveal.bind(this),
-      "minesweeper-flag": this.flag.bind(this),
-    }
-    // responses
-    this.boardEvent = "minesweeper-board"
-    this.updateSpaceEvent = "minesweeper-update-space"
-
-    // game state
-    this.field = []
-    this.revealed = []
-    this.gameStatus = ""
-    this.spaces = 0
-    this.numBombs = 100
-    this.time = 0
-  }
-
-  revealBoard() {
+  private revealBoard() {
     const size = this.field.length
     for (let x = 0; x < size; x++) {
       for (let y = 0; y < size; y++) {
@@ -52,23 +32,18 @@ class MinesweeperService extends GameService {
     }
   }
 
-  increment(field: number[][], x: number, y: number) {
+  private increment(field: number[][], x: number, y: number) {
     if (this.verify(field, x, y) && field[x][y] !== BOMB) {
       field[x][y]++
     }
   }
 
-  verify(field: number[][], x: number, y: number): boolean {
+  private verify(field: number[][], x: number, y: number): boolean {
     const size = field.length
     return x >= 0 && x < size && y >= 0 && y < size
   }
 
-  getBoard(_: any, socket: TSocket) {
-    socket.emit(this.boardEvent, this.getBoardState())
-  }
-
-  // returns the whole state of the board (expensive)
-  getBoardState() {
+  private getBoardState(): BoardData {
     return {
       status: this.gameStatus,
       size: this.revealed.length,
@@ -79,11 +54,15 @@ class MinesweeperService extends GameService {
           ? Math.round(
               (new Date().getTime() - (this.time as Date).getTime()) / 1000
             )
-          : this.time,
+          : (this.time as number),
     }
   }
 
-  init({ size, bombs }: { size: number; bombs: number }, socket: TSocket) {
+  getBoardAction(_data: GetBoardData, sender: TSocket) {
+    this.sendBoard(this.getBoardState(), sender)
+  }
+
+  initAction({ size, bombs }: InitData, sender: TSocket) {
     this.gameStatus = "ongoing"
     this.field = []
     this.revealed = []
@@ -122,14 +101,14 @@ class MinesweeperService extends GameService {
     }
     this.broadcastFn(
       "log",
-      `${socket.ign} started a new game (bombs=${bombs}, size=${size})`
+      `${sender.ign} started a new game (bombs=${bombs}, size=${size})`
     )
-    this.broadcastFn(this.boardEvent, this.getBoardState())
+    this.sendBoard(this.getBoardState())
   }
 
-  reveal({ x, y }: { x: number; y: number }, socket: TSocket) {
+  revealAction({ x, y }: CoordData, sender: TSocket) {
     if (this.revealed[x][y] !== FLAG) {
-      this.broadcastFn("log", `${socket.ign} revealed (${x}, ${y})`)
+      this.broadcastFn("log", `${sender.ign} revealed (${x}, ${y})`)
       if (this.field[x][y] === BOMB) {
         this.revealBoard()
         this.revealed[x][y] = BOOM
@@ -137,10 +116,10 @@ class MinesweeperService extends GameService {
         this.time = Math.round(
           (new Date().getTime() - (this.time as Date).getTime()) / 1000
         )
-        this.broadcastFn(this.boardEvent, this.getBoardState())
+        this.sendBoard(this.getBoardState())
         this.broadcastFn(
           "log",
-          `${socket.ign} blew everyone up after ${this.time} seconds.`
+          `${sender.ign} blew everyone up after ${this.time} seconds.`
         )
       } else {
         const queue: [number, number][] = []
@@ -176,29 +155,26 @@ class MinesweeperService extends GameService {
           this.time = Math.round(
             (new Date().getTime() - (this.time as Date).getTime()) / 1000
           )
-          this.broadcastFn(this.boardEvent, this.getBoardState())
+          this.sendBoard(this.getBoardState())
           this.broadcastFn(
             "log",
-            `${socket.ign} revealed the last space after ${this.time} seconds.`
+            `${sender.ign} revealed the last space after ${this.time} seconds.`
           )
         } else if (this.field[x][y] === 0) {
-          this.broadcastFn(this.boardEvent, this.getBoardState())
+          this.sendBoard(this.getBoardState())
         } else {
-          this.broadcastFn(this.updateSpaceEvent, x, y, this.revealed[x][y])
+          this.sendUpdateSpace({ x, y, value: this.revealed[x][y] })
         }
       }
     }
   }
 
-  flag({ x, y }: { x: number; y: number }) {
+  flagAction({ x, y }: CoordData, _sender: TSocket) {
     if (this.revealed[x][y] === FLAG) {
       this.revealed[x][y] = HIDDEN
     } else if (this.revealed[x][y] === HIDDEN) {
       this.revealed[x][y] = FLAG
     }
-    this.broadcastFn(this.updateSpaceEvent, x, y, this.revealed[x][y])
+    this.sendUpdateSpace({ x, y, value: this.revealed[x][y] })
   }
 }
-MinesweeperService.prototype.id = "minesweeper"
-
-export default MinesweeperService

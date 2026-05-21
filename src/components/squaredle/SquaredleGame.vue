@@ -194,9 +194,9 @@ export default {
         this.bonusWords.sort()
       }
     })
-    this.on("guess-response", (word, guessType) => {
+    this.on("guess-response", ({ word, result }) => {
       this.lastGuess = word
-      this.guessType = guessType
+      this.guessType = result
     })
     this.emit("get")
   },

@@ -94,7 +94,7 @@ export default {
         this.revealed = this.board.filter((val) => val > 0).length
       })
     })
-    this.on("update-space", (x, y, value) => {
+    this.on("update-space", ({ x, y, value }) => {
       this.board[x * this.size + y] = value
       this.$nextTick(() => {
         this.revealed = this.board.filter((val) => val > 0).length

@@ -7,6 +7,7 @@ const db = new Database(dbFile)
 
 export async function run(
   sql: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ...args: any[]
 ): Promise<{ lastID: number; changes: number }> {
   const start = process.hrtime()
@@ -29,7 +30,8 @@ export async function run(
   }
 }
 
-export async function get(sql: string, ...args: any[]): Promise<any[]> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function get(sql: string, ...args: any[]): Promise<unknown[]> {
   const start = process.hrtime()
   try {
     return db.prepare(sql).all(...args)

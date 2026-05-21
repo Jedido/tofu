@@ -27,13 +27,25 @@ export const StateData: DataType = z.object({
   time: z.number(),
 })
 
-export const QueueVideoAction: Action = { action: "queue", data: QueueVideoData }
+export const QueueVideoAction: Action = {
+  action: "queue",
+  data: QueueVideoData,
+}
 export const StartVideoAction: Action = { action: "start", data: VideoIdData }
 export const SyncVideoAction: Action = { action: "sync", data: SyncData }
 export const NextVideoAction: Action = { action: "next", data: VideoIdData }
-export const SearchVideoAction: Action = { action: "search", data: SearchVideoData }
-export const RemoveVideoAction: Action = { action: "remove", data: RemoveVideoData }
-export const GetStateAction: Action = { action: "get-state", data: GetStateData }
+export const SearchVideoAction: Action = {
+  action: "search",
+  data: SearchVideoData,
+}
+export const RemoveVideoAction: Action = {
+  action: "remove",
+  data: RemoveVideoData,
+}
+export const GetStateAction: Action = {
+  action: "get-state",
+  data: GetStateData,
+}
 
 export const RequestQueueEvent: Message = {
   event: "request-queue",

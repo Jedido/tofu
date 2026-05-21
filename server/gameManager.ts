@@ -1,14 +1,8 @@
 import { Server } from "socket.io"
 
 import { services } from "./services/registry.ts"
-import AnagramService from "./services/anagramService.ts"
-import MinesweeperService from "./services/minesweeperService.ts"
-import GachaService from "./services/gachaService.ts"
 import JeopardyService from "./services/jeopardyService.ts"
-import SquaredleService from "./services/squaredleService.ts"
 import TeamService from "./services/team/teamService.ts"
-import SandboxService from "./services/sandboxService.ts"
-import AnidleService from "./services/anidleService.ts"
 import TileService from "./services/tileService.ts"
 
 import { TSocket } from "./utils/tsocket.ts"
@@ -22,13 +16,8 @@ const users = new Map<string, TSocket>()
 
 const games: Record<string, GameServiceConstructor> = [
   ...services,
-  MinesweeperService,
-  GachaService,
   JeopardyService,
-  SquaredleService,
   TeamService,
-  SandboxService,
-  AnidleService,
   TileService,
 ].reduce((acc: Record<string, GameServiceConstructor>, cur) => {
   acc[(cur as any).prototype.id] = cur

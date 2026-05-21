@@ -1,4 +1,4 @@
-class TrieNode {
+export class TrieNode {
   children: Record<string, TrieNode>
   word: string
 
@@ -8,7 +8,7 @@ class TrieNode {
   }
 }
 
-class Trie {
+export class Trie {
   root: TrieNode
 
   constructor() {
@@ -51,5 +51,3 @@ class Trie {
     return node
   }
 }
-
-export default Trie
